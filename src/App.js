@@ -72,6 +72,9 @@ function App() {
           <Link to="/">Home</Link>
           <Link to="/how-it-works">How it Works</Link>
           <Link to="/about">About</Link> {/* Changed to Link */}
+          {session && ( // Conditionally render Dashboard link if session exists
+            <Link to="/dashboard">Dashboard</Link>
+          )}
           {!session ? ( // Conditionally render Login/Signup if no session
             <>
               <Link to="/login">Login</Link> {/* Updated to Link */}
