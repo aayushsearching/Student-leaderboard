@@ -1,8 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './DashboardPage.css';
+
+// Helper to format dates
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+};
 
 function DashboardPage({ user }) {
   const username = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+  const [currentDateDisplay, setCurrentDateDisplay] = useState('');
+  const [activeDateToggle, setActiveDateToggle] = useState('Month'); // Default active toggle
+
+  // Function to calculate date ranges
+  const getDateRange = (period) => {
+    const today = new Date();
+    let startDate, endDate;
+
+    if (period === 'Day') {
+      startDate = today;
+      return `📅 ${formatDate(startDate)}`;
+    } else if (period === 'Week') {
+      endDate = today;
+      startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6); // Last 7 days
+      return `📅 ${formatDate(startDate)} - ${formatDate(endDate)}`;
+    } else if (period === 'Month') {
+      endDate = today;
+      startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 29); // 30-day range ending today
+      return `📅 ${formatDate(startDate)} - ${formatDate(endDate)}`;
+    }
+  };
+
+  // Set initial date display on component mount
+  useEffect(() => {
+    setCurrentDateDisplay(getDateRange(activeDateToggle));
+  }, [activeDateToggle]);
+
+  const handleDateToggleClick = (period) => {
+    setActiveDateToggle(period);
+    setCurrentDateDisplay(getDateRange(period));
+  };
 
   return (
     <div className="dashboard-container">
@@ -56,12 +92,27 @@ function DashboardPage({ user }) {
           </div>
           <div className="header-actions">
             <div className="date-selector">
-              <span>📅 Oct 20, 2024</span>
+              <span>{currentDateDisplay}</span>
             </div>
             <div className="segmented-toggle">
-              <button className="active">Day</button>
-              <button>Week</button>
-              <button>Month</button>
+              <button
+                className={activeDateToggle === 'Day' ? 'active' : ''}
+                onClick={() => handleDateToggleClick('Day')}
+              >
+                Day
+              </button>
+              <button
+                className={activeDateToggle === 'Week' ? 'active' : ''}
+                onClick={() => handleDateToggleClick('Week')}
+              >
+                Week
+              </button>
+              <button
+                className={activeDateToggle === 'Month' ? 'active' : ''}
+                onClick={() => handleDateToggleClick('Month')}
+              >
+                Month
+              </button>
             </div>
           </div>
         </header>
