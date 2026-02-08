@@ -1,38 +1,187 @@
+/* General Setup */
+html, body {
+  height: 100%; /* Ensure html and body take full viewport height */
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f8f7; /* Light, soft off-white background */
+  background-image: radial-gradient(#d7d7d7 1px, transparent 1px);
+  background-size: 1.5rem 1.5rem; /* Subtle dotted texture */
+  color: #333;
+  /* overflow: hidden; Removed to allow scrolling */
+}
+
 .App {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Navigation Bar */
+.main-nav {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: rgba(248, 248, 247, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 64px; /* Explicit height for calculation */
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.nav-links a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+}
+
+.nav-cta {
+  background-color: #eee;
+  color: #333;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 14px; /* Rounded edges */
+  cursor: pointer;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  height: calc(100vh - 64px); /* Full viewport height minus nav height */
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 2rem;
+  /* overflow: hidden; Removed to allow scrolling within the section if content overflows */
+  box-sizing: border-box; /* Include padding in the height calculation */
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+}
+
+.hero-content h1 {
+  font-size: 4rem;
+  font-weight: 700;
+  color: #000; /* Bold, black primary headline */
+  margin: 0;
+}
+
+.hero-content .secondary-text {
+  font-size: 1.25rem;
+  color: #666; /* Lighter gray secondary text */
+  margin: 1rem 0 2rem;
+}
+
+.cta-button {
+  background-color: #007bff; /* Solid blue */
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 20px; /* Rounded primary CTA */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0, 123, 255, 0.3);
+  text-decoration: none; /* Remove underline */
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+}
+
+/* UI Card General Styling */
+.ui-card {
+  position: absolute;
+  background: white;
+  border-radius: 16px; /* Rounded corners */
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07); /* Soft shadows */
+  border: 1px solid #eee;
+  z-index: 1;
+}
+
+/* Individual Card Positioning & Styling */
+.card-task {
+  top: 20%;
+  left: 15%;
+  transform: rotate(-8deg);
+  width: 250px;
+}
+
+.progress-bar {
+  background-color: #eee;
+  border-radius: 10px;
+  height: 10px;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.progress {
+  background-color: #4caf50; /* Green progress */
+  height: 100%;
+  border-radius: 10px;
+}
+
+.card-sticky-note {
+  top: 30%;
+  right: 18%;
+  transform: rotate(6deg);
+  background-color: #fffacd;
+  width: 220px;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; /* Handwritten font */
+}
+
+.card-reminder {
+  bottom: 25%;
+  left: 25%;
+  transform: rotate(4deg);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 280px;
+}
+
+.card-reminder .icon {
+  font-size: 1.5rem;
+}
+
+.card-integration {
+  bottom: 15%;
+  right: 12%;
+  transform: rotate(-5deg);
+  width: 200px;
+}
+
+.app-icons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.app-icons span {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: bold;
   color: white;
 }
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+.app-icons span:nth-child(1) { background-color: #ff5722; }
+.app-icons span:nth-child(2) { background-color: #3f51b5; }
+.app-icons span:nth-child(3) { background-color: #4caf50; }

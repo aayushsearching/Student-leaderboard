@@ -1,0 +1,140 @@
+.login-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Occupy full viewport height */
+  /* Sky gradient with subtle cloud texture and curved lines implication */
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.05) 25%, transparent 25%) -50px 0,
+    linear-gradient(225deg, rgba(255,255,255,0.05) 25%, transparent 25%) -50px 0,
+    linear-gradient(315deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+    linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+    linear-gradient(to bottom, #e0f2f7, #ffffff); /* Light blue to white */
+  background-size: 100px 100px, 100px 100px, 100px 100px, 100px 100px, cover;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
+  padding: 2rem;
+  overflow: hidden; /* Prevent background elements from causing scroll */
+}
+
+.login-form-card {
+  background: rgba(255, 255, 255, 0.75); /* Translucent white background */
+  backdrop-filter: blur(15px); /* Soft blur for glassmorphism */
+  border-radius: 20px; /* Slightly more rounded corners */
+  padding: 3.5rem; /* More generous padding */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Gentler shadow */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Lighter, translucent border */
+  max-width: 450px; /* Max width for the form */
+  width: 100%;
+  text-align: center;
+  z-index: 10; /* Ensure card is above background elements */
+  position: relative; /* For proper stacking context */
+}
+
+.login-form-card h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left; /* Align labels and inputs to the left */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: calc(100% - 24px); /* Full width minus padding */
+  padding: 12px 12px; /* Adjusted padding */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Lighter border */
+  border-radius: 50px; /* Pill-shaped */
+  font-size: 1rem;
+  color: #333;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background-color: rgba(255, 255, 255, 0.8); /* Slightly translucent input background */
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15); /* Softer focus shadow */
+}
+
+.login-button {
+  background-color: #333; /* Dark, bold button */
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600; /* Bolder font */
+  border-radius: 12px; /* Slightly rounded, visually grounded */
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Stronger, but soft shadow */
+  width: 100%;
+  margin-top: 1.5rem; /* More spacing */
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.login-footer {
+  margin-top: 2rem; /* More spacing */
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.login-footer a {
+  color: #888; /* Subtle link color */
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.login-footer a:hover {
+  color: #333; /* Darker on hover */
+  text-decoration: underline;
+}
+
+/* Error message styling */
+.error-message {
+  color: #e74c3c; /* Red color for errors */
+  font-size: 1rem; /* Increased font size */
+  font-weight: 600; /* Added font weight */
+  margin-top: 0.5rem; /* Adjusted margin to give space below subtitle/title */
+  margin-bottom: 2rem; /* Increased margin to push the button further down */
+  text-align: center; /* Center the error message */
+  padding-left: 0; /* Remove padding-left as it's centered */
+}
+
+/* Input error state */
+.input-error {
+  border-color: #e74c3c !important; /* Red border for error */
+}
+
+/* Success message styling */
+.success-message {
+  color: #2ecc71; /* Green color for success */
+  background-color: #eafaf1; /* Light green background */
+  border: 1px solid #a3e9a4;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+}

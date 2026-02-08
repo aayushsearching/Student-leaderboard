@@ -1,0 +1,291 @@
+/* Overall Dashboard Layout */
+.dashboard-container {
+  display: flex;
+  background-color: #f7f8fc; /* Light gray background */
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Sidebar Styling */
+.dashboard-sidebar {
+  width: 260px;
+  background-color: #ffffff; /* White sidebar */
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #eef0f6; /* Soft border */
+}
+
+.sidebar-header {
+  margin-bottom: 2rem;
+  padding-left: 1rem;
+}
+
+.sidebar-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li a {
+  display: flex;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  border-radius: 12px; /* Rounded edges for nav items */
+  text-decoration: none;
+  color: #8a92a6; /* Muted text */
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-nav li.active a {
+  background-color: #333; /* Dark active state pill */
+  color: #fff;
+}
+
+.sidebar-nav li a:hover {
+  background-color: #f7f8fc;
+}
+
+.sidebar-nav .icon {
+  margin-right: 1rem;
+  font-size: 1.2rem;
+}
+
+/* Main Content Area */
+.dashboard-main-content {
+  flex-grow: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Bar Styling */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.search-bar input {
+  width: 350px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px; /* Pill-shaped */
+  border: 1px solid #eef0f6;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.date-selector {
+  background-color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #eef0f6;
+  color: #555;
+  font-weight: 500;
+}
+
+.segmented-toggle {
+  display: flex;
+  background-color: #eef0f6;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.segmented-toggle button {
+  background-color: transparent;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #8a92a6;
+  font-weight: 500;
+}
+
+.segmented-toggle button.active {
+  background-color: #fff;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Content Grid & Cards */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.dashboard-card {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+  border: 1px solid #eef0f6;
+}
+
+.dashboard-card.full-width {
+  grid-column: 1 / -1; /* Make a card span full width */
+}
+
+.dashboard-card h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-card h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.muted-text {
+  color: #8a92a6;
+}
+
+/* Data Table Styling */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.5rem; /* Space between rows */
+}
+
+.data-table th {
+  text-align: left;
+  padding: 0 1rem 0.5rem;
+  color: #8a92a6;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.data-table td {
+  padding: 1rem;
+}
+
+.data-table tbody tr {
+  background-color: #f7f8fc; /* Light background for rows */
+  border-radius: 10px; /* Rounded rows */
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+}
+
+.user-cell span {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #eef0f6;
+  color: #333;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.status-badge.status-active {
+  background-color: #d4edda; /* Soft green */
+  color: #155724;
+}
+
+.status-badge.status-inactive {
+  background-color: #f8d7da; /* Soft red */
+  color: #721c24;
+}
+
+/* Chart and Stacked Panel Styling */
+.chart-container {
+  width: 100%;
+  height: 150px;
+}
+
+.chart-line {
+  stroke: #007bff;
+  stroke-width: 2;
+}
+
+.chart-point {
+  fill: #007bff;
+  stroke: white;
+  stroke-width: 2;
+}
+
+.stacked-panels {
+  position: relative;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel {
+  position: absolute;
+  width: 80%;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.panel-1 {
+  background-color: #e0f2f7;
+  transform: rotate(-5deg) translateY(-10px);
+  z-index: 1;
+}
+
+.panel-2 {
+  background-color: #cce7ef;
+  transform: rotate(3deg);
+  z-index: 2;
+}
+
+.panel-3 {
+  background-color: #b8dde7;
+  transform: rotate(8deg) translateY(10px);
+  z-index: 3;
+}
+
+.stacked-panels:hover .panel-1 {
+  transform: rotate(0) translateY(-30px);
+}
+
+.stacked-panels:hover .panel-2 {
+  transform: rotate(0);
+}
+
+.stacked-panels:hover .panel-3 {
+  transform: rotate(0) translateY(30px);
+}

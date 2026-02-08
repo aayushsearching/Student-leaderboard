@@ -1,0 +1,118 @@
+.how-it-works-container {
+  max-width: 1200px;
+  margin: 64px auto;
+  padding: 48px;
+  background-color: #ffffff;
+  border-radius: 16px; /* Increased border-radius */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08); /* Slightly more prominent shadow */
+  text-align: left;
+  position: relative; /* For containing abstract shapes */
+  overflow: hidden; /* To contain shapes within the rounded corners */
+}
+
+/* Abstract Shapes */
+.how-it-works-container::before,
+.how-it-works-container::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  z-index: 0;
+  opacity: 0.1;
+  pointer-events: none; /* Make them non-interactive */
+}
+
+.how-it-works-container::before {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #a1c4fd, #c2e9fb);
+  top: -100px;
+  right: -100px;
+}
+
+.how-it-works-container::after {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #ffc3a0, #ffafbd);
+  bottom: -50px;
+  left: -50px;
+}
+
+.steps-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 32px; /* Consistent spacing */
+  position: relative; /* To be on top of the abstract shapes */
+  z-index: 1;
+}
+
+.how-it-works-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 32px;
+  text-align: left;
+  position: relative;
+  z-index: 1;
+}
+
+.how-it-works-intro {
+  font-size: 18px;
+  color: #666666;
+  text-align: left;
+  margin-bottom: 48px;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+}
+
+.step-card {
+  background-color: #ffffff;
+  border-radius: 16px; /* Increased border-radius */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07); /* More prominent shadow */
+  padding: 32px;
+  margin-bottom: 0; /* Margin is now handled by the grid gap */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.step-card h2 {
+  font-size: 24px;
+  color: #3f51b5; /* Vibrant indigo/purple-blue */
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.step-card p {
+  font-size: 16px;
+  color: #666666; /* Secondary color */
+  line-height: 1.6;
+}
+
+.step-card ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 16px; /* Consistent spacing */
+}
+
+.step-card ul li {
+  font-size: 16px;
+  color: #666666; /* Secondary color */
+  margin-bottom: 8px; /* Consistent spacing */
+  position: relative;
+  padding-left: 24px; /* Space for custom bullet */
+}
+
+.step-card ul li::before {
+  content: '•'; /* Simple dot for bullet */
+  position: absolute;
+  left: 0;
+  color: #66B2FF; /* Accent color (soft blue) */
+  font-size: 1.2em; /* Adjust size to fit */
+  line-height: 1;
+}
+
+
