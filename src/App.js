@@ -7,6 +7,10 @@ import About from './About'; // Import the new About component
 import LoginPage from './LoginPage'; // Import LoginPage
 import SignupPage from './SignupPage'; // Import SignupPage
 import DashboardPage from './DashboardPage'; // Import DashboardPage
+import TasksPage from './TasksPage'; // Import TasksPage
+import DashboardOverview from './DashboardOverview'; // Import DashboardOverview
+import BadgeRankingPage from './BadgeRankingPage'; // Import BadgeRankingPage
+import ProfilePage from './ProfilePage'; // Import ProfilePage
 
 // Component for the landing page's main content
 function HomeContent() {
@@ -111,7 +115,13 @@ function App() {
         <Route path="/about" element={<About />} /> {/* Added new Route */}
         <Route path="/login" element={<LoginPage />} /> {/* Added LoginPage Route */}
         <Route path="/signup" element={<SignupPage />} /> {/* Added SignupPage Route */}
-        <Route path="/dashboard" element={<DashboardPage user={session?.user} />} /> {/* Added DashboardPage Route with user prop */}
+        {/* Nested routes for Dashboard */}
+        <Route path="/dashboard" element={<DashboardPage user={session?.user} />}>
+          <Route index element={<DashboardOverview user={session?.user} />} />
+          <Route path="tasks" element={<TasksPage user={session?.user} />} />
+          <Route path="leaderboard" element={<BadgeRankingPage user={session?.user} />} />
+        </Route>
+        <Route path="/profile" element={<ProfilePage user={session?.user} />} /> {/* Added ProfilePage Route */}
       </Routes>
     </div>
   );

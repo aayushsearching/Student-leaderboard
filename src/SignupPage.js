@@ -38,7 +38,13 @@ function SignupPage() {
       if (error) throw error;
       setSuccessMessage('Success! Please check your email for a confirmation link.');
     } catch (error) {
-      setErrorMessage(error.message);
+      console.log('Supabase signup error:', error); // Log the full error object for debugging
+      // Check for specific error message indicating user already exists
+      if (error.message.includes('User already registered') || error.message.includes('duplicate key value violates unique constraint')) {
+        setErrorMessage('User already existed, please log in');
+      } else {
+        setErrorMessage(error.message);
+      }
     } finally {
       setLoading(false);
     }

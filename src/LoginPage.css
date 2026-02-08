@@ -114,12 +114,18 @@
 /* Error message styling */
 .error-message {
   color: #e74c3c; /* Red color for errors */
+  background-color: #fff0f0; /* Light red background for emphasis */
+  border: 1px solid #e74c3c;
+  padding: 0.75rem 1rem; /* More padding */
+  border-radius: 8px; /* Slightly rounded corners */
   font-size: 1rem; /* Increased font size */
   font-weight: 600; /* Added font weight */
-  margin-top: 0.5rem; /* Adjusted margin to give space below subtitle/title */
+  margin-top: 1rem; /* Adjust margin to give space below subtitle/title */
   margin-bottom: 2rem; /* Increased margin to push the button further down */
   text-align: center; /* Center the error message */
-  padding-left: 0; /* Remove padding-left as it's centered */
+  display: block; /* Ensure it takes up its own line */
+  position: relative; /* Ensure z-index works */
+  z-index: 100; /* Ensure it's on top of other elements */
 }
 
 /* Input error state */

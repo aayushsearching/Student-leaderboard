@@ -1,0 +1,427 @@
+/* Page Layout */
+.badge-ranking-page {
+  padding: 3rem;
+  background-color: #1a1d22; /* Deep charcoal */
+  background-image: linear-gradient(to bottom, #1a1d22, #111317); /* Soft gradient */
+  color: #fff;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Spacing between sections */
+}
+
+.ranking-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.ranking-header h1 {
+  font-size: 2.8rem; /* Larger primary heading */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #fff; /* Bright primary label */
+}
+
+.ranking-header p {
+  color: #8a92a6; /* Muted secondary text */
+  font-size: 1.1rem;
+}
+
+.ranking-info-button {
+  background-color: #3a3f45;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 1rem;
+}
+
+.ranking-info-button:hover {
+  background-color: #4a4f55;
+}
+
+/* Ranking Explanation Section */
+.ranking-explanation {
+  background-color: #2a2e35;
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 0 auto 3rem auto;
+  max-width: 950px;
+  width: 100%;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid #3a3f45;
+}
+
+.ranking-explanation h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-align: center;
+}
+
+.ranking-explanation p {
+  color: #e0e6f0;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.league-explanation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.league-info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: #1a1d22;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid #3a3f45;
+}
+
+.league-info-item h5 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.league-info-item p {
+  font-size: 0.85rem;
+  color: #a0a8b9;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Current User Rank Card */
+.current-user-rank-card {
+  background-color: #2a2e35;
+  border-radius: 16px;
+  padding: 2rem 3rem;
+  margin: 0 auto 3rem auto;
+  max-width: 700px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid #3a3f45;
+}
+
+.current-user-rank-card .user-info {
+  text-align: left;
+}
+
+.current-user-rank-card .user-name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.current-user-rank-card .user-rank {
+  font-size: 1.2rem;
+  color: #a0a8b9;
+}
+
+.current-user-rank-card .user-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.current-user-rank-card .user-badge-name {
+  font-size: 1rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #a0a8b9;
+}
+
+/* Leaderboard & Badges Card */
+.leaderboard-card {
+  background-color: #2a2e35;
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 0 auto;
+  max-width: 950px;
+  width: 100%;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid #3a3f45;
+}
+
+.leaderboard-card h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  text-align: center;
+}
+
+/* Leaderboard Table */
+.leaderboard-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.leaderboard-table th {
+  text-align: left;
+  padding: 0 1rem 1rem;
+  color: #8a92a6;
+  font-weight: 500;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  border-bottom: 1px solid #3a3f45;
+}
+
+.leaderboard-table td {
+  padding: 1rem;
+  color: #e0e6f0;
+  font-size: 1rem;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+.leaderboard-table tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.leaderboard-table tbody tr:hover {
+  background-color: #3a3f45;
+}
+
+.leaderboard-table .progress-bar-container {
+  width: 100px;
+  height: 8px;
+  background-color: #1a1d22;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.leaderboard-table .progress-bar {
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 4px;
+}
+
+.leaderboard-badge-cell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.leaderboard-badge-cell .badge-details {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.leaderboard-badge-cell .badge-name-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Folder of Badges Section */
+.earned-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+}
+
+/* Badge Display Styling (CSS-based shapes) */
+.badge-display {
+  width: 50px; /* Default size for general display */
+  height: 57px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* Shield shape */
+  position: relative;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 8px; /* Rounded edges for the base shape */
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.badge-display .league-title {
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Tier-specific styling for the badge-display */
+/* 1. Novice */
+.badge-novice {
+  background-color: #8c5b3c;
+  background-image: linear-gradient(145deg, #a67b5b, #70472d);
+}
+
+/* 2. Learner */
+.badge-learner {
+  background-color: #c0c0c0;
+  background-image: linear-gradient(145deg, #e0e0e0, #a0a0a0);
+}
+.badge-learner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  clip-path: inherit;
+  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.4), inset 0 -2px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* 3. Scholar */
+.badge-scholar {
+  background-color: #ffd700;
+  background-image: linear-gradient(145deg, #ffec80, #d4af37);
+}
+.badge-scholar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  clip-path: inherit;
+  box-shadow: inset 0 3px 4px rgba(255, 255, 255, 0.5), inset 0 -3px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 4. Skilled */
+.badge-skilled {
+  background-color: #e5e4e2;
+  background-image: linear-gradient(145deg, #f0f8ff, #b0c4de);
+}
+.badge-skilled::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  clip-path: inherit;
+  box-shadow: inset 0 3px 3px rgba(255, 255, 255, 0.7), inset 0 -3px 3px rgba(0, 0, 0, 0.15);
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+}
+
+/* 5. Expert */
+.badge-expert {
+  background-color: #b9f2ff;
+  background-image: linear-gradient(145deg, #a1c4fd, #c2e9fb);
+  box-shadow: 0 0 15px rgba(161, 196, 253, 0.3); /* Soft outer glow */
+}
+.badge-expert::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  clip-path: inherit;
+  background-image: 
+    radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(ellipse at 50% 70%, rgba(200,220,255,0.3), transparent);
+  clip-path: polygon(50% 0, 100% 25%, 50% 50%, 0 25%); /* Top facet */
+}
+.badge-expert::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  clip-path: inherit;
+  background-image: 
+    radial-gradient(ellipse at 50% 70%, rgba(255,255,255,0.2), transparent),
+    radial-gradient(ellipse at 50% 30%, rgba(200,220,255,0.1), transparent);
+  clip-path: polygon(100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%, 50% 50%); /* Bottom facets */
+}
+
+/* 6. Master */
+.badge-master {
+  background-color: #a52a2a;
+  background-image: linear-gradient(145deg, #dc143c, #8b0000);
+}
+.badge-master::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  clip-path: inherit;
+  box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.4); /* Subtle inner glow */
+  background: radial-gradient(circle, rgba(255,100,100,0.2) 0%, rgba(255,0,0,0) 60%);
+}
+
+/* 7. Elite */
+.badge-elite {
+  background-color: #4b0082;
+  background-image: linear-gradient(145deg, #8a2be2, #483d8b);
+  box-shadow: 0 0 25px rgba(138, 43, 226, 0.4); /* Controlled ambient glow */
+}
+.badge-elite::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  clip-path: inherit;
+  border: 3px solid rgba(220, 220, 255, 0.3);
+  box-shadow: inset 0 0 20px rgba(190, 150, 255, 0.3);
+}
+
+/* 8. Apex */
+.badge-apex {
+  background-color: #1a1d22;
+  background-image: linear-gradient(145deg, #333, #000);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); /* Elegant gold glow */
+}
+.badge-apex::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  clip-path: inherit;
+  border: 4px solid #ffd700;
+  box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.5);
+  background: 
+    linear-gradient(to top, rgba(255,215,0,0) 50%, rgba(255,215,0,0.1) 100%),
+    linear-gradient(to bottom, rgba(255,215,0,0) 50%, rgba(255,215,0,0.1) 100%);
+}
+
+/* Updated Badge Size Adjustments */
+.badge-size-small {
+  width: 90px;
+  height: 102px;
+}
+
+.badge-size-x-small {
+  width: 50px;
+  height: 57px;
+}
+

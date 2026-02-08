@@ -1,0 +1,74 @@
+@import './LoginPage.css'; /* Reuse common card and form styling */
+
+.profile-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Occupy full viewport height */
+  /* Reusing background from login page */
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.05) 25%, transparent 25%) -50px 0,
+    linear-gradient(225deg, rgba(255,255,255,0.05) 25%, transparent 25%) -50px 0,
+    linear-gradient(315deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+    linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
+    linear-gradient(to bottom, #e0f2f7, #ffffff); /* Light blue to white */
+  background-size: 100px 100px, 100px 100px, 100px 100px, 100px 100px, cover;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
+  padding: 2rem;
+  overflow: hidden;
+}
+
+.profile-form-card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 3.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  max-width: 500px; /* Slightly wider for profile details */
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  position: relative;
+}
+
+.profile-form-card h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.profile-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+/* Save Button Styling */
+.save-profile-button {
+  background-color: #333; /* Dark button like login */
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.save-profile-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.save-profile-button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
