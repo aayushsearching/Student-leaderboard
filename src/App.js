@@ -111,7 +111,7 @@ function App() {
         <Route path="/about" element={<About />} /> {/* Added new Route */}
         <Route path="/login" element={<LoginPage />} /> {/* Added LoginPage Route */}
         <Route path="/signup" element={<SignupPage />} /> {/* Added SignupPage Route */}
-        <Route path="/dashboard" element={<DashboardPage />} /> {/* Added DashboardPage Route */}
+        <Route path="/dashboard" element={<DashboardPage user={session?.user} />} /> {/* Added DashboardPage Route with user prop */}
       </Routes>
     </div>
   );

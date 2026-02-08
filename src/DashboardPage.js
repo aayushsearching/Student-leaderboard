@@ -1,7 +1,9 @@
 import React from 'react';
 import './DashboardPage.css';
 
-function DashboardPage() {
+function DashboardPage({ user }) {
+  const username = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+
   return (
     <div className="dashboard-container">
       {/* Phase 1: Sidebar */}
@@ -68,7 +70,7 @@ function DashboardPage() {
         <section className="dashboard-grid">
           {/* This is where the cards for tables and data viz will go */}
           <div className="dashboard-card full-width">
-            <h3>Welcome, User!</h3>
+            <h3>Welcome, {username}!</h3>
             <p className="muted-text">Here is your progress overview.</p>
           </div>
 
