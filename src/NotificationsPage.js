@@ -56,7 +56,7 @@ function NotificationsPage({ user }) {
     };
   }, [fetchNotifications, user]);
 
-  const markAsRead = async (notificationId) => {
+  const markAsRead = useCallback(async (notificationId) => {
     const { error: updateError } = await supabase
       .from('notifications')
       .update({ is_read: true })
@@ -72,9 +72,10 @@ function NotificationsPage({ user }) {
         )
       );
     }
-  };
+  }, []);
 
-  const markAllAsRead = async () => {
+  const markAllAsRead = useCallback(async () => {
+    if (!user) return;
     const { error: updateError } = await supabase
       .from('notifications')
       .update({ is_read: true })
@@ -89,9 +90,9 @@ function NotificationsPage({ user }) {
         prevNotifications.map((n) => ({ ...n, is_read: true }))
       );
     }
-  };
+  }, [user]);
 
-  const handleNotificationClick = (notification) => {
+  const handleNotificationClick = useCallback((notification) => {
     if (!notification.is_read) {
       markAsRead(notification.id);
     }
@@ -99,7 +100,7 @@ function NotificationsPage({ user }) {
     if (notification.task_id) {
       navigate(`/dashboard/tasks/${notification.task_id}`); // Assuming a route like /dashboard/tasks/:taskId
     }
-  };
+  }, [navigate, markAsRead]);
 
   if (loading) return <div className="notifications-container">Loading notifications...</div>;
   if (error) return <div className="notifications-container error-message">{error}</div>;

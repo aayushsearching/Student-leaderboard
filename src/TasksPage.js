@@ -49,7 +49,7 @@ function TasksPage({ user }) {
   }, [fetchTasks]);
 
   const openTaskDetailsModal = (task) => setSelectedTask(task);
-  const closeTaskDetailsModal = () => setSelectedTask(null);
+  const closeTaskDetailsModal = useCallback(() => setSelectedTask(null), []);
 
   const statusDisplayMap = {
     not_started: 'Not Started',
@@ -59,7 +59,7 @@ function TasksPage({ user }) {
     rejected: 'Rejected',
   };
 
-  const handleStatusChange = async () => {
+  const handleStatusChange = useCallback(async () => {
     if (!selectedTask) return;
     const currentStatus = selectedTask.status;
     
@@ -85,9 +85,9 @@ function TasksPage({ user }) {
         }
       }
     }
-  };
+  }, [selectedTask, fetchTasks]);
 
-  const handleSubmitForApproval = async () => {
+  const handleSubmitForApproval = useCallback(async () => {
     if (!taskToComplete) return;
     try {
       const { error: updateError } = await supabase
@@ -105,9 +105,9 @@ function TasksPage({ user }) {
       setTaskToComplete(null);
       closeTaskDetailsModal();
     }
-  };
+  }, [taskToComplete, fetchTasks, closeTaskDetailsModal]);
 
-  const handleRetryTask = async () => {
+  const handleRetryTask = useCallback(async () => {
     if (!selectedTask) return;
     try {
       const { error: updateError } = await supabase
@@ -120,7 +120,7 @@ function TasksPage({ user }) {
     } catch (err) {
       setError('Failed to retry task: ' + err.message);
     }
-  };
+  }, [selectedTask, fetchTasks, closeTaskDetailsModal]);
 
   return (
     <div className="tasks-page-container">

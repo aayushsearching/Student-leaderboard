@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
 import './DashboardPage.css'; // Reuse DashboardPage styles
 
@@ -21,7 +21,7 @@ function DashboardOverview({ user }) {
   const [activeDateToggle, setActiveDateToggle] = useState('Month'); // Default active toggle
 
   // Function to calculate date ranges
-  const getDateRange = (period) => {
+  const getDateRange = useCallback((period) => {
     const today = new Date();
     let startDate, endDate;
 
@@ -37,12 +37,12 @@ function DashboardOverview({ user }) {
       startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 29); // 30-day range ending today
       return `📅 ${formatDate(startDate)} - ${formatDate(endDate)}`;
     }
-  };
+  }, []);
 
   // Set initial date display on component mount
   useEffect(() => {
     setCurrentDateDisplay(getDateRange(activeDateToggle));
-  }, [activeDateToggle]);
+  }, [activeDateToggle, getDateRange]);
 
   const handleDateToggleClick = (period) => {
     setActiveDateToggle(period);

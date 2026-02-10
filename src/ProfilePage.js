@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { supabase } from './supabaseClient'; // Import Supabase client
 import './ProfilePage.css';
@@ -12,21 +12,10 @@ function ProfilePage({ user }) { // Accept user prop
   const [success, setSuccess] = useState('');
   const navigate = useNavigate(); // Initialize useNavigate
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/login'); // Redirect to login if no user
-    } else {
-      getProfile();
-    }
-  }, [user, navigate]); // Depend on user and navigate
-
-  async function getProfile() {
+  const getProfile = useCallback(async () => {
     try {
       setLoading(true);
-      // const { data: { user } } = await supabase.auth.getSession(); // User is now passed as prop
-      
       if (user) {
-        // Fetch existing profile data from user_metadata
         setFullName(user.user_metadata?.full_name || '');
         setAcademicYear(user.user_metadata?.academic_year || '');
         setBranch(user.user_metadata?.branch || '');
@@ -37,7 +26,15 @@ function ProfilePage({ user }) { // Accept user prop
     } finally {
       setLoading(false);
     }
-  }
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login'); // Redirect to login if no user
+    } else {
+      getProfile();
+    }
+  }, [user, navigate, getProfile]); // Depend on getProfile
 
   async function updateProfile() {
     try {

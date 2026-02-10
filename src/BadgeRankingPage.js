@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { supabase } from './supabaseClient'; // Import Supabase client
 import './BadgeRankingPage.css';
@@ -59,15 +59,7 @@ function BadgeRankingPage({ user }) { // Accept user prop
   const [currentUserData, setCurrentUserData] = useState(null);
   const navigate = useNavigate(); // Initialize useNavigate
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/login'); // Redirect to login if no user
-      return;
-    }
-    fetchLeaderboardData();
-  }, [user, navigate]); // Depend on user and navigate
-
-  async function fetchLeaderboardData() {
+  const fetchLeaderboardData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -141,7 +133,15 @@ function BadgeRankingPage({ user }) { // Accept user prop
     } finally {
       setLoading(false);
     }
-  }
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login'); // Redirect to login if no user
+      return;
+    }
+    fetchLeaderboardData();
+  }, [user, navigate, fetchLeaderboardData]); // Depend on user and navigate
 
   // Prepare current user mock data using fetched data
   const currentUserDisplay = {

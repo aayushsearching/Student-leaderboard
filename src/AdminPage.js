@@ -44,16 +44,16 @@ function AdminPage({ user }) {
     fetchAdminData();
   }, [fetchAdminData]);
   
-  const clearForm = () => {
+  const clearForm = useCallback(() => {
     setEditingTask(null);
     setTitle('');
     setDescription('');
     setPoints(10);
     setDueDate('');
     setTasksUrl('');
-  };
+  }, []);
 
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = useCallback(async (e) => {
     e.preventDefault();
     setError(''); setSuccess(''); setFormLoading(true);
     const taskData = { title, description, points, due_date: dueDate, tasks_url: tasksUrl };
@@ -75,9 +75,9 @@ function AdminPage({ user }) {
       await fetchAdminData();
     }
     setFormLoading(false);
-  };
+  }, [editingTask, title, description, points, dueDate, tasksUrl, clearForm, fetchAdminData]);
 
-  const handleEditClick = (task) => {
+  const handleEditClick = useCallback((task) => {
     setEditingTask(task);
     setTitle(task.title);
     setDescription(task.description);
@@ -86,9 +86,9 @@ function AdminPage({ user }) {
     setDueDate(formattedDueDate);
     setTasksUrl(task.tasks_url || '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
-  const handleDeleteClick = async (taskId) => {
+  const handleDeleteClick = useCallback(async (taskId) => {
     if (window.confirm('Are you sure you want to delete this task template?')) {
       setLoading(true);
       const { error: deleteError } = await supabase.from('tasks').delete().eq('id', taskId);
@@ -99,10 +99,10 @@ function AdminPage({ user }) {
       }
       setLoading(false);
     }
-  };
+  }, [fetchAdminData]);
 
   // Handle sending custom admin notifications
-  const handleSendNotification = async (e) => {
+  const handleSendNotification = useCallback(async (e) => {
     e.preventDefault();
     setNotificationError('');
     setNotificationSuccess('');
@@ -132,7 +132,7 @@ function AdminPage({ user }) {
     } finally {
       setSendingNotification(false);
     }
-  };
+  }, [notificationTitle, notificationMessage]);
 
   if (loading) return <p>Loading Admin Dashboard...</p>;
   

@@ -75,11 +75,11 @@ function App() {
     return () => subscription.unsubscribe();
   }, []); // Only run once on mount
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
     if (error) console.error('Error signing out:', error.message);
     else navigate('/');
-  };
+  }, [navigate]);
 
   return (
     <div className="App">
