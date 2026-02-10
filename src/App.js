@@ -73,7 +73,7 @@ function App() {
     });
 
     return () => subscription.unsubscribe();
-  }, []); // Only run once on mount
+  }, [loading]); // Added loading to dependency array
 
   const handleLogout = useCallback(async () => {
     const { error } = await supabase.auth.signOut();

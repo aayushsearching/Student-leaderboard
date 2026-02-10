@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom'; // Removed as it's not used
 import { supabase } from './supabaseClient';
 import './TasksPage.css';
 
@@ -11,7 +11,7 @@ function TasksPage({ user }) {
   const [showProofModal, setShowProofModal] = useState(false);
   const [taskToComplete, setTaskToComplete] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Removed as it's not used
 
   const fetchTasks = useCallback(async () => {
     if (!user) return;

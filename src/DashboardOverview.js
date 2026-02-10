@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './DashboardPage.css'; // Reuse DashboardPage styles
 
 // Helper to format dates
@@ -44,10 +44,10 @@ function DashboardOverview({ user }) {
     setCurrentDateDisplay(getDateRange(activeDateToggle));
   }, [activeDateToggle, getDateRange]);
 
-  const handleDateToggleClick = (period) => {
+  const handleDateToggleClick = useCallback((period) => {
     setActiveDateToggle(period);
     setCurrentDateDisplay(getDateRange(period));
-  };
+  }, [getDateRange]);
 
   return (
     <>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom'; // Removed as it's not used
 import { supabase } from './supabaseClient';
 import './AdminPage.css';
 
-function AdminPage({ user }) {
-  const navigate = useNavigate();
+function AdminPage() { // Removed user prop
+  // const navigate = useNavigate(); // Removed as it's not used
   const [templateTasks, setTemplateTasks] = useState([]);
-  const [allProfiles, setAllProfiles] = useState([]);
+  // const [allProfiles, setAllProfiles] = useState([]); // Removed as it's not used
   
   const [editingTask, setEditingTask] = useState(null);
   const [title, setTitle] = useState('');
@@ -32,10 +32,6 @@ function AdminPage({ user }) {
     const { data, error: fetchError } = await supabase.from('tasks').select('*').order('created_at', { ascending: false });
     if (fetchError) setError('Failed to fetch task templates: ' + fetchError.message);
     else setTemplateTasks(data);
-
-    const { data: profilesData, error: profilesError } = await supabase.from('profiles').select('id, full_name, role').order('full_name', { ascending: true });
-    if (profilesError) setError('Failed to fetch profiles: ' + profilesError.message);
-    else setAllProfiles(profilesData);
 
     setLoading(false);
   }, []);
