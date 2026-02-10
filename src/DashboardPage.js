@@ -1,16 +1,55 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react'; // Import useState and useCallback
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom'; // Import useNavigate and useEffect
+import { supabase } from './supabaseClient'; // Import supabase
 import './DashboardPage.css';
 
 function DashboardPage({ user }) { // Receive user prop
   const location = useLocation(); // Get current location
   const navigate = useNavigate(); // Initialize useNavigate
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchUnreadCount = useCallback(async () => {
+    if (!user) {
+      setUnreadCount(0);
+      return;
+    }
+    const { count, error } = await supabase
+      .from('notifications')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('is_read', false);
+
+    if (error) {
+      console.error('Error fetching unread notification count:', error.message);
+    } else {
+      setUnreadCount(count);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
       navigate('/login'); // Redirect to login if no user
+      return;
     }
-  }, [user, navigate]); // Depend on user and navigate
+    fetchUnreadCount();
+
+    // Realtime subscription for unread count
+    const channel = supabase
+      .channel('unread_dashboard_notifications_channel')
+      .on('postgres_changes', { 
+        event: '*', 
+        schema: 'public', 
+        table: 'notifications',
+        filter: `user_id=eq.${user?.id}`
+      }, (payload) => {
+        fetchUnreadCount();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, navigate, fetchUnreadCount]); // Depend on user, navigate, and fetchUnreadCount
 
   return (
     <div className="dashboard-container">
@@ -37,6 +76,13 @@ function DashboardPage({ user }) { // Receive user prop
               <Link to="/dashboard/leaderboard">
                 <span className="icon">🏆</span>
                 <span>Leaderboard</span>
+              </Link>
+            </li>
+            <li className={location.pathname.startsWith('/dashboard/notifications') ? 'active' : ''}>
+              <Link to="/dashboard/notifications">
+                <span className="icon">🔔</span> {/* Notification icon */}
+                <span>Notifications</span>
+                {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
               </Link>
             </li>
             <li className={location.pathname === '/profile' ? 'active' : ''}>

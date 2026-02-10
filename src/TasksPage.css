@@ -55,4 +55,234 @@
   border-top: 1px solid #eef0f6;
   font-size: 0.85rem;
   color: #555;
+  flex-wrap: wrap; /* Allow details to wrap on smaller screens */
+  gap: 0.5rem; /* Space between detail items */
+}
+
+.task-card .task-details span {
+  flex-basis: 48%; /* Roughly half width for two columns */
+}
+
+.show-details-button {
+  background-color: #000000; /* Black background */
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.2s ease;
+  align-self: flex-end; /* Align to the right within the flex column */
+}
+
+.show-details-button:hover {
+  background-color: #333333; /* Darker black on hover */
+}
+
+.expanded-details {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eef0f6;
+  font-size: 0.9rem;
+  color: #333;
+  text-align: left;
+}
+
+.expanded-details p {
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.expanded-details strong {
+  color: #000;
+}
+
+.expanded-details a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.expanded-details a:hover {
+  text-decoration: underline;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top of other content */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #ffffff;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px; /* Max width for readability */
+  position: relative;
+  text-align: left;
+  animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-content h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.modal-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+  color: #555;
+}
+
+.modal-content strong {
+  color: #333;
+}
+
+.modal-content a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.modal-content a:hover {
+  text-decoration: underline;
+}
+
+/* Close button for modal */
+.modal-close-button {
+  background-color: #dc3545; /* Red for close/danger */
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: background-color 0.2s ease;
+  font-size: 1rem;
+}
+
+.modal-close-button:hover {
+  background-color: #c82333;
+}
+
+/* Change Status Button */
+.change-status-button {
+  background-color: #000000; /* Black for primary action */
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  margin-right: 1rem; /* Space between change status and close button */
+  transition: background-color 0.2s ease;
+  font-size: 1rem;
+}
+
+.change-status-button:hover {
+  background-color: #333333; /* Darker black on hover */
+}
+
+/* Completed Task Status */
+.task-status-completed {
+  color: green;
+  font-weight: bold;
+  /* You can add more styling here, e.g., text-decoration: line-through; */
+}
+
+/* NEW STYLES */
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  border: 1px solid #c3e6cb;
+}
+
+.task-completed {
+  background-color: #f8f9fa;
+  border-left: 4px solid #28a745;
+}
+
+.task-rejected {
+  background-color: #fff3f3;
+  border-left: 4px solid #dc3545;
+}
+
+.rejection-box {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  border: 1px solid #f5c6cb;
+}
+
+.proof-modal p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.yes-button, .no-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.yes-button {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.yes-button:hover {
+  background-color: #218838;
+}
+
+.no-button {
+  background-color: #f1f3f5;
+  color: #495057;
+  border-color: #dee2e6;
+}
+
+.no-button:hover {
+  background-color: #e9ecef;
 }

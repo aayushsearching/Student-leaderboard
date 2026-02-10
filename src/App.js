@@ -1,18 +1,22 @@
 import './App.css';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom'; // Import useNavigate
-import { useEffect, useState } from 'react'; // Import useEffect and useState
-import { supabase } from './supabaseClient'; // Import supabase
+import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react'; // Added useCallback
+import { supabase } from './supabaseClient';
 import HowItWorks from './HowItWorks';
-import About from './About'; // Import the new About component
-import LoginPage from './LoginPage'; // Import LoginPage
-import SignupPage from './SignupPage'; // Import SignupPage
-import DashboardPage from './DashboardPage'; // Import DashboardPage
-import TasksPage from './TasksPage'; // Import TasksPage
-import DashboardOverview from './DashboardOverview'; // Import DashboardOverview
-import BadgeRankingPage from './BadgeRankingPage'; // Import BadgeRankingPage
-import ProfilePage from './ProfilePage'; // Import ProfilePage
+import About from './About';
+import LoginPage from './LoginPage';
+import SignupPage from './SignupPage';
+import DashboardPage from './DashboardPage';
+import TasksPage from './TasksPage';
+import DashboardOverview from './DashboardOverview';
+import BadgeRankingPage from './BadgeRankingPage';
+import ProfilePage from './ProfilePage';
+import AdminPage from './AdminPage';
+import AdminLayout from './AdminLayout';
+import PointSystemPage from './PointSystemPage';
+import ProtectedRoute from './ProtectedRoute';
+import NotificationsPage from './NotificationsPage'; // Import NotificationsPage
 
-// Component for the landing page's main content
 function HomeContent() {
   return (
     <main className="hero-section">
@@ -21,107 +25,93 @@ function HomeContent() {
         <p className="secondary-text">Task-based mentorship for college students to learn, earn points, and climb the leaderboard.</p>
         <Link to="/login" className="cta-button">Join the Challenge</Link>
       </div>
-
-      {/* Floating UI Cards - Reflecting the platform's core loop */}
-      <div className="ui-card card-task">
-        <p>Learn new skills: "Web Dev Basics"</p>
-        <div className="progress-bar">
-          <div className="progress" style={{ width: '85%' }}></div>
-        </div>
-      </div>
-
-      <div className="ui-card card-sticky-note">
-        <p>Get personalized feedback from seniors!</p>
-      </div>
-
-      <div className="ui-card card-reminder">
-        <span className="icon">🏆</span>
-        <p>Your Rank: #15</p>
-        <span>+200 Points this week!</span>
-      </div>
-
-      <div className="ui-card card-integration">
-        <div className="app-icons">
-          <span>📚</span> <span>✅</span> <span>✨</span>
-        </div>
-        <p>Your Journey: Learn > Quiz > Task > Rank</p>
-      </div>
     </main>
   );
 }
 
-function App() {
-  const [session, setSession] = useState(null); // State to hold session info
-  const navigate = useNavigate(); // Initialize useNavigate
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    })
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []); // Removed navigate from dependency array
-
+function MainLayout({ session, onLogout, user }) { // Add user prop
+  // Removed notification state and logic from here
   return (
-    <div className="App">
+    <>
       <nav className="main-nav">
         <div className="logo">MentorFlow</div>
         <div className="nav-links">
           <Link to="/">Home</Link>
           <Link to="/how-it-works">How it Works</Link>
-          <Link to="/about">About</Link> {/* Changed to Link */}
-          {session && ( // Conditionally render Dashboard link if session exists
-            <Link to="/dashboard">Dashboard</Link>
-          )}
-          {!session ? ( // Conditionally render Login/Signup if no session
-            <>
-              <Link to="/login">Login</Link> {/* Updated to Link */}
-            </>
-          ) : (
-            // You can add a link to a profile page or a logout button here
-            // For now, let's just show nothing if logged in for these spots
-            null
-          )}
+          <Link to="/about">About</Link>
+          {session && <Link to="/dashboard">Dashboard</Link>}
+          {/* Removed notification link */}
+          {!session && <Link to="/login">Login</Link>}
         </div>
-        {!session && ( // Conditionally render Sign Up Free if no session
+        {!session ? (
           <Link to="/signup" className="nav-cta">Sign Up Free</Link>
-        )}
-        {session && ( // Conditionally render a logout button if session exists
-          <button
-            className="nav-cta"
-            onClick={async () => {
-              const { error } = await supabase.auth.signOut();
-              if (error) {
-                console.error('Error signing out:', error.message);
-              } else {
-                navigate('/'); // Redirect to home on successful logout
-              }
-            }}
-          >
-            Logout
-          </button>
+        ) : (
+          <button className="nav-cta" onClick={onLogout}>Logout</button>
         )}
       </nav>
+      <Outlet />
+    </>
+  );
+}
 
+function App() {
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true); // Central loading state
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setLoading(true);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false); // Finished initial session check
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      // If auth state changes, we are no longer in the initial loading phase
+      if (loading) setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []); // Only run once on mount
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) console.error('Error signing out:', error.message);
+    else navigate('/');
+  };
+
+  return (
+    <div className="App">
       <Routes>
-        <Route path="/" element={<HomeContent />} />
-        <Route path="/how-it-works" element={<HowItWorks />} />
-        <Route path="/about" element={<About />} /> {/* Added new Route */}
-        <Route path="/login" element={<LoginPage />} /> {/* Added LoginPage Route */}
-        <Route path="/signup" element={<SignupPage />} /> {/* Added SignupPage Route */}
-        {/* Nested routes for Dashboard */}
-        <Route path="/dashboard" element={<DashboardPage user={session?.user} />}>
-          <Route index element={<DashboardOverview user={session?.user} />} />
-          <Route path="tasks" element={<TasksPage user={session?.user} />} />
-          <Route path="leaderboard" element={<BadgeRankingPage user={session?.user} />} />
+        <Route path="/" element={<MainLayout session={session} onLogout={handleLogout} user={session?.user} />}>
+          <Route index element={<HomeContent />} />
+          <Route path="how-it-works" element={<HowItWorks />} />
+          <Route path="about" element={<About />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignupPage />} />
+          <Route path="dashboard" element={<DashboardPage user={session?.user} />}>
+            <Route index element={<DashboardOverview user={session?.user} />} />
+            <Route path="tasks" element={<TasksPage user={session?.user} />} />
+            <Route path="leaderboard" element={<BadgeRankingPage user={session?.user} />} />
+            <Route path="notifications" element={<NotificationsPage user={session?.user} />} /> {/* New route */}
+          </Route>
+          <Route path="profile" element={<ProfilePage user={session?.user} />} />
         </Route>
-        <Route path="/profile" element={<ProfilePage user={session?.user} />} /> {/* Added ProfilePage Route */}
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute user={session?.user} appLoading={loading} requiredRole="admin">
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<AdminPage user={session?.user} />} />
+          <Route path="points" element={<PointSystemPage user={session?.user} />} />
+          <Route path="leaderboard" element={<BadgeRankingPage user={session?.user} />} />
+          <Route path="profile" element={<ProfilePage user={session?.user} />} />
+        </Route>
       </Routes>
     </div>
   );

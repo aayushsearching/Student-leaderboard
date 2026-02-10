@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import './SignupPage.css';
+import { useNavigate } from 'react-router-dom';
 
 function SignupPage() {
   const [email, setEmail] = useState('');
@@ -10,6 +11,17 @@ function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate('/dashboard');
+      }
+    };
+    checkSession();
+  }, [navigate]);
 
   const validateEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
@@ -34,8 +46,25 @@ function SignupPage() {
 
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
+
+      if (data.user) {
+        // Insert user into leaderboard with initial score
+        const { error: leaderboardError } = await supabase
+          .from('leaderboard')
+          .insert([
+            { user_id: data.user.id, score: 0, rank: 0, badge_tier: 'novice', badge_division: 1 }
+          ]);
+
+        if (leaderboardError) {
+          console.error('Error inserting user into leaderboard:', leaderboardError.message);
+          // Optionally, handle this error more gracefully, e.g., rollback signup or notify admin
+        } else {
+          console.log('User successfully added to leaderboard.');
+        }
+      }
+
       setSuccessMessage('Success! Please check your email for a confirmation link.');
     } catch (error) {
       console.log('Supabase signup error:', error); // Log the full error object for debugging

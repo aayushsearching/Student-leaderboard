@@ -16,33 +16,37 @@ const formatRank = (rank) => {
   }
 };
 
-const leagues = [
-  { name: 'Novice', tier: 'novice', description: 'Entry-level, grounded in basic understanding.' },
-  { name: 'Learner', tier: 'learner', description: 'Developing core skills with foundational knowledge.' },
-  { name: 'Scholar', tier: 'scholar', description: 'Demonstrating solid comprehension and consistent progress.' },
-  { name: 'Skilled', tier: 'skilled', description: 'Proficient in key areas, consistently performing well.' },
-  { name: 'Expert', tier: 'expert', description: 'Mastered complex challenges, highly effective.' },
-  { name: 'Master', tier: 'master', description: 'Dominant in multiple domains, influencing others.' },
-  { name: 'Elite', tier: 'elite', description: 'Top-tier performance, consistently outstanding achievements.' },
-  { name: 'Apex', tier: 'apex', description: 'Unrivaled expertise, setting new benchmarks for excellence.' },
-];
-
-const DivisionIndicator = ({ division, totalDivisions = 5 }) => {
-  return (
-    <div className="division-indicator">
-      {[...Array(totalDivisions)].map((_, i) => (
-        <span key={i} className={i < division ? 'filled' : ''}>★</span>
-      ))}
-    </div>
-  );
+const getDivisionLabel = (division) => {
+  switch (division) {
+    case 5: return 'V';
+    case 4: return 'IV';
+    case 3: return 'III';
+    case 2: return 'II';
+    case 1: return 'I';
+    default: return '';
+  }
 };
 
+const leagues = [
+  { name: 'Novice', tier: 'novice', description: 'Easy progression to welcome new players.', pointsPerDivision: 50 },
+  { name: 'Learner', tier: 'learner', description: 'Moderate grind, requiring consistent effort.', pointsPerDivision: 75 },
+  { name: 'Scholar', tier: 'scholar', description: 'Moderate grind, requiring consistent effort.', pointsPerDivision: 100 },
+  { name: 'Skilled', tier: 'skilled', description: 'A significant grind, rewarding dedication.', pointsPerDivision: 150 },
+  { name: 'Expert', tier: 'expert', description: 'A significant grind, rewarding dedication.', pointsPerDivision: 200 },
+  { name: 'Master', tier: 'master', description: 'A very hard climb, for seasoned participants.', pointsPerDivision: 300 },
+  { name: 'Elite', tier: 'elite', description: 'A very hard climb, for seasoned participants.', pointsPerDivision: 400 },
+  { name: 'Apex', tier: 'apex', description: 'The pinnacle of achievement, for the top 1%.', pointsPerDivision: 500 }, // Points to maintain or for future seasons
+];
+
 // Simplified Badge component - will use CSS classes
-const Badge = ({ tier, size = 'medium' }) => {
+const Badge = ({ tier, division, size = 'medium' }) => {
   const league = leagues.find(l => l.tier === tier);
+  const divisionLabel = getDivisionLabel(division);
+  const capitalizedTier = league ? league.name.charAt(0).toUpperCase() + league.name.slice(1) : 'Unranked';
+  
   return (
     <div className={`badge-display badge-${tier} badge-size-${size}`}>
-      {league ? <span className="league-title">{league.name}</span> : null}
+      <span className="league-title">{`${capitalizedTier} ${divisionLabel}`}</span>
     </div>
   );
 };
@@ -68,14 +72,20 @@ function BadgeRankingPage({ user }) { // Accept user prop
       setLoading(true);
       setError(null);
 
-      // const { data: { session }, error: sessionError } = await supabase.auth.getSession(); // No longer needed
-      // if (sessionError) throw sessionError;
-
       const { data, error: fetchError } = await supabase
         .from('leaderboard')
-        .select('*, profiles(full_name, academic_year, branch)') // Fetch related profile data
-        .order('score', { ascending: false })
-        .limit(10);
+        .select(`
+          score,
+          rank,
+          badge_tier,
+          badge_division,
+          profiles (
+            full_name,
+            academic_year,
+            branch
+          )
+        `)
+        .order('rank', { ascending: true }); // Order by rank
 
       if (fetchError) throw fetchError;
 
@@ -83,18 +93,46 @@ function BadgeRankingPage({ user }) { // Accept user prop
 
       // Find current user's data if logged in
       if (user) { // Use the user prop directly
-        const userEntry = data.find(entry => entry.user_id === user.id);
+        const userEntry = data.find(entry => entry.profiles?.full_name === user.full_name); // Assuming full_name is unique enough or use user.id
         if (userEntry) {
           setCurrentUserData(userEntry);
         } else {
           // If user is logged in but not in top 10, fetch their specific data
           const { data: userData, error: userError } = await supabase
             .from('leaderboard')
-            .select('*, profiles(full_name, academic_year, branch)')
+            .select(`
+              score,
+              rank,
+              badge_tier,
+              badge_division,
+              profiles (
+                full_name,
+                academic_year,
+                branch
+              )
+            `)
             .eq('user_id', user.id) // Use user.id from prop
             .single();
           if (userError && userError.code !== 'PGRST116') throw userError; // PGRST116 is 'No rows found'
           setCurrentUserData(userData);
+
+          // If user is logged in but no leaderboard entry found, create one
+          if (user && !userData) {
+            console.log("Creating new leaderboard entry for user:", user.id);
+            const { error: insertError } = await supabase
+              .from('leaderboard')
+              .insert([
+                { user_id: user.id, score: 0 } // Only insert user_id and score, rank is calculated by DB
+              ]);
+
+            if (insertError) {
+              console.error('Error creating leaderboard entry for user:', insertError.message);
+            } else {
+              console.log('Leaderboard entry created, re-fetching data...');
+              // Re-fetch data to include the newly created entry
+              await fetchLeaderboardData(); // This will re-run the whole fetch process
+            }
+          }
         }
       }
     } catch (err) {
@@ -107,16 +145,27 @@ function BadgeRankingPage({ user }) { // Accept user prop
 
   // Prepare current user mock data using fetched data
   const currentUserDisplay = {
-    name: currentUserData?.profiles?.full_name || currentUserData?.username || 'You',
-    rank: currentUserData?.rank || 'N/A',
+    name: currentUserData?.profiles?.full_name || 'You',
+    rank: currentUserData?.rank,
     badge: { 
-      name: leagues.find(l => l.tier === currentUserData?.badge_tier)?.name || 'Unranked', 
+      name: (leagues.find(l => l.tier === currentUserData?.badge_tier)?.name ? 
+             (leagues.find(l => l.tier === currentUserData?.badge_tier).name.charAt(0).toUpperCase() + 
+              leagues.find(l => l.tier === currentUserData?.badge_tier).name.slice(1)) : 'Unranked') + 
+             ' ' + getDivisionLabel(currentUserData?.badge_division || 1),
       tier: currentUserData?.badge_tier || 'novice', 
       division: currentUserData?.badge_division || 1 
     },
-    course: currentUserData?.profiles?.branch || 'N/A', // Assuming branch maps to course for display
-    year: currentUserData?.profiles?.academic_year || 'N/A',
-    points: currentUserData?.score || 0
+    course: currentUserData?.profiles?.branch, 
+    year: currentUserData?.profiles?.academic_year,
+    points: currentUserData?.score || 0,
+    pointsToNextDivision: (() => {
+      if (!currentUserData) return null;
+      const currentLeague = leagues.find(l => l.tier === currentUserData.badge_tier);
+      if (!currentLeague) return null;
+      const scoreInLeague = currentUserData.score - (leagues.slice(0, leagues.indexOf(currentLeague)).reduce((acc, l) => acc + l.pointsPerDivision * 5, 0));
+      const pointsInDivision = scoreInLeague % currentLeague.pointsPerDivision;
+      return currentLeague.pointsPerDivision - pointsInDivision;
+    })()
   };
 
   return (
@@ -159,9 +208,10 @@ function BadgeRankingPage({ user }) { // Accept user prop
                     <h3 className="user-name">{currentUserDisplay.name}</h3>
                     <p className="user-rank">Your Rank: {formatRank(currentUserDisplay.rank)}</p>
                     <p className="user-points">{currentUserDisplay.points} Points</p>
+                    {currentUserDisplay.pointsToNextDivision !== null && <p className="user-points">{currentUserDisplay.pointsToNextDivision} points to next division</p>}
                   </div>
                   <div className="user-badge">
-                    <Badge tier={currentUserDisplay.badge.tier} size="small" /> {/* Using simplified Badge */}
+                    <Badge tier={currentUserDisplay.badge.tier} division={currentUserDisplay.badge.division} size="small" /> {/* Using simplified Badge */}
                   </div>
                 </div>
               ) : (
@@ -193,15 +243,15 @@ function BadgeRankingPage({ user }) { // Accept user prop
                       leaderboardData.map((student) => (
                         <tr key={student.user_id}> {/* Use user_id as key as it's unique */}
                           <td>{formatRank(student.rank)}</td>
-                          <td>{student.profiles?.full_name || student.username || 'N/A'}</td>
-                          <td>{student.profiles?.branch || 'N/A'} ({student.profiles?.academic_year || 'N/A'})</td>
+                          <td>{student.profiles.full_name}</td>
+                          <td>{student.profiles.branch} ({student.profiles.academic_year})</td>
                           <td>{student.score}</td>
                           <td className="leaderboard-badge-cell">
-                            <Badge tier={student.badge_tier} size="x-small" /> {/* Using simplified Badge */}
-                            <div className="badge-details">
+                            <Badge tier={student.badge_tier} division={student.badge_division} size="x-small" /> {/* Using simplified Badge */}
+                            {/* <div className="badge-details">
                               <p className="badge-name-text">{leagues.find(l => l.tier === student.badge_tier)?.name || 'N/A'}</p>
                               <DivisionIndicator division={student.badge_division || 1} totalDivisions={5} />
-                            </div>
+                            </div> */}
                           </td>
                         </tr>
                       ))
