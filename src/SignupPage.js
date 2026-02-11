@@ -50,18 +50,7 @@ function SignupPage() {
       if (error) throw error;
 
       if (data.user) {
-        // Insert user into leaderboard with initial score
-        const { error: leaderboardError } = await supabase
-          .from('leaderboard')
-          .insert([
-            { user_id: data.user.id, score: 0, rank: 0, badge_tier: 'novice', badge_division: 1 }
-          ]);
 
-        if (leaderboardError) {
-          throw leaderboardError; // Throw the error so it's caught by the outer catch block
-        } else {
-          console.log('User successfully added to leaderboard.');
-        }
 
         // Insert user into profiles with initial data
         const { error: profileInsertError } = await supabase
