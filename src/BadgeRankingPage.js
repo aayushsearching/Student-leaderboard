@@ -235,9 +235,9 @@ function BadgeRankingPage({ user }) { // Accept user prop
                     <tr>
                       <th>Rank</th>
                       <th>Name</th>
-                      <th>Details</th>
+                      <th className="hide-mobile">Details</th>
                       <th>Points</th>
-                      <th>League</th>
+                      <th className="hide-mobile">League</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -246,9 +246,9 @@ function BadgeRankingPage({ user }) { // Accept user prop
                         <tr key={student.user_id}> {/* Use user_id as key as it's unique */}
                           <td>{formatRank(student.rank)}</td>
                           <td>{student.profiles.full_name}</td>
-                          <td>{student.profiles.branch} ({student.profiles.academic_year})</td>
+                          <td className="hide-mobile">{student.profiles.branch} ({student.profiles.academic_year})</td>
                           <td>{student.score}</td>
-                          <td className="leaderboard-badge-cell">
+                          <td className="leaderboard-badge-cell hide-mobile">
                             <Badge tier={student.badge_tier} division={student.badge_division} size="x-small" /> {/* Using simplified Badge */}
                             {/* <div className="badge-details">
                               <p className="badge-name-text">{leagues.find(l => l.tier === student.badge_tier)?.name || 'N/A'}</p>

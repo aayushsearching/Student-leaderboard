@@ -174,3 +174,34 @@
   background-color: #f8d7da;
   color: #721c24;
 }
+
+/* Layout switching for desktop and mobile */
+.desktop-layout {
+  display: none; /* Hidden by default, shown on desktop */
+}
+
+.mobile-layout {
+  display: block; /* Shown by default, hidden on desktop */
+}
+
+@media (min-width: 769px) {
+  .desktop-layout {
+    display: block; /* Show desktop layout */
+  }
+
+  .mobile-layout {
+    display: none; /* Hide mobile layout */
+  }
+
+  /* Specific elements within the desktop layout that should be hidden on desktop */
+  .hide-on-desktop {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Specific elements within the mobile layout that should be hidden on mobile */
+  .hide-on-mobile {
+    display: none !important;
+  }
+}

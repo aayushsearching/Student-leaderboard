@@ -487,3 +487,9 @@
   height: 57px;
 }
 
+/* Helper class to hide elements on mobile */
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
