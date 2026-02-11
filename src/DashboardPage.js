@@ -63,14 +63,14 @@ function DashboardPage({ user }) { // Receive user prop
   }, [user, navigate, fetchUnreadCount]); // Depend on user, navigate, and fetchUnreadCount
 
   return (
-    <div className="dashboard-page-wrapper"> {/* New wrapper for overall layout */}
-      <div className="dashboard-header-mobile">
+    <div className="dashboard-page-wrapper">
+      <div className="dashboard-navbar">
+        <div className="navbar-brand">MentorFlow</div>
         <button className="hamburger-menu" onClick={toggleSidebar} aria-label="Toggle sidebar">
           <span className="bar"></span>
           <span className="bar"></span>
           <span className="bar"></span>
         </button>
-        <div className="mobile-logo">MentorFlow</div>
       </div>
 
       <aside className={`dashboard-sidebar ${isSidebarOpen ? 'open' : ''}`}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import './DashboardPage.css'; // Reuse DashboardPage styles
+import './DashboardOverview.css'; // Use DashboardOverview specific styles
 
 // Helper to format dates
 const formatDate = (date) => {
@@ -51,44 +51,82 @@ function DashboardOverview({ user }) {
 
   return (
     <>
-      <header className="dashboard-header">
-        <div className="search-bar">
-          <input type="text" placeholder="Search..." />
-        </div>
-        <div className="header-actions">
-          <div className="date-selector">
-            <span>{currentDateDisplay}</span>
-          </div>
-          <div className="segmented-toggle">
-            <button
-              className={activeDateToggle === 'Day' ? 'active' : ''}
-              onClick={() => handleDateToggleClick('Day')}
-            >
-              Day
-            </button>
-            <button
-              className={activeDateToggle === 'Week' ? 'active' : ''}
-              onClick={() => handleDateToggleClick('Week')}
-            >
-              Week
-            </button>
-            <button
-              className={activeDateToggle === 'Month' ? 'active' : ''}
-              onClick={() => handleDateToggleClick('Month')}
-            >
-              Month
-            </button>
-          </div>
-        </div>
-      </header>
 
+
+function DashboardOverview({ user }) {
+  const navigate = useNavigate();
+  const [currentDateDisplay, setCurrentDateDisplay] = useState('');
+  const [activeDateToggle, setActiveDateToggle] = useState('Month');
+
+  // Placeholder data for stats
+  const stats = [
+    { id: 1, label: 'Total Students', value: '120', icon: '🧑‍🎓' },
+    { id: 2, label: 'Tasks Completed', value: '450', icon: '✅' },
+    { id: 3, label: 'Pending Reviews', value: '15', icon: '✍️' },
+  ];
+
+  // Placeholder data for active students (matching the original table structure)
+  const activeStudents = [
+    { id: 1, name: 'Aayush Yadav', course: 'Web Development', completed: '12/15', status: 'active' },
+    { id: 2, name: 'Jane Doe', course: 'UI/UX Design', completed: '14/15', status: 'active' },
+    { id: 3, name: 'John Smith', course: 'Data Science', completed: '8/15', status: 'inactive' },
+    { id: 4, name: 'Emily White', course: 'Machine Learning', completed: '10/15', status: 'active' },
+  ];
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
+  const username = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+
+  const getDateRange = useCallback((period) => {
+    const today = new Date();
+    let startDate, endDate;
+
+    if (period === 'Day') {
+      startDate = today;
+      return `📅 ${formatDate(startDate)}`;
+    } else if (period === 'Week') {
+      endDate = today;
+      startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6);
+      return `📅 ${formatDate(startDate)} - ${formatDate(endDate)}`;
+    } else if (period === 'Month') {
+      endDate = today;
+      startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 29);
+      return `📅 ${formatDate(startDate)} - ${formatDate(endDate)}`;
+    }
+  }, []);
+
+  useEffect(() => {
+    setCurrentDateDisplay(getDateRange(activeDateToggle));
+  }, [activeDateToggle, getDateRange]);
+
+  const handleDateToggleClick = useCallback((period) => {
+    setActiveDateToggle(period);
+    setCurrentDateDisplay(getDateRange(period));
+  }, [getDateRange]);
+
+  return (
+    <>
       <section className="dashboard-grid">
-        <div className="dashboard-card full-width">
+        <div className="dashboard-card welcome-card full-width">
           <h3>Welcome, {username}!</h3>
-          <p className="muted-text">Here is your progress overview.</p>
+          <p>Here is your progress overview.</p>
         </div>
 
-        <div className="dashboard-card full-width">
+        <div className="stats-grid full-width">
+          {stats.map(stat => (
+            <div className="stat-card" key={stat.id}>
+              <span className="icon">{stat.icon}</span>
+              <div className="value">{stat.value}</div>
+              <div className="label">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="dashboard-card full-width active-students-table-desktop">
           <h4>Active Students</h4>
           <table className="data-table">
             <thead>
@@ -100,41 +138,36 @@ function DashboardOverview({ user }) {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <div className="user-cell">
-                    <span>AY</span>
-                    <p>Aayush Yadav</p>
-                  </div>
-                </td>
-                <td>Web Development</td>
-                <td>12/15</td>
-                <td><span className="status-badge status-active">Active</span></td>
-              </tr>
-              <tr>
-                <td>
-                  <div className="user-cell">
-                    <span>JD</span>
-                    <p>Jane Doe</p>
-                  </div>
-                </td>
-                <td>UI/UX Design</td>
-                <td>14/15</td>
-                <td><span className="status-badge status-active">Active</span></td>
-              </tr>
-              <tr>
-                <td>
-                  <div className="user-cell">
-                    <span>JS</span>
-                    <p>John Smith</p>
-                  </div>
-                </td>
-                <td>Data Science</td>
-                <td>8/15</td>
-                <td><span className="status-badge status-inactive">Inactive</span></td>
-              </tr>
+              {activeStudents.map(student => (
+                <tr key={student.id}>
+                  <td>
+                    <div className="user-cell">
+                      <span>{student.name.split(' ').map(n => n[0]).join('')}</span>
+                      <p>{student.name}</p>
+                    </div>
+                  </td>
+                  <td>{student.course}</td>
+                  <td>{student.completed}</td>
+                  <td><span className={`status-badge status-${student.status}`}>{student.status.charAt(0).toUpperCase() + student.status.slice(1)}</span></td>
+                </tr>
+              ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile-friendly card layout for Active Students */}
+        <div className="active-students-cards-mobile full-width">
+          <h4>Active Students</h4>
+          {activeStudents.map(student => (
+            <div className="student-card-mobile" key={student.id}>
+              <div className="name">{student.name}</div>
+              <div className="course">{student.course}</div>
+              <div className="completed-count">Completed: {student.completed}</div>
+              <span className={`status-badge status-${student.status}`}>
+                {student.status.charAt(0).toUpperCase() + student.status.slice(1)}
+              </span>
+            </div>
+          ))}
         </div>
 
         <div className="dashboard-card">

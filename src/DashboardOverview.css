@@ -1,0 +1,176 @@
+/* Content Grid & Cards - Mobile First */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Stack vertically on mobile */
+  gap: var(--spacing-lg); /* Consistent gap for mobile */
+}
+
+/* Dashboard Card - Mobile First */
+.dashboard-card {
+  background-color: #fff;
+  padding: var(--spacing-lg); /* Consistent padding for cards */
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-md); /* Softer, more pronounced shadow */
+  border: 1px solid #eef0f6;
+  text-align: left; /* Default text alignment for cards */
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow-lg);
+}
+
+/* Tablet Layout */
+@media (min-width: 768px) {
+  /* Dashboard Grid */
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet */
+    gap: var(--spacing-xl); /* Consistent gap for tablet */
+  }
+}
+
+/* Laptop/Desktop Layout */
+@media (min-width: 1024px) {
+  /* Dashboard Grid */
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
+    gap: var(--spacing-xl); /* Consistent gap for desktop */
+  }
+}
+
+/* Welcome Card Redesign */
+.welcome-card {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* Subtle gradient */
+  color: #fff; /* White text */
+  border-radius: 16px; /* 16px border radius */
+  padding: var(--spacing-xl);
+  box-shadow: var(--box-shadow-lg);
+  border: none; /* Remove border */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.welcome-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: var(--spacing-sm);
+  color: inherit; /* Inherit white color */
+}
+
+.welcome-card p {
+  font-size: 1rem;
+  opacity: 0.9;
+  color: inherit; /* Inherit white color */
+}
+
+/* Stats Section */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-lg);
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.stat-card {
+  background-color: #fff;
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-md);
+  border: 1px solid #eef0f6;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow-lg);
+}
+
+.stat-card .icon {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.stat-card .value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.stat-card .label {
+  font-size: 0.9rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Active Students Card Layout for Mobile */
+.active-students-cards-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+@media (min-width: 768px) {
+  .active-students-cards-mobile {
+    display: none; /* Hide on larger screens */
+  }
+}
+
+.student-card-mobile {
+  background-color: #fff;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-sm);
+  border: 1px solid #eef0f6;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  text-align: left;
+}
+
+.student-card-mobile .name {
+  font-weight: 700;
+  color: #333;
+}
+
+.student-card-mobile .course {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.student-card-mobile .completed-count {
+  font-weight: 600;
+  color: #28a745; /* Green for completed */
+}
+
+.student-card-mobile .status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.student-card-mobile .status-active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.student-card-mobile .status-inactive {
+  background-color: #f8d7da;
+  color: #721c24;
+}

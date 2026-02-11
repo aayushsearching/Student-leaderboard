@@ -8,29 +8,29 @@
   position: relative; /* For sidebar overlay */
 }
 
-/* Mobile Header (visible only on mobile) */
-.dashboard-header-mobile {
+/* New Modern Navbar */
+.dashboard-navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 1rem;
+  padding: var(--spacing-md) var(--spacing-lg); /* Consistent padding */
   background-color: #ffffff;
   border-bottom: 1px solid #eef0f6;
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 60px; /* Adjust height as needed */
+  height: 60px;
 }
 
-.dashboard-header-mobile .mobile-logo {
+.dashboard-navbar .navbar-brand {
   font-weight: bold;
   font-size: 1.2rem;
   color: #333;
 }
 
-/* Hamburger Menu (re-using styles from App.css, but local override if needed) */
-.dashboard-header-mobile .hamburger-menu {
-  display: flex;
+/* Specific button styles for the dashboard hamburger menu */
+.dashboard-navbar .hamburger-menu {
+  display: flex; /* Always flex for styling, but hidden via media query */
   flex-direction: column;
   justify-content: space-around;
   width: 24px;
@@ -41,12 +41,30 @@
   padding: 0;
 }
 
-.dashboard-header-mobile .hamburger-menu .bar {
+.dashboard-navbar .hamburger-menu .bar {
   width: 100%;
   height: 3px;
   background-color: #333;
   border-radius: 2px;
   transition: all 0.3s ease-in-out;
+}
+
+/* Hide hamburger on tablet and larger screens */
+@media (min-width: 768px) {
+  .dashboard-navbar .hamburger-menu {
+    display: none;
+  }
+}
+
+/* Tablet Layout adjustments for navbar */
+@media (min-width: 768px) {
+  .dashboard-navbar {
+    display: none; /* Hide top navbar on larger screens, sidebar will be main nav */
+  }
+  
+  .dashboard-main-content {
+    margin-top: 0; /* No top navbar, so no margin needed */
+  }
 }
 
 /* Sidebar Styling - Mobile First */
@@ -125,23 +143,6 @@
   background-color: #f7f8fc; /* Ensure background consistency */
 }
 
-/* Content Grid & Cards - Mobile First */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr; /* Stack vertically on mobile */
-  gap: var(--spacing-lg); /* Consistent gap for mobile */
-}
-
-/* Dashboard Card - Mobile First */
-.dashboard-card {
-  background-color: #fff;
-  padding: var(--spacing-lg); /* Consistent padding for cards */
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--box-shadow-md); /* Softer, more pronounced shadow */
-  border: 1px solid #eef0f6;
-  text-align: left; /* Default text alignment for cards */
-}
-
 /* Tablet Layout */
 @media (min-width: 768px) {
   .dashboard-page-wrapper {
@@ -173,12 +174,6 @@
     margin-left: 200px; /* Offset for tablet sidebar */
     padding: var(--spacing-xl); /* Increased padding for tablet */
   }
-
-  /* Dashboard Grid */
-  .dashboard-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet */
-    gap: var(--spacing-xl); /* Consistent gap for tablet */
-  }
 }
 
 /* Laptop/Desktop Layout */
@@ -190,12 +185,6 @@
   .dashboard-main-content {
     margin-left: 260px; /* Offset for laptop sidebar */
     padding: var(--spacing-xl); /* Consistent padding for desktop */
-  }
-
-  /* Dashboard Grid */
-  .dashboard-grid {
-    grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
-    gap: var(--spacing-xl); /* Consistent gap for desktop */
   }
 }
 
@@ -218,33 +207,5 @@
     display: flex;
     align-items: center;
     gap: 1.5rem;
-  }
-}
-
-/* Specific button styles for the dashboard hamburger menu */
-/* To ensure consistency, use styles similar to App.css hamburger */
-.hamburger-menu {
-  display: flex; /* Always flex for styling, but hidden via media query */
-  flex-direction: column;
-  justify-content: space-around;
-  width: 24px;
-  height: 24px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-.hamburger-menu .bar {
-  width: 100%;
-  height: 3px;
-  background-color: #333;
-  border-radius: 2px;
-  transition: all 0.3s ease-in-out;
-}
-
-@media (min-width: 768px) {
-  .hamburger-menu {
-    display: none; /* Hide on tablet and larger screens */
   }
 }
