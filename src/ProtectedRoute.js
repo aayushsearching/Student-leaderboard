@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import { useState, useEffect } from 'react';
 
-function ProtectedRoute({ user, appLoading, requiredRole, children }) {
+function ProtectedRoute({ user, appLoading, profile, profileComplete, requiredRole, children }) {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
 
@@ -21,7 +21,25 @@ function ProtectedRoute({ user, appLoading, requiredRole, children }) {
       return;
     }
 
-    // If we have a user object, fetch their profile to check for the required role.
+    // Check if profile is complete
+    if (profileComplete === false) {
+      setIsAuthorized(false); // Not authorized to access protected content
+      setIsChecking(false);
+      return;
+    }
+
+    // If we have a user object and profile is complete, fetch their profile to check for the required role.
+    // Optimize by using passed profile if available
+    if (profile && profile.role) {
+        if (profile.role !== requiredRole) {
+          setIsAuthorized(false);
+        } else {
+          setIsAuthorized(true);
+        }
+        setIsChecking(false);
+        return;
+    }
+
     supabase
       .from('profiles')
       .select('role')
@@ -38,7 +56,7 @@ function ProtectedRoute({ user, appLoading, requiredRole, children }) {
         // In any case, we are done checking.
         setIsChecking(false);
       });
-  }, [user, appLoading, requiredRole]);
+  }, [user, appLoading, profile, profileComplete, requiredRole]);
 
   // While we are checking, show a loading message.
   if (isChecking) {
@@ -47,6 +65,10 @@ function ProtectedRoute({ user, appLoading, requiredRole, children }) {
 
   // After checking, if the user is not authorized, we redirect.
   if (!isAuthorized) {
+    // If profile is incomplete, redirect to complete-profile page
+    if (user && profileComplete === false) {
+        return <Navigate to="/complete-profile" replace />;
+    }
     // If there was a user, but they had the wrong role, send them to the dashboard.
     // If there was no user at all, send them to the login page.
     return <Navigate to={user ? "/dashboard" : "/login"} replace />;

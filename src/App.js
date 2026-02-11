@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react'; // Added useCallback
 import { supabase } from './supabaseClient';
 import HowItWorks from './HowItWorks';
@@ -16,6 +16,7 @@ import AdminLayout from './AdminLayout';
 import PointSystemPage from './PointSystemPage';
 import ProtectedRoute from './ProtectedRoute';
 import NotificationsPage from './NotificationsPage'; // Import NotificationsPage
+import CompleteProfilePage from './CompleteProfilePage'; // Import CompleteProfilePage
 
 function HomeContent() {
   return (
@@ -29,7 +30,7 @@ function HomeContent() {
   );
 }
 
-function MainLayout({ session, onLogout, user }) { // Add user prop
+function MainLayout({ session, onLogout, user, profile }) { // Add profile prop
   // Removed notification state and logic from here
   return (
     <>
@@ -56,13 +57,47 @@ function MainLayout({ session, onLogout, user }) { // Add user prop
 
 function App() {
   const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true); // Central loading state
+  const [loading, setLoading] = useState(true);
+  const [profileComplete, setProfileComplete] = useState(null); // null, true, or false
+  const [profile, setProfile] = useState(null); // Store user profile
   const navigate = useNavigate();
+  const location = useLocation(); // Initialize useLocation
+
+  useEffect(() => {
+    // Redirect logic
+    if (!loading && session && profileComplete === false && location.pathname !== '/complete-profile') {
+      navigate('/complete-profile');
+    } else if (!loading && session && profileComplete === true && location.pathname === '/complete-profile') {
+      navigate('/dashboard'); // If profile is complete and user is on complete-profile page, redirect to dashboard
+    }
+  }, [loading, session, profileComplete, location.pathname, navigate]);
 
   useEffect(() => {
     const initializeAuth = async () => {
       const { data } = await supabase.auth.getSession();
       setSession(data.session);
+
+      if (data.session?.user) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('full_name, academic_year, branch, role')
+          .eq('id', data.session.user.id)
+          .single();
+
+        if (profileError && profileError.code !== 'PGRST116') { // PGRST116 is 'No rows found'
+          console.error('Error fetching profile:', profileError);
+          setProfileComplete(false); // Assume incomplete on error
+        } else if (profileData) {
+          setProfile(profileData);
+          const isComplete = profileData.full_name && profileData.academic_year && profileData.branch;
+          setProfileComplete(!!isComplete); // Convert to boolean
+        } else {
+          // No profile found, so it's incomplete
+          setProfileComplete(false);
+        }
+      } else {
+        setProfileComplete(true); // No user, so no profile to complete or it's implicitly complete
+      }
       setLoading(false);
     };
 
@@ -71,6 +106,29 @@ function App() {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
+        // When auth state changes, re-evaluate profile completeness
+        if (session?.user) {
+          supabase
+            .from('profiles')
+            .select('full_name, academic_year, branch, role')
+            .eq('id', session.user.id)
+            .single()
+            .then(({ data: profileData, error: profileError }) => {
+              if (profileError && profileError.code !== 'PGRST116') {
+                console.error('Error fetching profile on auth state change:', profileError);
+                setProfileComplete(false);
+              } else if (profileData) {
+                setProfile(profileData);
+                const isComplete = profileData.full_name && profileData.academic_year && profileData.branch;
+                setProfileComplete(!!isComplete);
+              } else {
+                setProfileComplete(false);
+              }
+            });
+        } else {
+          setProfileComplete(true); // No user, implicitly complete
+          setProfile(null);
+        }
       }
     );
 
@@ -88,7 +146,7 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<MainLayout session={session} onLogout={handleLogout} user={session?.user} />}>
+        <Route path="/" element={<MainLayout session={session} onLogout={handleLogout} user={session?.user} profile={profile} />}>
           <Route index element={<HomeContent />} />
           <Route path="how-it-works" element={<HowItWorks />} />
           <Route path="about" element={<About />} />
@@ -101,12 +159,13 @@ function App() {
             <Route path="notifications" element={<NotificationsPage user={session?.user} />} /> {/* New route */}
           </Route>
           <Route path="profile" element={<ProfilePage user={session?.user} />} />
+          <Route path="/complete-profile" element={<CompleteProfilePage user={session?.user} profile={profile} profileComplete={profileComplete} />} />
         </Route>
 
         <Route
           path="/admin"
           element={
-            <ProtectedRoute user={session?.user} appLoading={loading} requiredRole="admin">
+            <ProtectedRoute user={session?.user} appLoading={loading} profile={profile} profileComplete={profileComplete} requiredRole="admin">
               <AdminLayout />
             </ProtectedRoute>
           }

@@ -62,6 +62,19 @@ function SignupPage() {
         } else {
           console.log('User successfully added to leaderboard.');
         }
+
+        // Insert user into profiles with initial data
+        const { error: profileInsertError } = await supabase
+          .from('profiles')
+          .insert([
+            { id: data.user.id, email: data.user.email, role: 'user' } // Assuming 'user' is the default role
+          ]);
+
+        if (profileInsertError) {
+          throw profileInsertError; // Throw the error so it's caught by the outer catch block
+        } else {
+          console.log('User profile created.');
+        }
       }
 
       setSuccessMessage('Success! Please check your email for a confirmation link.');
