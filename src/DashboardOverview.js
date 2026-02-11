@@ -8,55 +8,7 @@ const formatDate = (date) => {
 };
 
 function DashboardOverview({ user }) {
-  const navigate = useNavigate(); // Initialize useNavigate
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/login'); // Redirect to login if no user
-    }
-  }, [user, navigate]); // Depend on user and navigate
-
-  const username = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
-  const [currentDateDisplay, setCurrentDateDisplay] = useState('');
-  const [activeDateToggle, setActiveDateToggle] = useState('Month'); // Default active toggle
-
-  // Function to calculate date ranges
-  const getDateRange = useCallback((period) => {
-    const today = new Date();
-    let startDate, endDate;
-
-    if (period === 'Day') {
-      startDate = today;
-      return `📅 ${formatDate(startDate)}`;
-    } else if (period === 'Week') {
-      endDate = today;
-      startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6); // Last 7 days
-      return `📅 ${formatDate(startDate)} - ${formatDate(endDate)}`;
-    } else if (period === 'Month') {
-      endDate = today;
-      startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 29); // 30-day range ending today
-      return `📅 ${formatDate(startDate)} - ${formatDate(endDate)}`;
-    }
-  }, []);
-
-  // Set initial date display on component mount
-  useEffect(() => {
-    setCurrentDateDisplay(getDateRange(activeDateToggle));
-  }, [activeDateToggle, getDateRange]);
-
-  const handleDateToggleClick = useCallback((period) => {
-    setActiveDateToggle(period);
-    setCurrentDateDisplay(getDateRange(period));
-  }, [getDateRange]);
-
-  return (
-    <>
-
-
-function DashboardOverview({ user }) {
   const navigate = useNavigate();
-  const [currentDateDisplay, setCurrentDateDisplay] = useState('');
-  const [activeDateToggle, setActiveDateToggle] = useState('Month');
 
   // Placeholder data for stats
   const stats = [
@@ -80,6 +32,8 @@ function DashboardOverview({ user }) {
   }, [user, navigate]);
 
   const username = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+  const [currentDateDisplay, setCurrentDateDisplay] = useState('');
+  const [activeDateToggle, setActiveDateToggle] = useState('Month'); // Default active toggle
 
   const getDateRange = useCallback((period) => {
     const today = new Date();
@@ -126,6 +80,7 @@ function DashboardOverview({ user }) {
           ))}
         </div>
 
+        {/* Desktop-friendly table layout for Active Students */}
         <div className="dashboard-card full-width active-students-table-desktop">
           <h4>Active Students</h4>
           <table className="data-table">
