@@ -51,6 +51,7 @@ function LoginPage() {
       // Logged in successfully, redirect to dashboard
       navigate('/dashboard');
     } catch (error) {
+      if (error.name === 'AbortError') return; // Silently ignore AbortError
       console.log('Supabase login error:', error); // Log the full error object for debugging
       // Error message is already set in the if block above
       // If it's a generic error not caught above, set it here

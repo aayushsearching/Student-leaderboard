@@ -118,7 +118,7 @@ function BadgeRankingPage({ user }) { // Accept user prop
               ]);
 
             if (insertError) {
-              console.error('Error creating leaderboard entry for user:', insertError.message);
+              throw insertError; // Throw the error so it's caught by the outer catch block
             } else {
               console.log('Leaderboard entry created, re-fetching data...');
               // Re-fetch data to include the newly created entry
@@ -128,6 +128,7 @@ function BadgeRankingPage({ user }) { // Accept user prop
         }
       }
     } catch (err) {
+      if (err.name === 'AbortError') return; // Silently ignore AbortError
       console.error('Error fetching leaderboard data:', err);
       setError('Failed to load leaderboard data: ' + err.message);
     } finally {

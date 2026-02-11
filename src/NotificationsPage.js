@@ -18,19 +18,22 @@ function NotificationsPage({ user }) {
     setLoading(true);
     setError(null);
 
-    const { data, error: fetchError } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
 
-    if (fetchError) {
-      console.error('Error fetching notifications:', fetchError);
-      setError('Failed to load notifications: ' + fetchError.message);
-    } else {
+      if (fetchError) throw fetchError;
       setNotifications(data);
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      console.error('Error fetching notifications:', err);
+      setError('Failed to load notifications: ' + err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [user]);
 
   useEffect(() => {
@@ -57,38 +60,42 @@ function NotificationsPage({ user }) {
   }, [fetchNotifications, user]);
 
   const markAsRead = useCallback(async (notificationId) => {
-    const { error: updateError } = await supabase
-      .from('notifications')
-      .update({ is_read: true })
-      .eq('id', notificationId);
+    try {
+      const { error: updateError } = await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('id', notificationId);
 
-    if (updateError) {
-      console.error('Error marking notification as read:', updateError);
-      setError('Failed to mark notification as read: ' + updateError.message);
-    } else {
+      if (updateError) throw updateError;
       setNotifications((prevNotifications) =>
         prevNotifications.map((n) =>
           n.id === notificationId ? { ...n, is_read: true } : n
         )
       );
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      console.error('Error marking notification as read:', err);
+      setError('Failed to mark notification as read: ' + err.message);
     }
   }, []);
 
   const markAllAsRead = useCallback(async () => {
     if (!user) return;
-    const { error: updateError } = await supabase
-      .from('notifications')
-      .update({ is_read: true })
-      .eq('user_id', user.id)
-      .eq('is_read', false);
+    try {
+      const { error: updateError } = await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('user_id', user.id)
+        .eq('is_read', false);
 
-    if (updateError) {
-      console.error('Error marking all notifications as read:', updateError);
-      setError('Failed to mark all notifications as read: ' + updateError.message);
-    } else {
+      if (updateError) throw updateError;
       setNotifications((prevNotifications) =>
         prevNotifications.map((n) => ({ ...n, is_read: true }))
       );
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      console.error('Error marking all notifications as read:', err);
+      setError('Failed to mark all notifications as read: ' + err.message);
     }
   }, [user]);
 

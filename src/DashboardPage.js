@@ -13,16 +13,18 @@ function DashboardPage({ user }) { // Receive user prop
       setUnreadCount(0);
       return;
     }
-    const { count, error } = await supabase
-      .from('notifications')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('is_read', false);
+    try {
+      const { count, error } = await supabase
+        .from('notifications')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('is_read', false);
 
-    if (error) {
-      console.error('Error fetching unread notification count:', error.message);
-    } else {
+      if (error) throw error;
       setUnreadCount(count);
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      console.error('Error fetching unread notification count:', err.message);
     }
   }, [user]);
 

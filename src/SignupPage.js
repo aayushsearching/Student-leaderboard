@@ -58,8 +58,7 @@ function SignupPage() {
           ]);
 
         if (leaderboardError) {
-          console.error('Error inserting user into leaderboard:', leaderboardError.message);
-          // Optionally, handle this error more gracefully, e.g., rollback signup or notify admin
+          throw leaderboardError; // Throw the error so it's caught by the outer catch block
         } else {
           console.log('User successfully added to leaderboard.');
         }
@@ -67,6 +66,7 @@ function SignupPage() {
 
       setSuccessMessage('Success! Please check your email for a confirmation link.');
     } catch (error) {
+      if (error.name === 'AbortError') return; // Silently ignore AbortError
       console.log('Supabase signup error:', error); // Log the full error object for debugging
       // Check for specific error message indicating user already exists
       if (error.message.includes('User already registered') || error.message.includes('duplicate key value violates unique constraint')) {

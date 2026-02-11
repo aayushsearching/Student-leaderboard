@@ -19,29 +19,32 @@ function TasksPage({ user }) {
     setError(null);
     setSuccessMessage('');
 
-    const { data, error: fetchError } = await supabase
-      .from('user_tasks')
-      .select(`
-        id,
-        status,
-        rejection_message,
-        tasks (
-          title,
-          description,
-          points,
-          due_date,
-          tasks_url
-        )
-      `)
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('user_tasks')
+        .select(`
+          id,
+          status,
+          rejection_message,
+          tasks (
+            title,
+            description,
+            points,
+            due_date,
+            tasks_url
+          )
+        `)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
 
-    if (fetchError) {
-      setError('Failed to load your tasks: ' + fetchError.message);
-    } else {
+      if (fetchError) throw fetchError;
       setUserTasks(data);
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      setError('Failed to load your tasks: ' + err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [user]);
 
   useEffect(() => {
@@ -81,6 +84,7 @@ function TasksPage({ user }) {
           await fetchTasks();
           setSelectedTask(prev => ({ ...prev, status: nextStatus, rejection_message: null }));
         } catch (err) {
+          if (err.name === 'AbortError') return;
           setError('Failed to update task status: ' + err.message);
         }
       }
@@ -99,6 +103,7 @@ function TasksPage({ user }) {
       setSuccessMessage('Task submitted for approval! Your points will be credited shortly.');
       await fetchTasks();
     } catch (err) {
+      if (err.name === 'AbortError') return;
       setError('Failed to submit task for approval: ' + err.message);
     } finally {
       setShowProofModal(false);
@@ -118,6 +123,7 @@ function TasksPage({ user }) {
       await fetchTasks();
       closeTaskDetailsModal(); // Close the modal after retrying
     } catch (err) {
+      if (err.name === 'AbortError') return;
       setError('Failed to retry task: ' + err.message);
     }
   }, [selectedTask, fetchTasks, closeTaskDetailsModal]);

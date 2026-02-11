@@ -29,11 +29,16 @@ function AdminPage() { // Removed user prop
 
   const fetchAdminData = useCallback(async () => {
     setLoading(true);
-    const { data, error: fetchError } = await supabase.from('tasks').select('*').order('created_at', { ascending: false });
-    if (fetchError) setError('Failed to fetch task templates: ' + fetchError.message);
-    else setTemplateTasks(data);
-
-    setLoading(false);
+    try {
+      const { data, error: fetchError } = await supabase.from('tasks').select('*').order('created_at', { ascending: false });
+      if (fetchError) throw fetchError;
+      setTemplateTasks(data);
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      setError('Failed to fetch task templates: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -53,24 +58,29 @@ function AdminPage() { // Removed user prop
     e.preventDefault();
     setError(''); setSuccess(''); setFormLoading(true);
     const taskData = { title, description, points, due_date: dueDate, tasks_url: tasksUrl };
-    let response;
-    if (editingTask) {
-      response = await supabase.from('tasks').update(taskData).eq('id', editingTask.id);
-    } else {
-      if (!title || !description || !points) {
-        setError('Please fill out all required fields.');
-        setFormLoading(false);
-        return;
+    
+    try {
+      let response;
+      if (editingTask) {
+        response = await supabase.from('tasks').update(taskData).eq('id', editingTask.id);
+      } else {
+        if (!title || !description || !points) {
+          setError('Please fill out all required fields.');
+          setFormLoading(false);
+          return;
+        }
+        response = await supabase.from('tasks').insert([taskData]);
       }
-      response = await supabase.from('tasks').insert([taskData]);
-    }
-    if (response.error) setError(`Failed to ${editingTask ? 'update' : 'create'} template: ${response.error.message}`);
-    else {
+      if (response.error) throw response.error;
       setSuccess(`Task template ${editingTask ? 'updated' : 'created'} successfully!`);
       clearForm();
       await fetchAdminData();
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      setError(`Failed to ${editingTask ? 'update' : 'create'} template: ${err.message}`);
+    } finally {
+      setFormLoading(false);
     }
-    setFormLoading(false);
   }, [editingTask, title, description, points, dueDate, tasksUrl, clearForm, fetchAdminData]);
 
   const handleEditClick = useCallback((task) => {
@@ -87,13 +97,17 @@ function AdminPage() { // Removed user prop
   const handleDeleteClick = useCallback(async (taskId) => {
     if (window.confirm('Are you sure you want to delete this task template?')) {
       setLoading(true);
-      const { error: deleteError } = await supabase.from('tasks').delete().eq('id', taskId);
-      if (deleteError) setError('Failed to delete template: ' + deleteError.message);
-      else {
+      try {
+        const { error: deleteError } = await supabase.from('tasks').delete().eq('id', taskId);
+        if (deleteError) throw deleteError;
         setSuccess('Task template deleted successfully!');
         await fetchAdminData();
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        setError('Failed to delete template: ' + err.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
   }, [fetchAdminData]);
 
@@ -124,6 +138,7 @@ function AdminPage() { // Removed user prop
         setNotificationMessage('');
       }
     } catch (err) {
+      if (err.name === 'AbortError') return;
       setNotificationError('An unexpected error occurred: ' + err.message);
     } finally {
       setSendingNotification(false);

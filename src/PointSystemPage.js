@@ -13,33 +13,36 @@ function PointSystemPage({ user }) {
     setError('');
     setSuccess('');
     
-    // Using the exact query structure as requested
-    const { data, error: fetchError } = await supabase
-      .from('user_tasks')
-      .select(`
-        id,
-        user_id,
-        status,
-        submission_url,
-        submitted_at,
-        tasks (
-          title,
-          points
-        ),
-        profiles (
-          full_name,
-          email
-        )
-      `)
-      .eq('status', 'pending_review')
-      .order('submitted_at', { ascending: true });
+    try {
+      // Using the exact query structure as requested
+      const { data, error: fetchError } = await supabase
+        .from('user_tasks')
+        .select(`
+          id,
+          user_id,
+          status,
+          submission_url,
+          submitted_at,
+          tasks (
+            title,
+            points
+          ),
+          profiles (
+            full_name,
+            email
+          )
+        `)
+        .eq('status', 'pending_review')
+        .order('submitted_at', { ascending: true });
 
-    if (fetchError) {
-      setError('Failed to fetch tasks for approval: ' + fetchError.message);
-    } else {
+      if (fetchError) throw fetchError;
       setPendingTasks(data);
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      setError('Failed to fetch tasks for approval: ' + err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -50,37 +53,43 @@ function PointSystemPage({ user }) {
   const handleApprove = async (userTask) => {
     setLoading(true);
     
-    const { error: rpcError } = await supabase.rpc('approve_task_and_update_score', {
-      p_user_task_id: userTask.id, // This is the ID of the row in user_tasks
-      p_user_id: userTask.user_id, // The ID of the user who submitted it
-      p_points_to_add: userTask.tasks.points // The points from the joined tasks table
-    });
+    try {
+      const { error: rpcError } = await supabase.rpc('approve_task_and_update_score', {
+        p_user_task_id: userTask.id, // This is the ID of the row in user_tasks
+        p_user_id: userTask.user_id, // The ID of the user who submitted it
+        p_points_to_add: userTask.tasks.points // The points from the joined tasks table
+      });
 
-    if (rpcError) {
-      setError('Failed to approve task: ' + rpcError.message);
-    } else {
+      if (rpcError) throw rpcError;
       setSuccess(`Task "${userTask.tasks.title}" approved for ${userTask.profiles.full_name}.`);
       await fetchPendingTasks(); // Refresh the list
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      setError('Failed to approve task: ' + err.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleReject = async (userTask) => {
     const reason = window.prompt('Please provide a reason for rejecting this task:');
     if (reason) {
       setLoading(true);
-      const { error: rpcError } = await supabase.rpc('reject_task_with_feedback', {
-        p_user_task_id: userTask.id,
-        p_feedback: reason
-      });
+      try {
+        const { error: rpcError } = await supabase.rpc('reject_task_with_feedback', {
+          p_user_task_id: userTask.id,
+          p_feedback: reason
+        });
 
-      if (rpcError) {
-        setError('Failed to reject task: ' + rpcError.message);
-      } else {
+        if (rpcError) throw rpcError;
         setSuccess(`Task "${userTask.tasks.title}" rejected for ${userTask.profiles.full_name}.`);
         await fetchPendingTasks(); // Refresh the list
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        setError('Failed to reject task: ' + err.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
   };
 

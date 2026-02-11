@@ -42,8 +42,6 @@ function ProfilePage({ user }) { // Accept user prop
       setError('');
       setSuccess('');
 
-      // const { data: { user } } = await supabase.auth.getSession(); // User is now passed as prop
-
       if (user) {
         const updates = {
           data: {
@@ -62,6 +60,7 @@ function ProfilePage({ user }) { // Accept user prop
         setError('No active session. Please log in.');
       }
     } catch (err) {
+      if (err.name === 'AbortError') return;
       console.error('Error updating profile:', err.message);
       setError('Error updating profile: ' + err.message);
     } finally {
