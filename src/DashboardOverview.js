@@ -1,11 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './DashboardOverview.css'; // Use DashboardOverview specific styles
-
-// Helper to format dates
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
-};
 
 function DashboardOverview({ user }) {
   const navigate = useNavigate();
@@ -32,35 +27,6 @@ function DashboardOverview({ user }) {
   }, [user, navigate]);
 
   const username = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
-  const [currentDateDisplay, setCurrentDateDisplay] = useState('');
-  const [activeDateToggle, setActiveDateToggle] = useState('Month'); // Default active toggle
-
-  const getDateRange = useCallback((period) => {
-    const today = new Date();
-    let startDate, endDate;
-
-    if (period === 'Day') {
-      startDate = today;
-      return `📅 ${formatDate(startDate)}`;
-    } else if (period === 'Week') {
-      endDate = today;
-      startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6);
-      return `📅 ${formatDate(startDate)} - ${formatDate(endDate)}`;
-    } else if (period === 'Month') {
-      endDate = today;
-      startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 29);
-      return `📅 ${formatDate(startDate)} - ${formatDate(endDate)}`;
-    }
-  }, []);
-
-  useEffect(() => {
-    setCurrentDateDisplay(getDateRange(activeDateToggle));
-  }, [activeDateToggle, getDateRange]);
-
-  const handleDateToggleClick = useCallback((period) => {
-    setActiveDateToggle(period);
-    setCurrentDateDisplay(getDateRange(period));
-  }, [getDateRange]);
 
   return (
     <>
