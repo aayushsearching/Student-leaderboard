@@ -20,7 +20,7 @@ import CompleteProfilePage from './CompleteProfilePage'; // Import CompleteProfi
 
 function HomeContent() {
   return (
-    <main className="hero-section main-content">
+    <main className="hero-section container-1200">
       <div className="hero-content">
         <h1>Level Up Your Skills, Boost Your Rank!</h1>
         <p className="secondary-text">Task-based mentorship for college students to learn, earn points, and climb the leaderboard.</p>
@@ -61,7 +61,7 @@ function MainLayout({ session, onLogout, user, profile }) { // Add profile prop
           </button>
         </div>
       </nav>
-      <div className="main-content">
+      <div className="container-1200">
         <Outlet />
       </div>
     </>

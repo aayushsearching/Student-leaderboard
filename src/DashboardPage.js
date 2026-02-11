@@ -64,102 +64,55 @@ function DashboardPage({ user }) { // Receive user prop
 
   return (
     <div className="dashboard-page-wrapper">
-      <div className="dashboard-navbar">
-        <div className="navbar-brand">MentorFlow</div>
+      <div className="dashboard-header-mobile">
         <button className="hamburger-menu" onClick={toggleSidebar} aria-label="Toggle sidebar">
           <span className="bar"></span>
           <span className="bar"></span>
           <span className="bar"></span>
         </button>
+        <div className="mobile-logo">MentorFlow</div>
       </div>
 
-      {/* Desktop Sidebar Layout */}
-      <div className="desktop-layout">
-        <aside className="dashboard-sidebar">
-          <div className="sidebar-header">
-            <h2>MentorFlow</h2>
-          </div>
-          <nav className="sidebar-nav">
-            <ul>
-              <li className={location.pathname === '/dashboard' ? 'active' : ''}>
-                <Link to="/dashboard" onClick={closeSidebar}>
-                  <span className="icon">📊</span>
-                  <span>Dashboard</span>
-                </Link>
-              </li>
-              <li className={location.pathname === '/dashboard/tasks' ? 'active' : ''}>
-                <Link to="/dashboard/tasks" onClick={closeSidebar}>
-                  <span className="icon">✅</span>
-                  <span>Tasks</span>
-                </Link>
-              </li>
-              <li className={location.pathname === '/dashboard/leaderboard' ? 'active' : ''}>
-                <Link to="/dashboard/leaderboard" onClick={closeSidebar}>
-                  <span className="icon">🏆</span>
-                  <span>Leaderboard</span>
-                </Link>
-              </li>
-              <li className={location.pathname.startsWith('/dashboard/notifications') ? 'active' : ''}>
-                <Link to="/dashboard/notifications" onClick={closeSidebar}>
-                  <span className="icon">🔔</span>
-                  <span>Notifications</span>
-                  {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
-                </Link>
-              </li>
-              <li className={location.pathname === '/profile' ? 'active' : ''}>
-                <Link to="/profile" onClick={closeSidebar}>
-                  <span className="icon">👤</span>
-                  <span>Profile</span>
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        </aside>
-      </div>
-
-      {/* Mobile Sidebar Layout */}
-      <div className="mobile-layout">
-        <aside className={`dashboard-sidebar ${isSidebarOpen ? 'open' : ''}`}>
-          <div className="sidebar-header">
-            <h2>MentorFlow</h2>
-          </div>
-          <nav className="sidebar-nav">
-            <ul>
-              <li className={location.pathname === '/dashboard' ? 'active' : ''}>
-                <Link to="/dashboard" onClick={closeSidebar}>
-                  <span className="icon">📊</span>
-                  <span>Dashboard</span>
-                </Link>
-              </li>
-              <li className={location.pathname === '/dashboard/tasks' ? 'active' : ''}>
-                <Link to="/dashboard/tasks" onClick={closeSidebar}>
-                  <span className="icon">✅</span>
-                  <span>Tasks</span>
-                </Link>
-              </li>
-              <li className={location.pathname === '/dashboard/leaderboard' ? 'active' : ''}>
-                <Link to="/dashboard/leaderboard" onClick={closeSidebar}>
-                  <span className="icon">🏆</span>
-                  <span>Leaderboard</span>
-                </Link>
-              </li>
-              <li className={location.pathname.startsWith('/dashboard/notifications') ? 'active' : ''}>
-                <Link to="/dashboard/notifications" onClick={closeSidebar}>
-                  <span className="icon">🔔</span>
-                  <span>Notifications</span>
-                  {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
-                </Link>
-              </li>
-              <li className={location.pathname === '/profile' ? 'active' : ''}>
-                <Link to="/profile" onClick={closeSidebar}>
-                  <span className="icon">👤</span>
-                  <span>Profile</span>
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        </aside>
-      </div>
+      <aside className={`dashboard-sidebar ${isSidebarOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <h2>MentorFlow</h2>
+        </div>
+        <nav className="sidebar-nav">
+          <ul>
+            <li className={location.pathname === '/dashboard' ? 'active' : ''}>
+              <Link to="/dashboard" onClick={closeSidebar}>
+                <span className="icon">📊</span>
+                <span>Dashboard</span>
+              </Link>
+            </li>
+            <li className={location.pathname === '/dashboard/tasks' ? 'active' : ''}>
+              <Link to="/dashboard/tasks" onClick={closeSidebar}>
+                <span className="icon">✅</span>
+                <span>Tasks</span>
+              </Link>
+            </li>
+            <li className={location.pathname === '/dashboard/leaderboard' ? 'active' : ''}>
+              <Link to="/dashboard/leaderboard" onClick={closeSidebar}>
+                <span className="icon">🏆</span>
+                <span>Leaderboard</span>
+              </Link>
+            </li>
+            <li className={location.pathname.startsWith('/dashboard/notifications') ? 'active' : ''}>
+              <Link to="/dashboard/notifications" onClick={closeSidebar}>
+                <span className="icon">🔔</span>
+                <span>Notifications</span>
+                {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
+              </Link>
+            </li>
+            <li className={location.pathname === '/profile' ? 'active' : ''}>
+              <Link to="/profile" onClick={closeSidebar}>
+                <span className="icon">👤</span>
+                <span>Profile</span>
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </aside>
 
       <main className="dashboard-main-content">
         <Outlet />
