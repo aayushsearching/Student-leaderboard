@@ -118,19 +118,28 @@
 /* Main Content Area - Mobile First */
 .dashboard-main-content {
   flex-grow: 1;
-  padding: 1rem; /* Smaller padding for mobile */
+  padding: var(--spacing-lg); /* Consistent padding for mobile */
   display: flex;
   flex-direction: column;
   margin-left: 0; /* No margin on mobile */
   background-color: #f7f8fc; /* Ensure background consistency */
-  padding-top: 20px; /* Space from mobile header */
 }
 
 /* Content Grid & Cards - Mobile First */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr; /* Stack vertically on mobile */
-  gap: 1rem; /* Smaller gap for mobile */
+  gap: var(--spacing-lg); /* Consistent gap for mobile */
+}
+
+/* Dashboard Card - Mobile First */
+.dashboard-card {
+  background-color: #fff;
+  padding: var(--spacing-lg); /* Consistent padding for cards */
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-md); /* Softer, more pronounced shadow */
+  border: 1px solid #eef0f6;
+  text-align: left; /* Default text alignment for cards */
 }
 
 /* Tablet Layout */
@@ -162,13 +171,13 @@
 
   .dashboard-main-content {
     margin-left: 200px; /* Offset for tablet sidebar */
-    padding: 1.5rem; /* Increased padding */
+    padding: var(--spacing-xl); /* Increased padding for tablet */
   }
 
   /* Dashboard Grid */
   .dashboard-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* 2 columns on tablet */
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on tablet */
+    gap: var(--spacing-xl); /* Consistent gap for tablet */
   }
 }
 
@@ -180,13 +189,13 @@
 
   .dashboard-main-content {
     margin-left: 260px; /* Offset for laptop sidebar */
-    padding: 2rem; /* Original padding */
+    padding: var(--spacing-xl); /* Consistent padding for desktop */
   }
 
   /* Dashboard Grid */
   .dashboard-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 3-4 columns on laptop */
-    gap: 2rem;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
+    gap: var(--spacing-xl); /* Consistent gap for desktop */
   }
 }
 
