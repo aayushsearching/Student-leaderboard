@@ -60,20 +60,24 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true);
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false); // Finished initial session check
-    });
+    const initializeAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+      setSession(data.session);
+      setLoading(false);
+    };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      // If auth state changes, we are no longer in the initial loading phase
-      if (loading) setLoading(false);
-    });
+    initializeAuth();
 
-    return () => subscription.unsubscribe();
-  }, [loading]); // Added loading to dependency array
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
 
   const handleLogout = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
