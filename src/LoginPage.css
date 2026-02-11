@@ -1,146 +1,187 @@
+/* Mobile First Styles */
 .login-page-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* Occupy full viewport height */
-  /* Sky gradient with subtle cloud texture and curved lines implication */
+  min-height: 100vh;
   background:
     linear-gradient(135deg, rgba(255,255,255,0.05) 25%, transparent 25%) -50px 0,
     linear-gradient(225deg, rgba(255,255,255,0.05) 25%, transparent 25%) -50px 0,
     linear-gradient(315deg, rgba(255,255,255,0.05) 25%, transparent 25%),
     linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
-    linear-gradient(to bottom, #e0f2f7, #ffffff); /* Light blue to white */
+    linear-gradient(to bottom, #e0f2f7, #ffffff);
   background-size: 100px 100px, 100px 100px, 100px 100px, 100px 100px, cover;
   background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
-  padding: 2rem;
-  overflow: hidden; /* Prevent background elements from causing scroll */
+  padding: 1rem; /* Smaller padding for mobile */
+  overflow: hidden;
 }
 
 .login-form-card {
-  background: rgba(255, 255, 255, 0.75); /* Translucent white background */
-  backdrop-filter: blur(15px); /* Soft blur for glassmorphism */
-  border-radius: 20px; /* Slightly more rounded corners */
-  padding: 3.5rem; /* More generous padding */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Gentler shadow */
-  border: 1px solid rgba(255, 255, 255, 0.3); /* Lighter, translucent border */
-  max-width: 450px; /* Max width for the form */
+  background: rgba(255, 255, 255, 0.9); /* Slightly more opaque for mobile readability */
+  backdrop-filter: blur(10px); /* Slightly less blur for performance */
+  border-radius: 15px; /* Slightly less rounded */
+  padding: 2rem; /* Reduced padding for mobile */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 90%; /* Max width for mobile */
   width: 100%;
   text-align: center;
-  z-index: 10; /* Ensure card is above background elements */
-  position: relative; /* For proper stacking context */
+  z-index: 10;
+  position: relative;
 }
 
 .login-form-card h2 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #333;
+  font-size: 1.8rem; /* Smaller for mobile */
   margin-bottom: 0.5rem;
 }
 
 .login-subtitle {
-  font-size: 1rem;
-  color: #666;
-  margin-bottom: 2rem;
+  font-size: 0.9rem; /* Smaller for mobile */
+  margin-bottom: 1.5rem; /* Reduced margin */
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
-  text-align: left; /* Align labels and inputs to the left */
+  margin-bottom: 1rem; /* Reduced margin */
+  text-align: left;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  color: #555;
-  font-weight: 500;
+  font-size: 0.85rem; /* Smaller for mobile */
+  margin-bottom: 0.4rem;
 }
 
 .form-group input {
-  width: calc(100% - 24px); /* Full width minus padding */
-  padding: 12px 12px; /* Adjusted padding */
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Lighter border */
-  border-radius: 50px; /* Pill-shaped */
-  font-size: 1rem;
-  color: #333;
+  width: 100%; /* Full width for mobile */
+  box-sizing: border-box; /* Include padding in width */
+  padding: 10px 12px; /* Adjusted padding */
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px; /* Less rounded for a cleaner look */
+  font-size: 0.9rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  background-color: rgba(255, 255, 255, 0.8); /* Slightly translucent input background */
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .form-group input:focus {
   outline: none;
   border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15); /* Softer focus shadow */
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1); /* Softer focus shadow */
 }
 
 .login-button {
-  background-color: #333; /* Dark, bold button */
+  background-color: #333;
   color: white;
   border: none;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  font-weight: 600; /* Bolder font */
-  border-radius: 12px; /* Slightly rounded, visually grounded */
+  padding: 0.8rem 1.5rem; /* Reduced padding for mobile */
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px; /* Less rounded */
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Stronger, but soft shadow */
-  width: 100%;
-  margin-top: 1.5rem; /* More spacing */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  width: 100%; /* Full width for mobile */
+  margin-top: 1rem; /* Reduced margin */
 }
 
 .login-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px); /* Less aggressive hover effect */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
 }
 
 .login-footer {
-  margin-top: 2rem; /* More spacing */
-  font-size: 0.95rem;
-  color: #666;
+  margin-top: 1.5rem; /* Reduced margin */
+  font-size: 0.85rem; /* Smaller for mobile */
 }
 
 .login-footer a {
-  color: #888; /* Subtle link color */
+  color: #888;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s ease;
 }
 
 .login-footer a:hover {
-  color: #333; /* Darker on hover */
+  color: #333;
   text-decoration: underline;
 }
 
-/* Error message styling */
 .error-message {
-  color: #e74c3c; /* Red color for errors */
-  background-color: #fff0f0; /* Light red background for emphasis */
-  border: 1px solid #e74c3c;
-  padding: 0.75rem 1rem; /* More padding */
-  border-radius: 8px; /* Slightly rounded corners */
-  font-size: 1rem; /* Increased font size */
-  font-weight: 600; /* Added font weight */
-  margin-top: 1rem; /* Adjust margin to give space below subtitle/title */
-  margin-bottom: 2rem; /* Increased margin to push the button further down */
-  text-align: center; /* Center the error message */
-  display: block; /* Ensure it takes up its own line */
-  position: relative; /* Ensure z-index works */
-  z-index: 100; /* Ensure it's on top of other elements */
+  padding: 0.6rem 0.8rem; /* Adjusted padding */
+  font-size: 0.9rem;
+  margin-bottom: 1rem; /* Adjusted margin */
 }
 
-/* Input error state */
-.input-error {
-  border-color: #e74c3c !important; /* Red border for error */
-}
-
-/* Success message styling */
 .success-message {
-  color: #2ecc71; /* Green color for success */
-  background-color: #eafaf1; /* Light green background */
-  border: 1px solid #a3e9a4;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  font-size: 0.95rem;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Tablet Layout */
+@media (min-width: 768px) {
+  .login-page-container {
+    padding: 2rem;
+  }
+
+  .login-form-card {
+    padding: 3rem; /* More padding for tablet */
+    max-width: 400px; /* Increased max-width */
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+  }
+
+  .login-form-card h2 {
+    font-size: 2rem;
+  }
+
+  .login-subtitle {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+  }
+
+  .form-group input {
+    padding: 12px 15px;
+    font-size: 1rem;
+  }
+
+  .login-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .login-footer {
+    margin-top: 2rem;
+    font-size: 0.95rem;
+  }
+  .error-message {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .success-message {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Laptop/Desktop Layout */
+@media (min-width: 1024px) {
+  .login-form-card {
+    padding: 3.5rem; /* Original padding */
+    max-width: 450px; /* Original max-width */
+  }
+
+  .login-form-card h2 {
+    font-size: 2.2rem; /* Original font size */
+  }
 }

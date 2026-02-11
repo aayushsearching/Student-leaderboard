@@ -1,53 +1,56 @@
+/* Mobile First Styles */
 .complete-profile-page-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 60px); /* Adjust based on your header height */
   background-color: #f0f2f5;
-  padding: 20px;
+  padding: 1rem; /* Smaller padding for mobile */
 }
 
 .complete-profile-form-card {
   background-color: #ffffff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem; /* Reduced padding for mobile */
+  border-radius: 10px; /* Slightly less rounded */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   width: 100%;
-  max-width: 500px;
+  max-width: 90%; /* Max width for mobile */
   text-align: center;
 }
 
 .complete-profile-form-card h2 {
   color: #333;
-  margin-bottom: 10px;
-  font-size: 2rem;
+  margin-bottom: 0.8rem;
+  font-size: 1.8rem; /* Smaller for mobile */
 }
 
 .complete-profile-form-card .profile-subtitle {
   color: #666;
-  margin-bottom: 30px;
-  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem; /* Smaller for mobile */
 }
 
 .complete-profile-form-card .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 1rem; /* Smaller margin for mobile */
   text-align: left;
 }
 
 .complete-profile-form-card .form-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
   color: #555;
   font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .complete-profile-form-card .form-group input,
 .complete-profile-form-card .form-group select {
-  width: calc(100% - 20px);
-  padding: 12px 10px;
+  width: 100%; /* Full width for mobile */
+  box-sizing: border-box; /* Include padding in width */
+  padding: 0.6rem 0.8rem; /* Adjusted padding */
   border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 6px; /* Less rounded */
+  font-size: 0.9rem;
   transition: border-color 0.3s ease;
 }
 
@@ -55,59 +58,102 @@
 .complete-profile-form-card .form-group select:focus {
   border-color: #007bff;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15); /* Softer focus shadow */
 }
 
-.complete-profile-form-card .error-message {
-  color: #dc3545;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-}
-
+.complete-profile-form-card .error-message,
 .complete-profile-form-card .success-message {
-  color: #28a745;
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
+  padding: 0.8rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
 }
 
 .complete-profile-form-card .save-profile-button {
   background-color: #007bff;
   color: white;
-  padding: 14px 25px;
+  padding: 0.8rem 1.5rem; /* Reduced padding for mobile */
   border: none;
   border-radius: 8px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  width: 100%;
+  width: 100%; /* Full width on mobile */
+  margin-top: 1rem;
 }
 
 .complete-profile-form-card .save-profile-button:hover:not(:disabled) {
   background-color: #0056b3;
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .complete-profile-form-card .save-profile-button:disabled {
   background-color: #a0c9f1;
   cursor: not-allowed;
+  transform: none;
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  .complete-profile-form-card {
-    padding: 30px 20px;
-    margin: 15px;
+/* Tablet Layout */
+@media (min-width: 768px) {
+  .complete-profile-page-container {
+    padding: 2rem;
   }
+
+  .complete-profile-form-card {
+    padding: 2.5rem;
+    border-radius: 12px;
+    max-width: 450px; /* Wider for tablet */
+  }
+
   .complete-profile-form-card h2 {
-    font-size: 1.8rem;
+    font-size: 2rem;
+  }
+
+  .complete-profile-form-card .profile-subtitle {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .complete-profile-form-card .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .complete-profile-form-card .form-group label {
+    font-size: 1rem;
+  }
+
+  .complete-profile-form-card .form-group input,
+  .complete-profile-form-card .form-group select {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+
+  .complete-profile-form-card .save-profile-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    width: auto; /* Auto width on tablet */
+    min-width: 180px; /* Ensure a minimum width */
+  }
+}
+
+/* Laptop/Desktop Layout */
+@media (min-width: 1024px) {
+  .complete-profile-form-card {
+    padding: 40px; /* Original padding */
+    max-width: 500px; /* Original max-width */
+  }
+
+  .complete-profile-form-card h2 {
+    font-size: 2.2rem; /* Original font size */
+  }
+
+  .complete-profile-form-card .profile-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .complete-profile-form-card .save-profile-button {
+    padding: 14px 25px; /* Original padding */
+    font-size: 1.1rem;
   }
 }

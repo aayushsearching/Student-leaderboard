@@ -1,30 +1,80 @@
 /* Overall Dashboard Layout */
-.dashboard-container {
+.dashboard-page-wrapper {
   display: flex;
-  background-color: #f7f8fc; /* Light gray background */
+  flex-direction: column; /* Mobile: Stack header and content */
+  background-color: #f7f8fc;
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  position: relative; /* For sidebar overlay */
 }
 
-/* Sidebar Styling */
-.dashboard-sidebar {
-  width: 260px;
-  background-color: #ffffff; /* White sidebar */
-  padding: 1.5rem;
+/* Mobile Header (visible only on mobile) */
+.dashboard-header-mobile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #eef0f6;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 60px; /* Adjust height as needed */
+}
+
+.dashboard-header-mobile .mobile-logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Hamburger Menu (re-using styles from App.css, but local override if needed) */
+.dashboard-header-mobile .hamburger-menu {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #eef0f6; /* Soft border */
-  height: 100vh; /* Ensure sidebar takes full viewport height */
-  position: fixed; /* Keep sidebar in place */
+  justify-content: space-around;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dashboard-header-mobile .hamburger-menu .bar {
+  width: 100%;
+  height: 3px;
+  background-color: #333;
+  border-radius: 2px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Sidebar Styling - Mobile First */
+.dashboard-sidebar {
+  position: fixed;
   top: 0;
   left: 0;
-  overflow-y: auto; /* Allow scrolling if content overflows */
-  z-index: 1000; /* Ensure sidebar is above other content */
+  width: 100%; /* Full width overlay on mobile */
+  height: 100vh;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  flex-direction: column;
+  border-right: none; /* No border on mobile overlay */
+  transform: translateX(-100%); /* Hidden by default */
+  transition: transform 0.3s ease-in-out;
+  z-index: 1001; /* Above mobile header */
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  display: flex; /* Ensure it's a flex container even when off-screen */
+}
+
+.dashboard-sidebar.open {
+  transform: translateX(0); /* Slide in when open */
 }
 
 .sidebar-header {
   margin-bottom: 2rem;
   padding-left: 1rem;
+  text-align: center; /* Center header in mobile overlay */
 }
 
 .sidebar-header h2 {
@@ -43,16 +93,16 @@
   display: flex;
   align-items: center;
   padding: 0.9rem 1rem;
-  border-radius: 12px; /* Rounded edges for nav items */
+  border-radius: 12px;
   text-decoration: none;
-  color: #8a92a6; /* Muted text */
+  color: #8a92a6;
   font-weight: 500;
   margin-bottom: 0.5rem;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .sidebar-nav li.active a {
-  background-color: #333; /* Dark active state pill */
+  background-color: #333;
   color: #fff;
 }
 
@@ -65,234 +115,127 @@
   font-size: 1.2rem;
 }
 
-/* Main Content Area */
+/* Main Content Area - Mobile First */
 .dashboard-main-content {
   flex-grow: 1;
-  padding: 2rem;
+  padding: 1rem; /* Smaller padding for mobile */
   display: flex;
   flex-direction: column;
-  margin-left: 260px; /* Offset main content by sidebar width */
+  margin-left: 0; /* No margin on mobile */
+  background-color: #f7f8fc; /* Ensure background consistency */
+  padding-top: 20px; /* Space from mobile header */
 }
 
-/* Header Bar Styling */
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.search-bar input {
-  width: 350px;
-  padding: 0.75rem 1.5rem;
-  border-radius: 50px; /* Pill-shaped */
-  border: 1px solid #eef0f6;
-  font-size: 1rem;
-  color: #333;
-  background-color: #fff;
-}
-
-.search-bar input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.date-selector {
-  background-color: #fff;
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #eef0f6;
-  color: #555;
-  font-weight: 500;
-}
-
-.segmented-toggle {
-  display: flex;
-  background-color: #eef0f6;
-  border-radius: 10px;
-  padding: 4px;
-}
-
-.segmented-toggle button {
-  background-color: transparent;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  color: #8a92a6;
-  font-weight: 500;
-}
-
-.segmented-toggle button.active {
-  background-color: #fff;
-  color: #333;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* Content Grid & Cards */
+/* Content Grid & Cards - Mobile First */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 1fr; /* Stack vertically on mobile */
+  gap: 1rem; /* Smaller gap for mobile */
 }
 
-.dashboard-card {
-  background-color: #fff;
-  padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
-  border: 1px solid #eef0f6;
+/* Tablet Layout */
+@media (min-width: 768px) {
+  .dashboard-page-wrapper {
+    flex-direction: row; /* Tablet: Sidebar and main content side-by-side */
+  }
+
+  .dashboard-header-mobile {
+    display: none; /* Hide mobile header */
+  }
+
+  .dashboard-sidebar {
+    position: sticky; /* Sticky on tablet/desktop */
+    top: 0;
+    left: 0;
+    width: 200px; /* Tablet sidebar width */
+    height: 100vh; /* Full height */
+    transform: translateX(0); /* Always visible */
+    border-right: 1px solid #eef0f6; /* Re-add border */
+    z-index: 1000; /* Lower z-index than mobile overlay */
+    box-shadow: none; /* Remove shadow */
+  }
+
+  .sidebar-header {
+    text-align: left; /* Align header to left */
+    padding-left: 0;
+  }
+
+  .dashboard-main-content {
+    margin-left: 200px; /* Offset for tablet sidebar */
+    padding: 1.5rem; /* Increased padding */
+  }
+
+  /* Dashboard Grid */
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* 2 columns on tablet */
+    gap: 1.5rem;
+  }
 }
 
-.dashboard-card.full-width {
-  grid-column: 1 / -1; /* Make a card span full width */
+/* Laptop/Desktop Layout */
+@media (min-width: 1024px) {
+  .dashboard-sidebar {
+    width: 260px; /* Laptop sidebar width */
+  }
+
+  .dashboard-main-content {
+    margin-left: 260px; /* Offset for laptop sidebar */
+    padding: 2rem; /* Original padding */
+  }
+
+  /* Dashboard Grid */
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 3-4 columns on laptop */
+    gap: 2rem;
+  }
 }
 
-.dashboard-card h3 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
+/* Header Bar Styling (if exists in DashboardPage.js for desktop view) */
+/* Assuming dashboard-header and search-bar are for larger screens */
+@media (min-width: 768px) {
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .search-bar input {
+    width: 350px;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
 }
 
-.dashboard-card h4 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+/* Specific button styles for the dashboard hamburger menu */
+/* To ensure consistency, use styles similar to App.css hamburger */
+.hamburger-menu {
+  display: flex; /* Always flex for styling, but hidden via media query */
+  flex-direction: column;
+  justify-content: space-around;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
-.muted-text {
-  color: #8a92a6;
-}
-
-/* Data Table Styling */
-.data-table {
+.hamburger-menu .bar {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 0.5rem; /* Space between rows */
+  height: 3px;
+  background-color: #333;
+  border-radius: 2px;
+  transition: all 0.3s ease-in-out;
 }
 
-.data-table th {
-  text-align: left;
-  padding: 0 1rem 0.5rem;
-  color: #8a92a6;
-  font-weight: 500;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-}
-
-.data-table td {
-  padding: 1rem;
-}
-
-.data-table tbody tr {
-  background-color: #f7f8fc; /* Light background for rows */
-  border-radius: 10px; /* Rounded rows */
-}
-
-.user-cell {
-  display: flex;
-  align-items: center;
-}
-
-.user-cell span {
-  display: inline-block;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: #eef0f6;
-  color: #333;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 1rem;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 50px;
-  font-weight: 500;
-  font-size: 0.85rem;
-}
-
-.status-badge.status-active {
-  background-color: #d4edda; /* Soft green */
-  color: #155724;
-}
-
-.status-badge.status-inactive {
-  background-color: #f8d7da; /* Soft red */
-  color: #721c24;
-}
-
-/* Chart and Stacked Panel Styling */
-.chart-container {
-  width: 100%;
-  height: 150px;
-}
-
-.chart-line {
-  stroke: #007bff;
-  stroke-width: 2;
-}
-
-.chart-point {
-  fill: #007bff;
-  stroke: white;
-  stroke-width: 2;
-}
-
-.stacked-panels {
-  position: relative;
-  height: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.panel {
-  position: absolute;
-  width: 80%;
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease;
-}
-
-.panel-1 {
-  background-color: #e0f2f7;
-  transform: rotate(-5deg) translateY(-10px);
-  z-index: 1;
-}
-
-.panel-2 {
-  background-color: #cce7ef;
-  transform: rotate(3deg);
-  z-index: 2;
-}
-
-.panel-3 {
-  background-color: #b8dde7;
-  transform: rotate(8deg) translateY(10px);
-  z-index: 3;
-}
-
-.stacked-panels:hover .panel-1 {
-  transform: rotate(0) translateY(-30px);
-}
-
-.stacked-panels:hover .panel-2 {
-  transform: rotate(0);
-}
-
-.stacked-panels:hover .panel-3 {
-  transform: rotate(0) translateY(30px);
+@media (min-width: 768px) {
+  .hamburger-menu {
+    display: none; /* Hide on tablet and larger screens */
+  }
 }

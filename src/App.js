@@ -31,24 +31,35 @@ function HomeContent() {
 }
 
 function MainLayout({ session, onLogout, user, profile }) { // Add profile prop
-  // Removed notification state and logic from here
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <>
       <nav className="main-nav">
         <div className="logo">MentorFlow</div>
-        <div className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/how-it-works">How it Works</Link>
-          <Link to="/about">About</Link>
-          {session && <Link to="/dashboard">Dashboard</Link>}
-          {/* Removed notification link */}
-          {!session && <Link to="/login">Login</Link>}
+        <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+          <Link to="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
+          <Link to="/how-it-works" onClick={() => setIsMenuOpen(false)}>How it Works</Link>
+          <Link to="/about" onClick={() => setIsMenuOpen(false)}>About</Link>
+          {session && <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>}
+          {!session && <Link to="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>}
         </div>
-        {!session ? (
-          <Link to="/signup" className="nav-cta">Sign Up Free</Link>
-        ) : (
-          <button className="nav-cta" onClick={onLogout}>Logout</button>
-        )}
+        <div className="nav-actions">
+          {!session ? (
+            <Link to="/signup" className="nav-cta" onClick={() => setIsMenuOpen(false)}>Sign Up Free</Link>
+          ) : (
+            <button className="nav-cta" onClick={() => { onLogout(); setIsMenuOpen(false); }}>Logout</button>
+          )}
+          <button className="hamburger-menu" onClick={toggleMenu} aria-label="Toggle menu">
+            <span className="bar"></span>
+            <span className="bar"></span>
+            <span className="bar"></span>
+          </button>
+        </div>
       </nav>
       <Outlet />
     </>

@@ -1,95 +1,90 @@
-/* AdminPage.css */
+/* AdminPage.css - Mobile First */
 
 .admin-grid-layout {
-  display: grid;
-  grid-template-columns: 3fr 2fr; /* 60% for list, 40% for form */
-  gap: 2rem;
-  height: calc(100vh - 4rem); /* Full height minus page padding */
+  display: flex; /* Mobile: Stack panels vertically */
+  flex-direction: column;
+  gap: 1.5rem; /* Smaller gap for mobile */
+  padding: 1rem; /* Add padding to the layout itself */
+  min-height: calc(100vh - 4rem); /* Adjust height calculation */
 }
 
 .task-list-panel, .form-panel {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  flex-grow: 1; /* Allow panels to grow when stacked */
+  height: auto; /* Auto height for stacked panels */
 }
 
 .task-list-container {
   flex-grow: 1;
-  overflow-y: auto; /* Makes the list scrollable */
-  margin-top: 1.5rem;
+  overflow-y: auto;
+  margin-top: 1rem;
+}
+
+/* Responsive table wrapper (same as leaderboard) */
+.table-responsive-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
 }
 
 .tasks-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px; /* Ensure table scrolls horizontally */
 }
 
 .admin-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem; /* Smaller margin for mobile */
 }
 
 .admin-header h1 {
-  font-size: 2.5rem;
+  font-size: 2rem; /* Smaller for mobile */
   margin-bottom: 0.5rem;
 }
 
 .admin-header p {
-  color: #6c757d;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .admin-card {
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Softer shadow */
+  padding: 1.5rem; /* Smaller padding for mobile */
 }
 
 .admin-card h3 {
-  font-size: 1.5rem;
+  font-size: 1.25rem; /* Smaller for mobile */
   margin-top: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   border-bottom: 1px solid #e9ecef;
-  padding-bottom: 1rem;
+  padding-bottom: 0.8rem;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem; /* Smaller margin for mobile */
 }
 
 .form-group label {
-  display: block;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.6rem; /* Smaller padding for mobile */
   border: 1px solid #ced4da;
   border-radius: 4px;
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #80bdff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-.form-group textarea {
-  min-height: 120px;
-  resize: vertical;
+  font-size: 0.9rem;
 }
 
 .form-row {
   display: flex;
-  gap: 1.5rem;
+  flex-direction: column; /* Mobile: Stack form groups */
+  gap: 1rem;
 }
 
 .form-row .form-group {
@@ -97,9 +92,9 @@
 }
 
 .admin-submit-button {
-  width: 100%;
-  padding: 0.85rem;
-  font-size: 1rem;
+  width: 100%; /* Full width on mobile */
+  padding: 0.75rem; /* Smaller padding */
+  font-size: 0.95rem;
   font-weight: 600;
   color: #fff;
   background-color: #007bff;
@@ -109,37 +104,19 @@
   transition: background-color 0.2s;
 }
 
-.admin-submit-button:hover {
+.admin-submit-button:hover:not(:disabled) {
   background-color: #0056b3;
 }
 
 .admin-submit-button:disabled {
-  background-color: #6c757d;
+  background-color: #aeb5bd;
   cursor: not-allowed;
 }
 
-.publish-info-box {
-  background-color: #e9ecef;
-  padding: 0.75rem;
-  border-radius: 4px;
-  color: #495057;
-  border: 1px solid #ced4da;
-}
-
-.warning-box {
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
-  color: #856404;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-top: 1rem;
-  text-align: center;
-}
-
 .cancel-edit-button {
-  width: 100%;
-  padding: 0.75rem;
-  margin-top: 1rem;
+  width: 100%; /* Full width on mobile */
+  padding: 0.7rem;
+  margin-top: 0.8rem;
   font-size: 0.9rem;
   font-weight: 600;
   color: #495057;
@@ -150,140 +127,90 @@
   transition: background-color 0.2s;
 }
 
-.cancel-edit-button:hover {
+.cancel-edit-button:hover:not(:disabled) {
   background-color: #f1f3f5;
-}
-
-.task-list-card {
-  margin-top: 2rem;
-}
-
-.tasks-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1.5rem;
-}
-
-.tasks-table th,
-.tasks-table td {
-  padding: 0.9rem;
-  text-align: left;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.tasks-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
 }
 
 .task-actions {
   display: flex;
+  flex-direction: column; /* Mobile: Stack action buttons */
   gap: 0.5rem;
 }
 
 .task-actions .edit-btn,
 .task-actions .delete-btn {
-  padding: 0.4rem 0.8rem;
+  width: 100%; /* Full width on mobile */
+  padding: 0.5rem 0.8rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-weight: 500;
 }
 
-.edit-btn {
-  background-color: #ffc107;
-  color: #212529;
+/* Tablet Layout */
+@media (min-width: 768px) {
+  .admin-grid-layout {
+    display: grid; /* Switch to grid layout */
+    grid-template-columns: 3fr 2fr; /* Original columns */
+    gap: 1.5rem; /* Moderate gap */
+    padding: 2rem;
+    min-height: calc(100vh - 4rem); /* Re-apply height for desktop */
+  }
+
+  .admin-card {
+    padding: 2rem; /* Original padding */
+  }
+
+  .admin-card h3 {
+    font-size: 1.5rem; /* Original size */
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .form-group label {
+    font-size: 1rem;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 0.75rem; /* Original padding */
+    font-size: 1rem;
+  }
+
+  .form-row {
+    flex-direction: row; /* Tablet: Row layout for form groups */
+    gap: 1.5rem;
+  }
+
+  .admin-submit-button,
+  .cancel-edit-button {
+    width: auto; /* Auto width for larger screens */
+    min-width: 150px; /* Ensure a minimum width */
+    padding: 0.85rem;
+  }
+
+  .task-actions {
+    flex-direction: row; /* Tablet: Row layout for action buttons */
+  }
+
+  .task-actions .edit-btn,
+  .task-actions .delete-btn {
+    width: auto; /* Auto width */
+  }
 }
 
-.assign-btn {
-  background-color: #007bff;
-  color: #fff;
-}
+/* Laptop/Desktop Layout */
+@media (min-width: 1024px) {
+  .admin-grid-layout {
+    gap: 2rem; /* Original gap */
+  }
 
-.assign-btn:hover {
-  background-color: #0056b3;
-}
+  .admin-header h1 {
+    font-size: 2.5rem; /* Original size */
+  }
 
-.assignment-actions {
-  margin-top: 1.5rem;
-  text-align: center;
-}
-
-.assignment-actions hr {
-  margin: 1.5rem 0;
-  border: 0;
-  border-top: 1px solid #dee2e6;
-}
-
-.assign-specific-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  text-align: left;
-}
-
-.assign-specific-form label {
-  font-weight: 600;
-}
-
-.assign-specific-form select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-}
-
-/* Make the specific assign button smaller */
-.assign-specific-form .edit-btn {
-  padding: 0.75rem;
-}
-
-.edit-btn:hover {
-  background-color: #e0a800;
-}
-
-.delete-btn {
-  background-color: #dc3545;
-  color: #fff;
-}
-
-.delete-btn:hover {
-  background-color: #c82333;
-}
-
-.error-message {
-  color: #dc3545;
-  background-color: #f8d7da;
-  padding: 1rem;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-  margin-bottom: 1.5rem;
-}
-
-.success-message {
-  color: #155724;
-  background-color: #d4edda;
-  padding: 1rem;
-  border: 1px solid #c3e6cb;
-  border-radius: 4px;
-  margin-bottom: 1.5rem;
-}
-
-/* Auto-assign section styles */
-.auto-assign-section {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.auto-assign-message {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  text-align: center;
-  /* Differentiate success/error messages, similar to existing ones */
-  color: #007bff; /* Use primary color for general messages */
-  background-color: #e7f3ff;
-  border: 1px solid #b3d9ff;
+  .admin-header p {
+    font-size: 1.1rem;
+  }
 }

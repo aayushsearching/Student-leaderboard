@@ -7,6 +7,15 @@ function DashboardPage({ user }) { // Receive user prop
   const location = useLocation(); // Get current location
   const navigate = useNavigate(); // Initialize useNavigate
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for mobile sidebar
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+  };
 
   const fetchUnreadCount = useCallback(async () => {
     if (!user) {
@@ -54,53 +63,59 @@ function DashboardPage({ user }) { // Receive user prop
   }, [user, navigate, fetchUnreadCount]); // Depend on user, navigate, and fetchUnreadCount
 
   return (
-    <div className="dashboard-container">
-      {/* Sidebar */}
-      <aside className="dashboard-sidebar">
+    <div className="dashboard-page-wrapper"> {/* New wrapper for overall layout */}
+      <div className="dashboard-header-mobile">
+        <button className="hamburger-menu" onClick={toggleSidebar} aria-label="Toggle sidebar">
+          <span className="bar"></span>
+          <span className="bar"></span>
+          <span className="bar"></span>
+        </button>
+        <div className="mobile-logo">MentorFlow</div>
+      </div>
+
+      <aside className={`dashboard-sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <h2>MentorFlow</h2>
         </div>
         <nav className="sidebar-nav">
           <ul>
             <li className={location.pathname === '/dashboard' ? 'active' : ''}>
-              <Link to="/dashboard">
+              <Link to="/dashboard" onClick={closeSidebar}>
                 <span className="icon">📊</span>
                 <span>Dashboard</span>
               </Link>
             </li>
-            <li className={location.pathname === '/dashboard/tasks' ? 'active' : ''}> {/* Updated path */}
-              <Link to="/dashboard/tasks">
+            <li className={location.pathname === '/dashboard/tasks' ? 'active' : ''}>
+              <Link to="/dashboard/tasks" onClick={closeSidebar}>
                 <span className="icon">✅</span>
                 <span>Tasks</span>
               </Link>
             </li>
             <li className={location.pathname === '/dashboard/leaderboard' ? 'active' : ''}>
-              <Link to="/dashboard/leaderboard">
+              <Link to="/dashboard/leaderboard" onClick={closeSidebar}>
                 <span className="icon">🏆</span>
                 <span>Leaderboard</span>
               </Link>
             </li>
             <li className={location.pathname.startsWith('/dashboard/notifications') ? 'active' : ''}>
-              <Link to="/dashboard/notifications">
-                <span className="icon">🔔</span> {/* Notification icon */}
+              <Link to="/dashboard/notifications" onClick={closeSidebar}>
+                <span className="icon">🔔</span>
                 <span>Notifications</span>
                 {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
               </Link>
             </li>
             <li className={location.pathname === '/profile' ? 'active' : ''}>
-              <Link to="/profile">
+              <Link to="/profile" onClick={closeSidebar}>
                 <span className="icon">👤</span>
                 <span>Profile</span>
               </Link>
             </li>
-
           </ul>
         </nav>
       </aside>
 
-      {/* Main Content Area - Renders nested routes */}
       <main className="dashboard-main-content">
-        <Outlet /> {/* This is where nested routes will render */}
+        <Outlet />
       </main>
     </div>
   );

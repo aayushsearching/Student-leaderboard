@@ -229,7 +229,8 @@ function BadgeRankingPage({ user }) { // Accept user prop
               {/* Leaderboard List: Top 10 Students */}
               <div className="leaderboard-card">
                 <h4>Top 10 Students</h4>
-                <table className="leaderboard-table">
+                <div className="table-responsive-wrapper"> {/* New wrapper for responsive table */}
+                  <table className="leaderboard-table">
                   <thead>
                     <tr>
                       <th>Rank</th>
@@ -263,6 +264,7 @@ function BadgeRankingPage({ user }) { // Accept user prop
                     )}
                   </tbody>
                 </table>
+                </div> {/* Closing tag for table-responsive-wrapper */}
               </div>
             </>
           )}

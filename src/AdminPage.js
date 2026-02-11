@@ -154,7 +154,8 @@ function AdminPage() { // Removed user prop
         {error && <p className="error-message">{error}</p>}
         {success && <p className="success-message">{success}</p>}
         <div className="task-list-container">
-          <table className="tasks-table">
+          <div className="table-responsive-wrapper"> {/* New wrapper for responsive table */}
+            <table className="tasks-table">
             <thead><tr><th>Title</th><th>Points</th><th>Actions</th></tr></thead>
             <tbody>
               {templateTasks.length > 0 ? templateTasks.map(task => (
@@ -171,6 +172,7 @@ function AdminPage() { // Removed user prop
               )}
             </tbody>
           </table>
+          </div> {/* Closing tag for table-responsive-wrapper */}
         </div>
       </div>
 

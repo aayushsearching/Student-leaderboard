@@ -19,31 +19,78 @@ body {
   text-align: center;
 }
 
-/* Navigation Bar */
+/* General Setup */
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f8f7;
+  background-image: radial-gradient(#d7d7d7 1px, transparent 1px);
+  background-size: 1.5rem 1.5rem;
+  color: #333;
+}
+
+.App {
+  text-align: center;
+}
+
+/* Navigation Bar - Mobile First */
 .main-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: rgba(248, 248, 247, 0.8);
-  backdrop-filter: blur(10px);
+  padding: 1rem; /* Smaller padding for mobile */
+  background-color: rgba(248, 248, 247, 0.95); /* More opaque for mobile */
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid #eee;
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 64px; /* Explicit height for calculation */
+  height: 64px;
 }
 
 .logo {
   font-weight: bold;
-  font-size: 1.5rem;
+  font-size: 1.25rem; /* Smaller logo for mobile */
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column; /* Stacked by default */
+  position: absolute;
+  top: 64px; /* Below the nav bar */
+  left: 0;
+  width: 100%;
+  background-color: rgba(248, 248, 247, 0.98);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transform: translateY(-100%); /* Hidden by default */
+  transition: transform 0.3s ease-out;
+  padding-bottom: 1rem;
+  z-index: 90;
+  align-items: center;
+}
+
+.nav-links.open {
+  transform: translateY(0); /* Shown when open */
 }
 
 .nav-links a {
-  margin: 0 1rem;
+  margin: 0.75rem 0; /* Vertical spacing for stacked links */
   text-decoration: none;
   color: #555;
   font-weight: 500;
+  width: fit-content;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .nav-cta {
@@ -51,137 +98,200 @@ body {
   color: #333;
   border: none;
   padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border-radius: 14px; /* Rounded edges */
+  font-size: 0.9rem; /* Smaller CTA for mobile */
+  border-radius: 14px;
   cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap; /* Prevent wrapping */
 }
 
-/* Hero Section */
+/* Hamburger Menu */
+.hamburger-menu {
+  display: flex; /* Visible on mobile */
+  flex-direction: column;
+  justify-content: space-around;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 101; /* Above nav links */
+}
+
+.hamburger-menu .bar {
+  width: 100%;
+  height: 3px;
+  background-color: #333;
+  border-radius: 2px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Hero Section - Mobile First */
 .hero-section {
   position: relative;
-  height: calc(100vh - 64px); /* Full viewport height minus nav height */
+  height: calc(100vh - 64px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
-  /* overflow: hidden; Removed to allow scrolling within the section if content overflows */
-  box-sizing: border-box; /* Include padding in the height calculation */
+  padding: 1rem; /* Smaller padding for mobile */
+  box-sizing: border-box;
 }
 
 .hero-content {
   position: relative;
   z-index: 10;
+  max-width: 100%;
 }
 
 .hero-content h1 {
-  font-size: 4rem;
+  font-size: 2.5rem; /* Smaller for mobile */
   font-weight: 700;
-  color: #000; /* Bold, black primary headline */
+  color: #000;
   margin: 0;
+  line-height: 1.2;
 }
 
 .hero-content .secondary-text {
-  font-size: 1.25rem;
-  color: #666; /* Lighter gray secondary text */
-  margin: 1rem 0 2rem;
+  font-size: 1rem; /* Smaller for mobile */
+  color: #666;
+  margin: 1rem 0 1.5rem;
+  max-width: 300px; /* Constrain text width on mobile */
 }
 
 .cta-button {
-  background-color: #007bff; /* Solid blue */
+  background-color: #007bff;
   color: white;
   border: none;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
+  padding: 0.8rem 1.5rem; /* Smaller for mobile */
+  font-size: 1rem;
   font-weight: 500;
-  border-radius: 20px; /* Rounded primary CTA */
+  border-radius: 20px;
   cursor: pointer;
   transition: transform 0.2s ease;
   box-shadow: 0 4px 14px rgba(0, 123, 255, 0.3);
-  text-decoration: none; /* Remove underline */
+  text-decoration: none;
+  width: 100%; /* Full width on mobile */
+  max-width: 250px; /* Max width for button */
+  box-sizing: border-box; /* Include padding in width */
 }
 
 .cta-button:hover {
   transform: translateY(-2px);
 }
 
-/* UI Card General Styling */
+/* UI Card General Styling - Hidden on mobile */
 .ui-card {
-  position: absolute;
-  background: white;
-  border-radius: 16px; /* Rounded corners */
-  padding: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07); /* Soft shadows */
-  border: 1px solid #eee;
-  z-index: 1;
+  display: none;
 }
 
-/* Individual Card Positioning & Styling */
-.card-task {
-  top: 20%;
-  left: 15%;
-  transform: rotate(-8deg);
-  width: 250px;
+
+/* Tablet Layout */
+@media (min-width: 768px) {
+  .main-nav {
+    padding: 1rem 2rem;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+  }
+
+  .nav-links {
+    position: static; /* Static positioning */
+    flex-direction: row; /* Horizontal */
+    transform: translateY(0); /* Always visible */
+    background-color: transparent;
+    box-shadow: none;
+    padding-bottom: 0;
+    width: auto;
+  }
+
+  .nav-links a {
+    margin: 0 1rem; /* Horizontal spacing */
+  }
+
+  .nav-cta {
+    font-size: 1rem;
+    width: auto; /* Auto width on larger screens */
+  }
+
+  .hamburger-menu {
+    display: none; /* Hide hamburger */
+  }
+
+  .hero-content h1 {
+    font-size: 3.5rem; /* Larger for tablet */
+  }
+
+  .hero-content .secondary-text {
+    font-size: 1.15rem;
+    max-width: none; /* Remove width constraint */
+  }
+
+  .cta-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    width: auto; /* Auto width on larger screens */
+  }
+
+  /* Show UI cards on tablet and above */
+  .ui-card {
+    display: block; /* Show ui-cards */
+    position: absolute; /* Re-apply positioning */
+  }
 }
 
-.progress-bar {
-  background-color: #eee;
-  border-radius: 10px;
-  height: 10px;
-  width: 100%;
-  margin-top: 1rem;
-}
+/* Laptop/Desktop Layout */
+@media (min-width: 1024px) {
+  .logo {
+    font-size: 1.8rem;
+  }
 
-.progress {
-  background-color: #4caf50; /* Green progress */
-  height: 100%;
-  border-radius: 10px;
-}
+  .nav-links a {
+    margin: 0 1.2rem;
+  }
 
-.card-sticky-note {
-  top: 30%;
-  right: 18%;
-  transform: rotate(6deg);
-  background-color: #fffacd;
-  width: 220px;
-  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; /* Handwritten font */
-}
+  .nav-cta {
+    padding: 0.6rem 1.2rem;
+    font-size: 1.05rem;
+  }
 
-.card-reminder {
-  bottom: 25%;
-  left: 25%;
-  transform: rotate(4deg);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: 280px;
-}
+  .hero-content h1 {
+    font-size: 4rem; /* Original size for desktop */
+  }
 
-.card-reminder .icon {
-  font-size: 1.5rem;
-}
+  .hero-content .secondary-text {
+    font-size: 1.25rem; /* Original size for desktop */
+  }
 
-.card-integration {
-  bottom: 15%;
-  right: 12%;
-  transform: rotate(-5deg);
-  width: 200px;
-}
+  .cta-button {
+    padding: 1.2rem 2.5rem;
+    font-size: 1.2rem;
+  }
 
-.app-icons {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  /* Specific card positioning for desktop */
+  .card-task {
+    top: 20%;
+    left: 15%;
+    transform: rotate(-8deg);
+    width: 250px;
+  }
+  .card-sticky-note {
+    top: 30%;
+    right: 18%;
+    transform: rotate(6deg);
+    width: 220px;
+  }
+  .card-reminder {
+    bottom: 25%;
+    left: 25%;
+    transform: rotate(4deg);
+    width: 280px;
+  }
+  .card-integration {
+    bottom: 15%;
+    right: 12%;
+    transform: rotate(-5deg);
+    width: 200px;
+  }
 }
-
-.app-icons span {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-weight: bold;
-  color: white;
-}
-.app-icons span:nth-child(1) { background-color: #ff5722; }
-.app-icons span:nth-child(2) { background-color: #3f51b5; }
-.app-icons span:nth-child(3) { background-color: #4caf50; }
