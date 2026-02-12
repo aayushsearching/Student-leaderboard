@@ -1,18 +1,25 @@
-/* AdminLayout.css */
 .admin-layout {
   display: flex;
   height: 100vh;
-  background-color: #f8f9fa;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bg-color);
+  font-family: var(--font-family);
 }
 
 .admin-sidebar {
   width: 260px;
-  background-color: #fff;
-  border-right: 1px solid #dee2e6;
+  background-color: var(--bg-color);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 0;
+  padding: 1.5rem;
+  box-shadow: 
+    9px 9px 16px rgba(163, 177, 198, 0.6),
+    -9px -9px 16px rgba(255, 255, 255, 0.5);
+  position: fixed; /* Make sidebar fixed */
+  left: 0;
+  top: 0;
+  height: 100vh; /* Full height */
+  flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -23,8 +30,9 @@
 
 .sidebar-header h2 {
   font-size: 1.8rem;
-  color: #343a40;
+  color: var(--primary-color);
   margin: 0;
+  font-weight: 800;
 }
 
 .sidebar-nav ul {
@@ -36,23 +44,27 @@
 .sidebar-nav a {
   display: flex;
   align-items: center;
-  padding: 0.9rem 1.5rem;
+  padding: 1rem;
   text-decoration: none;
-  color: #495057;
-  font-weight: 500;
-  transition: background-color 0.2s, color 0.2s;
-  border-left: 3px solid transparent;
+  color: var(--text-color-light);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
 }
 
 .sidebar-nav a:hover {
-  background-color: #f1f3f5;
-  color: #007bff;
+  color: var(--primary-color);
+  box-shadow: 
+    inset 2px 2px 5px #babecc,
+    inset -5px -5px 10px #fff;
 }
 
 .sidebar-nav a.active {
-  background-color: #e7f5ff;
-  color: #007bff;
-  border-left-color: #007bff;
+  color: var(--primary-color);
+  box-shadow: 
+    inset 2px 2px 5px #babecc,
+    inset -5px -5px 10px #fff;
 }
 
 .sidebar-nav .icon {
@@ -71,23 +83,47 @@
   align-items: center;
   justify-content: center;
   padding: 0.75rem;
-  background-color: #f1f3f5;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
+  background: var(--bg-color);
+  border: none;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 500;
-  color: #495057;
-  transition: background-color 0.2s, color 0.2s;
+  font-weight: 600;
+  color: var(--text-color-light);
+  transition: all 0.2s ease;
+  box-shadow: 
+    5px 5px 10px rgba(163, 177, 198, 0.6),
+    -5px -5px 10px rgba(255, 255, 255, 0.5);
 }
 
 .logout-button:hover {
-  background-color: #e9ecef;
-  color: #212529;
+  color: var(--primary-color);
+  box-shadow: 
+    inset 2px 2px 5px #babecc,
+    inset -5px -5px 10px #fff;
 }
 
 .admin-main-content {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  margin-left: 260px; /* Offset for fixed sidebar */
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 200px; /* Smaller fixed sidebar on smaller screens */
+  }
+  .admin-main-content {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-sidebar {
+    width: 150px; /* Even smaller fixed sidebar on very small screens */
+  }
+  .admin-main-content {
+    margin-left: 150px;
+  }
 }

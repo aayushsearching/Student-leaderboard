@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './AdminLayout.css';
+import { Edit, BarChart2, User, LogOut, Award } from 'react-feather';
 
 function AdminLayout() {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ function AdminLayout() {
     if (error) {
       console.error('Error signing out:', error.message);
     } else {
-      navigate('/'); // Redirect to home on successful logout
+      navigate('/');
     }
   };
 
@@ -24,29 +25,26 @@ function AdminLayout() {
         <nav className="sidebar-nav">
           <ul>
             <li>
-              {/* This will link to the task management page at /admin */}
               <NavLink to="/admin" end>
-                <span className="icon">📝</span>
+                <Edit className="icon" />
                 <span>Manage Tasks</span>
               </NavLink>
             </li>
             <li>
               <NavLink to="/admin/points">
-                <span className="icon">🪙</span>
+                <Award className="icon" />
                 <span>Point System</span>
               </NavLink>
             </li>
             <li>
-              {/* This links to the leaderboard rendered within the admin layout */}
               <NavLink to="/admin/leaderboard">
-                <span className="icon">🏆</span>
+                <BarChart2 className="icon" />
                 <span>View Leaderboard</span>
               </NavLink>
             </li>
             <li>
-              {/* This links to the profile page rendered within the admin layout */}
               <NavLink to="/admin/profile">
-                <span className="icon">👤</span>
+                <User className="icon" />
                 <span>My Profile</span>
               </NavLink>
             </li>
@@ -54,7 +52,7 @@ function AdminLayout() {
         </nav>
         <div className="sidebar-footer">
           <button onClick={handleLogout} className="logout-button">
-            <span className="icon">🚪</span>
+            <LogOut className="icon" />
             <span>Logout</span>
           </button>
         </div>

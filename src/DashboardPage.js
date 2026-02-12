@@ -1,21 +1,13 @@
-import React, { useEffect, useState, useCallback } from 'react'; // Import useState and useCallback
-import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom'; // Import useNavigate and useEffect
-import { supabase } from './supabaseClient'; // Import supabase
+import React, { useEffect, useState, useCallback } from 'react';
+import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
+import { supabase } from './supabaseClient';
 import './DashboardPage.css';
+import { Grid, CheckSquare, BarChart2, Bell, User } from 'react-feather';
 
-function DashboardPage({ user }) { // Receive user prop
-  const location = useLocation(); // Get current location
-  const navigate = useNavigate(); // Initialize useNavigate
+function DashboardPage({ user }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for mobile sidebar
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const closeSidebar = () => {
-    setIsSidebarOpen(false);
-  };
 
   const fetchUnreadCount = useCallback(async () => {
     if (!user) {
@@ -39,12 +31,11 @@ function DashboardPage({ user }) { // Receive user prop
 
   useEffect(() => {
     if (!user) {
-      navigate('/login'); // Redirect to login if no user
+      navigate('/login');
       return;
     }
     fetchUnreadCount();
 
-    // Realtime subscription for unread count
     const channel = supabase
       .channel('unread_dashboard_notifications_channel')
       .on('postgres_changes', { 
@@ -60,53 +51,44 @@ function DashboardPage({ user }) { // Receive user prop
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, navigate, fetchUnreadCount]); // Depend on user, navigate, and fetchUnreadCount
+  }, [user, navigate, fetchUnreadCount]);
 
   return (
     <div className="dashboard-page-wrapper">
-      <div className="dashboard-header-mobile">
-        <button className="hamburger-menu" onClick={toggleSidebar} aria-label="Toggle sidebar">
-          <span className="bar"></span>
-          <span className="bar"></span>
-          <span className="bar"></span>
-        </button>
-        <div className="mobile-logo">MentorFlow</div>
-      </div>
-
-      <aside className={`dashboard-sidebar ${isSidebarOpen ? 'open' : ''}`}>
+      <aside className="dashboard-sidebar">
         <div className="sidebar-header">
           <h2>MentorFlow</h2>
         </div>
         <nav className="sidebar-nav">
           <ul>
             <li className={location.pathname === '/dashboard' ? 'active' : ''}>
-              <Link to="/dashboard" onClick={closeSidebar}>
-                <span className="icon">📊</span>
+              <Link to="/dashboard">
+                <Grid className="icon" />
                 <span>Dashboard</span>
               </Link>
             </li>
             <li className={location.pathname === '/dashboard/tasks' ? 'active' : ''}>
-              <Link to="/dashboard/tasks" onClick={closeSidebar}>
-                <span className="icon">✅</span>
+              <Link to="/dashboard/tasks">
+                <CheckSquare className="icon" />
                 <span>Tasks</span>
               </Link>
             </li>
             <li className={location.pathname === '/dashboard/leaderboard' ? 'active' : ''}>
-              <Link to="/dashboard/leaderboard" onClick={closeSidebar}>
-                <span className="icon">🏆</span>
+              <Link to="/dashboard/leaderboard">
+                <BarChart2 className="icon" />
                 <span>Leaderboard</span>
               </Link>
             </li>
             <li className={location.pathname.startsWith('/dashboard/notifications') ? 'active' : ''}>
-              <Link to="/dashboard/notifications" onClick={closeSidebar}>
-                <span className="icon">🔔</span>
+              <Link to="/dashboard/notifications">
+                <Bell className="icon" />
                 <span>Notifications</span>
                 {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
               </Link>
             </li>
             <li className={location.pathname === '/profile' ? 'active' : ''}>
-              <Link to="/profile" onClick={closeSidebar}>
-                <span className="icon">👤</span>
+              <Link to="/profile">
+                <User className="icon" />
                 <span>Profile</span>
               </Link>
             </li>
