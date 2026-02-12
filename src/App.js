@@ -1,6 +1,6 @@
 import './App.css';
-import { Routes, Route, Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
-import { useEffect, useState, useCallback } from 'react'; // Added useCallback
+import { Routes, Route, Link, useNavigate, Outlet, useLocation, NavLink } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from './supabaseClient';
 import HowItWorks from './HowItWorks';
 import About from './About';
@@ -15,52 +15,108 @@ import AdminPage from './AdminPage';
 import AdminLayout from './AdminLayout';
 import PointSystemPage from './PointSystemPage';
 import ProtectedRoute from './ProtectedRoute';
-import NotificationsPage from './NotificationsPage'; // Import NotificationsPage
-import CompleteProfilePage from './CompleteProfilePage'; // Import CompleteProfilePage
+import NotificationsPage from './NotificationsPage';
+import CompleteProfilePage from './CompleteProfilePage';
+import { CheckSquare, GitMerge, Send, Users, Info, HelpCircle, LogIn, UserPlus, Grid, LogOut } from 'react-feather';
 
 function HomeContent() {
   return (
-    <main className="hero-section container-1200">
+    <main className="hero-section">
       <div className="hero-content">
         <h1>Level Up Your Skills, Boost Your Rank!</h1>
         <p className="secondary-text">Task-based mentorship for college students to learn, earn points, and climb the leaderboard.</p>
         <Link to="/login" className="cta-button">Join the Challenge</Link>
       </div>
+
+      {/* Floating UI Cards */}
+      <div className="ui-card card-task">
+        <div className="card-header">
+          <span className="card-title">Submit Task</span>
+          <CheckSquare className="card-icon" size={20} />
+        </div>
+        <div className="card-body">
+          <p>Complete the assigned task and submit for peer review.</p>
+        </div>
+        <div className="card-footer">
+          <div className="avatar-group">
+            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Avatar" className="avatar" />
+            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Avatar" className="avatar" />
+          </div>
+        </div>
+      </div>
+
+      <div className="ui-card card-sticky-note">
+        <p className="sticky-note-text">"The only way to do great work is to love what you do."</p>
+      </div>
+
+      <div className="ui-card card-reminder">
+        <div className="card-header">
+          <span className="card-title">Weekly Sync</span>
+          <Send className="card-icon" size={20} />
+        </div>
+        <div className="reminder-item">
+          <div className="reminder-checkbox"></div>
+          <span className="reminder-text">Sync up with the team on project progress.</span>
+        </div>
+      </div>
+
+      <div className="ui-card card-integration">
+        <div className="card-header">
+          <span className="card-title">Connect</span>
+        </div>
+        <div className="integration-icons">
+          <GitMerge className="card-icon" size={24} />
+          <Users className="card-icon" size={24} />
+        </div>
+      </div>
     </main>
   );
 }
 
-function MainLayout({ session, onLogout, user, profile }) { // Add profile prop
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+function MainLayout({ session, onLogout }) {
+  const location = useLocation();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const getActiveClass = ({ isActive }) => isActive ? 'nav-item active' : 'nav-item';
 
   return (
     <>
-      <nav className="main-nav">
-        <div className="logo">MentorFlow</div>
-        <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-          <Link to="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
-          <Link to="/how-it-works" onClick={() => setIsMenuOpen(false)}>How it Works</Link>
-          <Link to="/about" onClick={() => setIsMenuOpen(false)}>About</Link>
-          {session && <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>}
-          {!session && <Link to="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>}
-        </div>
-        <div className="nav-actions">
-          {!session ? (
-            <Link to="/signup" className="nav-cta" onClick={() => setIsMenuOpen(false)}>Sign Up Free</Link>
+      <div className="main-nav-container">
+        <nav className="main-nav">
+          <NavLink to="/" className="logo-link nav-item">
+            <div className="logo">MentorFlow</div>
+          </NavLink>
+          <NavLink to="/how-it-works" className={getActiveClass}>
+            <HelpCircle className="nav-icon" />
+            <span className="nav-label">How it Works</span>
+          </NavLink>
+          
+          {session ? (
+            <NavLink to="/dashboard" className="nav-primary-action">
+              <Grid />
+            </NavLink>
           ) : (
-            <button className="nav-cta" onClick={() => { onLogout(); setIsMenuOpen(false); }}>Logout</button>
+            <NavLink to="/login" className="nav-primary-action">
+              <LogIn />
+            </NavLink>
           )}
-          <button className="hamburger-menu" onClick={toggleMenu} aria-label="Toggle menu">
-            <span className="bar"></span>
-            <span className="bar"></span>
-            <span className="bar"></span>
-          </button>
-        </div>
-      </nav>
+
+          <NavLink to="/about" className={getActiveClass}>
+            <Info className="nav-icon" />
+            <span className="nav-label">About</span>
+          </NavLink>
+          {session ? (
+            <button onClick={onLogout} className="nav-item">
+              <LogOut className="nav-icon" />
+              <span className="nav-label">Logout</span>
+            </button>
+          ) : (
+            <NavLink to="/signup" className={getActiveClass}>
+              <UserPlus className="nav-icon" />
+              <span className="nav-label">Sign Up</span>
+            </NavLink>
+          )}
+        </nav>
+      </div>
       <div className="container-1200">
         <Outlet />
       </div>
@@ -71,17 +127,16 @@ function MainLayout({ session, onLogout, user, profile }) { // Add profile prop
 function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [profileComplete, setProfileComplete] = useState(null); // null, true, or false
-  const [profile, setProfile] = useState(null); // Store user profile
+  const [profileComplete, setProfileComplete] = useState(null);
+  const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
-  const location = useLocation(); // Initialize useLocation
+  const location = useLocation();
 
   useEffect(() => {
-    // Redirect logic
     if (!loading && session && profileComplete === false && location.pathname !== '/complete-profile') {
       navigate('/complete-profile');
     } else if (!loading && session && profileComplete === true && location.pathname === '/complete-profile') {
-      navigate('/dashboard'); // If profile is complete and user is on complete-profile page, redirect to dashboard
+      navigate('/dashboard');
     }
   }, [loading, session, profileComplete, location.pathname, navigate]);
 
@@ -97,19 +152,18 @@ function App() {
           .eq('id', data.session.user.id)
           .single();
 
-        if (profileError && profileError.code !== 'PGRST116') { // PGRST116 is 'No rows found'
+        if (profileError && profileError.code !== 'PGRST116') {
           console.error('Error fetching profile:', profileError);
-          setProfileComplete(false); // Assume incomplete on error
+          setProfileComplete(false);
         } else if (profileData) {
           setProfile(profileData);
           const isComplete = profileData.full_name && profileData.academic_year && profileData.branch;
-          setProfileComplete(!!isComplete); // Convert to boolean
+          setProfileComplete(!!isComplete);
         } else {
-          // No profile found, so it's incomplete
           setProfileComplete(false);
         }
       } else {
-        setProfileComplete(true); // No user, so no profile to complete or it's implicitly complete
+        setProfileComplete(true);
       }
       setLoading(false);
     };
@@ -119,7 +173,6 @@ function App() {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
-        // When auth state changes, re-evaluate profile completeness
         if (session?.user) {
           supabase
             .from('profiles')
@@ -139,7 +192,7 @@ function App() {
               }
             });
         } else {
-          setProfileComplete(true); // No user, implicitly complete
+          setProfileComplete(true);
           setProfile(null);
         }
       }
@@ -159,7 +212,7 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<MainLayout session={session} onLogout={handleLogout} user={session?.user} profile={profile} />}>
+        <Route path="/" element={<MainLayout session={session} onLogout={handleLogout} />}>
           <Route index element={<HomeContent />} />
           <Route path="how-it-works" element={<HowItWorks />} />
           <Route path="about" element={<About />} />
@@ -169,7 +222,7 @@ function App() {
             <Route index element={<DashboardOverview user={session?.user} />} />
             <Route path="tasks" element={<TasksPage user={session?.user} />} />
             <Route path="leaderboard" element={<BadgeRankingPage user={session?.user} />} />
-            <Route path="notifications" element={<NotificationsPage user={session?.user} />} /> {/* New route */}
+            <Route path="notifications" element={<NotificationsPage user={session?.user} />} />
           </Route>
           <Route path="profile" element={<ProfilePage user={session?.user} />} />
           <Route path="/complete-profile" element={<CompleteProfilePage user={session?.user} profile={profile} profileComplete={profileComplete} />} />
