@@ -1,2 +1,125 @@
-/* src/DashboardOverview.css */
-/* This file is now empty as all blocks have been removed from DashboardOverview.js */
+.dashboard-overview-container {
+  padding: 0; /* DashboardPage already has padding */
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto; /* Both blocks take content-based height */
+  gap: 1rem; /* Consistent spacing between its children */
+  overflow: hidden; /* Prevent scrolling on this container itself */
+  align-items: start; /* Align grid items to the start of their cells */
+}
+
+.top-students-leaderboard-block {
+  background-color: var(--bg-color);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: 5px 5px 10px rgba(163, 177, 198, 0.3), -5px -5px 10px rgba(255, 255, 255, 0.3);
+
+
+  overflow-y: auto; /* Allow internal scrolling if content is large */
+  display: flex; /* Ensure content stretches within */
+  flex-direction: column;
+}
+
+.top-students-leaderboard-block h2 {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  flex-shrink: 0; /* Prevent h2 from shrinking */
+}
+
+.student-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1; /* Allow list to grow and fill space */
+}
+
+.student-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(163, 177, 198, 0.2);
+}
+
+.student-item:last-child {
+  border-bottom: none;
+}
+
+.student-rank {
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-right: 0.75rem;
+  min-width: 25px; /* Ensure consistent spacing for rank numbers */
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.student-name {
+  font-weight: 600;
+  color: var(--text-color);
+  flex-grow: 1; /* Allow name to take available space */
+  white-space: nowrap; /* Prevent name from wrapping */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis for overflow */
+}
+
+.student-points {
+  font-weight: 500;
+  color: var(--text-color-light);
+  margin-left: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Placeholder styling */
+.placeholder-item {
+  background-color: rgba(163, 177, 198, 0.1); /* A subtle background for placeholders */
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  animation: pulse 1.5s infinite ease-in-out; /* Simple loading animation */
+}
+
+.placeholder-item .student-rank {
+    background-color: rgba(163, 177, 198, 0.2);
+    height: 1em;
+    border-radius: 4px;
+    display: inline-block;
+    min-width: 25px;
+    margin-right: 0.75rem;
+}
+
+.placeholder-item .student-name,
+.placeholder-item .student-points {
+  background-color: rgba(163, 177, 198, 0.2);
+  height: 1em; /* Adjust as needed */
+  border-radius: 4px;
+  display: inline-block;
+  min-width: 80px; /* Ensure visibility */
+}
+
+.placeholder-item .student-name {
+  width: 60%;
+}
+
+.placeholder-item .student-points {
+  width: 30%;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.leaderboard-position-card {
+  margin-bottom: 1rem; /* Added margin below the Global Rank card */
+}

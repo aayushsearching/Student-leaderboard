@@ -1,7 +1,8 @@
 .dashboard-page-wrapper {
   display: flex;
   background-color: var(--bg-color);
-  min-height: 100vh;
+  height: 100vh; /* Ensure it takes full viewport height */
+  overflow: hidden; /* Prevent scrolling on the main page */
   font-family: var(--font-family);
   color: var(--text-color);
 }
@@ -69,11 +70,75 @@
 
 .dashboard-main-content {
   flex-grow: 1;
-  padding: 2rem;
   background-color: var(--bg-color);
+  padding: var(--navbar-height) 2rem 2rem 2rem;
   margin-left: 240px; /* Offset for fixed sidebar */
-  overflow-y: auto; /* Enable scrolling for main content */
+  height: 100%; /* Fill available height */
+  overflow: hidden; /* Prevent scrolling here, scroll on specific grid items */
+  display: grid;
+  grid-template-rows: auto auto 1fr; /* Welcome banner, cards, and Outlet content */
+  gap: 1rem; /* Consistent spacing between major sections */
 }
+
+.welcome-banner {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem 2rem; /* Make more compact */
+  border-radius: var(--border-radius);
+  /* margin-bottom: 2rem; Removed as gap in grid handles spacing */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-banner h1 {
+  font-size: 1.8rem; /* Slightly smaller for compactness */
+  margin: 0;
+  font-weight: 700;
+}
+
+.welcome-banner p {
+  margin-top: 0.25rem; /* More compact */
+  font-size: 1rem; /* Slightly smaller */
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.dashboard-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted minmax for more compactness */
+  gap: 1rem; /* Consistent spacing */
+  /* margin-bottom: 2rem; Removed as gap in grid handles spacing */
+}
+
+.dashboard-card {
+  background-color: var(--bg-color);
+  padding: 2rem;
+  min-height: 120px; /* Ensure a minimum height for the card */
+  border-radius: var(--border-radius);
+  box-shadow: 5px 5px 10px rgba(163, 177, 198, 0.3), -5px -5px 10px rgba(255, 255, 255, 0.3);
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+  display: flex; /* Use flex to align content vertically */
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+}
+
+.dashboard-card h3 {
+  color: var(--primary-color);
+  font-size: 1.1rem; /* Slightly smaller */
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-card .card-value {
+  font-size: 2.2rem; /* Slightly smaller */
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+
 
 .notification-badge {
   background-color: var(--secondary-color);
