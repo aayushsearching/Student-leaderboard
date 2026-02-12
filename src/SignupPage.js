@@ -9,6 +9,7 @@ function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state variable
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
@@ -30,6 +31,11 @@ function SignupPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (isSubmitting) { // Prevent multiple submissions
+      return;
+    }
+
     setErrorMessage('');
     setSuccessMessage('');
 
@@ -45,25 +51,13 @@ function SignupPage() {
     }
 
     try {
+      setIsSubmitting(true); // Set submitting state to true
       setLoading(true);
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
 
       if (data.user) {
 
-
-        // Insert user into profiles with initial data
-        const { error: profileInsertError } = await supabase
-          .from('profiles')
-          .insert([
-            { id: data.user.id, email: data.user.email, role: 'user' } // Assuming 'user' is the default role
-          ]);
-
-        if (profileInsertError) {
-          throw profileInsertError; // Throw the error so it's caught by the outer catch block
-        } else {
-          console.log('User profile created.');
-        }
       }
 
       setSuccessMessage('Success! Please check your email for a confirmation link.');
@@ -78,6 +72,7 @@ function SignupPage() {
       }
     } finally {
       setLoading(false);
+      setIsSubmitting(false); // Reset submitting state
     }
   };
 
@@ -131,7 +126,7 @@ function SignupPage() {
               disabled={loading}
             />
           </div>
-          <button type="submit" className="login-button" disabled={loading}>
+          <button type="submit" className="login-button" disabled={loading || isSubmitting}>
             {loading ? 'Signing up...' : 'Sign Up'}
           </button>
         </form>
