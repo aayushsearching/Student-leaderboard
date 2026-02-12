@@ -2,19 +2,14 @@ import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './AdminLayout.css';
-import { Edit, BarChart2, User, LogOut, Award } from 'react-feather';
+import { Edit, BarChart2, User, Award, DollarSign, Clipboard } from 'react-feather';
 
 function AdminLayout() {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error signing out:', error.message);
-    } else {
-      navigate('/');
-    }
-  };
+
+  const getNavLinkClass = ({ isActive }) =>
+    isActive ? 'active' : '';
 
   return (
     <div className="admin-layout">
@@ -25,37 +20,32 @@ function AdminLayout() {
         <nav className="sidebar-nav">
           <ul>
             <li>
-              <NavLink to="/admin" end>
+              <NavLink to="/admin" end className={getNavLinkClass}>
                 <Edit className="icon" />
                 <span>Manage Tasks</span>
               </NavLink>
             </li>
             <li>
-              <NavLink to="/admin/points">
+              <NavLink to="/admin/points" className={getNavLinkClass}>
                 <Award className="icon" />
                 <span>Point System</span>
               </NavLink>
             </li>
             <li>
-              <NavLink to="/admin/leaderboard">
+              <NavLink to="/admin/leaderboard" className={getNavLinkClass}>
                 <BarChart2 className="icon" />
                 <span>View Leaderboard</span>
               </NavLink>
             </li>
             <li>
-              <NavLink to="/admin/profile">
+              <NavLink to="/admin/profile" className={getNavLinkClass}>
                 <User className="icon" />
                 <span>My Profile</span>
               </NavLink>
             </li>
           </ul>
         </nav>
-        <div className="sidebar-footer">
-          <button onClick={handleLogout} className="logout-button">
-            <LogOut className="icon" />
-            <span>Logout</span>
-          </button>
-        </div>
+
       </aside>
       <main className="admin-main-content">
         <Outlet />

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './DashboardPage.css';
-import { Grid, CheckSquare, BarChart2, Bell, User } from 'react-feather';
+import { Grid, CheckSquare, BarChart2, Bell, User, Award, DollarSign, Clipboard } from 'react-feather';
 
 function DashboardPage({ user }) {
   const location = useLocation();
@@ -53,6 +53,10 @@ function DashboardPage({ user }) {
     };
   }, [user, navigate, fetchUnreadCount]);
 
+
+  const getNavLinkClass = ({ isActive }) =>
+    isActive ? 'active' : '';
+
   return (
     <div className="dashboard-page-wrapper">
       <aside className="dashboard-sidebar">
@@ -61,39 +65,40 @@ function DashboardPage({ user }) {
         </div>
         <nav className="sidebar-nav">
           <ul>
-            <li className={location.pathname === '/dashboard' ? 'active' : ''}>
-              <Link to="/dashboard">
+            <li>
+              <NavLink to="/dashboard" className={getNavLinkClass}>
                 <Grid className="icon" />
                 <span>Dashboard</span>
-              </Link>
+              </NavLink>
             </li>
-            <li className={location.pathname === '/dashboard/tasks' ? 'active' : ''}>
-              <Link to="/dashboard/tasks">
+            <li>
+              <NavLink to="/dashboard/tasks" className={getNavLinkClass}>
                 <CheckSquare className="icon" />
                 <span>Tasks</span>
-              </Link>
+              </NavLink>
             </li>
-            <li className={location.pathname === '/dashboard/leaderboard' ? 'active' : ''}>
-              <Link to="/dashboard/leaderboard">
+            <li>
+              <NavLink to="/dashboard/leaderboard" className={getNavLinkClass}>
                 <BarChart2 className="icon" />
                 <span>Leaderboard</span>
-              </Link>
+              </NavLink>
             </li>
-            <li className={location.pathname.startsWith('/dashboard/notifications') ? 'active' : ''}>
-              <Link to="/dashboard/notifications">
+            <li>
+              <NavLink to="/dashboard/notifications" className={getNavLinkClass}>
                 <Bell className="icon" />
                 <span>Notifications</span>
                 {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
-              </Link>
+              </NavLink>
             </li>
-            <li className={location.pathname === '/profile' ? 'active' : ''}>
-              <Link to="/profile">
+            <li>
+              <NavLink to="/profile" className={getNavLinkClass}>
                 <User className="icon" />
                 <span>Profile</span>
-              </Link>
+              </NavLink>
             </li>
           </ul>
         </nav>
+
       </aside>
 
       <main className="dashboard-main-content">

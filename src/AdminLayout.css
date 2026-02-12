@@ -8,18 +8,20 @@
 .admin-sidebar {
   width: 260px;
   background-color: var(--bg-color);
-  border-right: 1px solid var(--border-color);
+  border-right: none;
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
   box-shadow: 
-    9px 9px 16px rgba(163, 177, 198, 0.6),
-    -9px -9px 16px rgba(255, 255, 255, 0.5);
-  position: fixed; /* Make sidebar fixed */
+    5px 5px 10px rgba(163, 177, 198, 0.3),
+    -5px -5px 10px rgba(255, 255, 255, 0.3);
+  position: fixed;
   left: 0;
   top: 0;
-  height: 100vh; /* Full height */
+  height: 100vh;
   flex-shrink: 0;
+  border-radius: 0 15px 15px 0; /* Rounded right edge */
+  z-index: 100;
 }
 
 .sidebar-header {
@@ -50,7 +52,7 @@
   font-weight: 600;
   transition: all 0.2s ease;
   border-radius: var(--border-radius);
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem; /* Slightly reduced margin */
 }
 
 .sidebar-nav a:hover {
@@ -61,10 +63,9 @@
 }
 
 .sidebar-nav a.active {
-  color: var(--primary-color);
-  box-shadow: 
-    inset 2px 2px 5px #babecc,
-    inset -5px -5px 10px #fff;
+  color: var(--bg-color-alt);
+  background-color: var(--primary-color);
+  box-shadow: 0 4px 10px rgba(106, 90, 249, 0.3);
 }
 
 .sidebar-nav .icon {
@@ -94,6 +95,7 @@
   box-shadow: 
     5px 5px 10px rgba(163, 177, 198, 0.6),
     -5px -5px 10px rgba(255, 255, 255, 0.5);
+  margin-top: auto;
 }
 
 .logout-button:hover {
@@ -110,9 +112,10 @@
   margin-left: 260px; /* Offset for fixed sidebar */
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .admin-sidebar {
-    width: 200px; /* Smaller fixed sidebar on smaller screens */
+    width: 200px;
   }
   .admin-main-content {
     margin-left: 200px;
@@ -121,7 +124,7 @@
 
 @media (max-width: 576px) {
   .admin-sidebar {
-    width: 150px; /* Even smaller fixed sidebar on very small screens */
+    width: 150px;
   }
   .admin-main-content {
     margin-left: 150px;

@@ -10,17 +10,19 @@
   width: 240px;
   background-color: var(--bg-color);
   padding: 2rem;
-  border-right: 1px solid var(--border-color);
+  border-right: none;
   display: flex;
   flex-direction: column;
   box-shadow: 
-    9px 9px 16px rgba(163, 177, 198, 0.6),
-    -9px -9px 16px rgba(255, 255, 255, 0.5);
-  position: fixed; /* Make sidebar fixed */
+    5px 5px 10px rgba(163, 177, 198, 0.3),
+    -5px -5px 10px rgba(255, 255, 255, 0.3);
+  position: fixed;
   left: 0;
   top: 0; 
-  height: 100vh; /* Full height */
-  flex-shrink: 0; /* Prevent sidebar from shrinking */
+  height: 100vh;
+  flex-shrink: 0;
+  border-radius: 0 15px 15px 0; /* Rounded right edge */
+  z-index: 100; /* Ensure it's above main content but below top nav */
 }
 
 .sidebar-header h2 {
@@ -45,22 +47,19 @@
   text-decoration: none;
   color: var(--text-color-light);
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem; /* Slightly reduced margin */
   transition: all 0.2s ease;
 }
 
-.sidebar-nav li.active a {
-  color: var(--primary-color);
-  box-shadow: 
-    inset 2px 2px 5px #babecc,
-    inset -5px -5px 10px #fff;
+.sidebar-nav li a.active { /* Use a.active for NavLink */
+  color: var(--bg-color-alt); /* White text on active pill */
+  background-color: var(--primary-color); /* Dark active pill */
+  box-shadow: 0 4px 10px rgba(106, 90, 249, 0.3); /* Stronger shadow for active */
 }
 
-.sidebar-nav li a:hover {
+.sidebar-nav li a:not(.active):hover { /* Hover for non-active items */
   color: var(--primary-color);
-  box-shadow: 
-    inset 2px 2px 5px #babecc,
-    inset -5px -5px 10px #fff;
+  background-color: rgba(106, 90, 249, 0.05); /* Soft hover background */
 }
 
 .sidebar-nav .icon {
@@ -73,24 +72,66 @@
   padding: 2rem;
   background-color: var(--bg-color);
   margin-left: 240px; /* Offset for fixed sidebar */
+  overflow-y: auto; /* Enable scrolling for main content */
+}
+
+.notification-badge {
+  background-color: var(--secondary-color);
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 10px;
+  margin-left: auto; /* Push to right */
+}
+
+.logout-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  background: var(--bg-color);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color-light);
+  transition: all 0.2s ease;
+  box-shadow: 
+    5px 5px 10px rgba(163, 177, 198, 0.6),
+    -5px -5px 10px rgba(255, 255, 255, 0.5);
+  margin-top: auto; /* Push to bottom of sidebar */
+}
+
+.logout-button:hover {
+  color: var(--primary-color);
+  box-shadow: 
+    inset 2px 2px 5px #babecc,
+    inset -5px -5px 10px #fff;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .dashboard-sidebar {
-    width: 200px; /* Smaller fixed sidebar on smaller screens */
+    width: 180px; /* Smaller fixed sidebar on smaller screens */
   }
 
   .dashboard-main-content {
-    margin-left: 200px; /* Adjust offset for smaller sidebar */
+    margin-left: 180px; /* Adjust offset for smaller sidebar */
   }
 }
 
 @media (max-width: 576px) {
   .dashboard-sidebar {
-    width: 150px; /* Even smaller fixed sidebar on very small screens */
+    width: 100%; /* Full width sidebar on very small screens */
+    height: auto;
+    position: relative; /* Not fixed on very small screens */
+    box-shadow: none;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
   }
   .dashboard-main-content {
-    margin-left: 150px; /* Adjust offset for very small sidebar */
+    margin-left: 0;
   }
 }
