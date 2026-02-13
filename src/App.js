@@ -126,6 +126,13 @@ function MainLayout({ session, onLogout }) {
 
 
 
+function App() {
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [profileComplete, setProfileComplete] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!loading && session && profileComplete === false) {
       navigate('/complete-profile');
@@ -243,5 +250,4 @@ function MainLayout({ session, onLogout }) {
     </div>
   );
 }
-
 export default App;
