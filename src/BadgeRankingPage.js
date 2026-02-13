@@ -16,40 +16,7 @@ const formatRank = (rank) => {
   }
 };
 
-const getDivisionLabel = (division) => {
-  switch (division) {
-    case 5: return 'V';
-    case 4: return 'IV';
-    case 3: return 'III';
-    case 2: return 'II';
-    case 1: return 'I';
-    default: return '';
-  }
-};
 
-const leagues = [
-  { name: 'Novice', tier: 'novice', description: 'Easy progression to welcome new players.', pointsPerDivision: 50 },
-  { name: 'Learner', tier: 'learner', description: 'Moderate grind, requiring consistent effort.', pointsPerDivision: 75 },
-  { name: 'Scholar', tier: 'scholar', description: 'Moderate grind, requiring consistent effort.', pointsPerDivision: 100 },
-  { name: 'Skilled', tier: 'skilled', description: 'A significant grind, rewarding dedication.', pointsPerDivision: 150 },
-  { name: 'Expert', tier: 'expert', description: 'A significant grind, rewarding dedication.', pointsPerDivision: 200 },
-  { name: 'Master', tier: 'master', description: 'A very hard climb, for seasoned participants.', pointsPerDivision: 300 },
-  { name: 'Elite', tier: 'elite', description: 'A very hard climb, for seasoned participants.', pointsPerDivision: 400 },
-  { name: 'Apex', tier: 'apex', description: 'The pinnacle of achievement, for the top 1%.', pointsPerDivision: 500 }, // Points to maintain or for future seasons
-];
-
-// Simplified Badge component - will use CSS classes
-const Badge = ({ tier, division, size = 'medium' }) => {
-  const league = leagues.find(l => l.tier === tier);
-  const divisionLabel = getDivisionLabel(division);
-  const capitalizedTier = league ? league.name.charAt(0).toUpperCase() + league.name.slice(1) : 'Unranked';
-  
-  return (
-    <div className={`badge-display badge-${tier} badge-size-${size}`}>
-      <span className="league-title">{`${capitalizedTier} ${divisionLabel}`}</span>
-    </div>
-  );
-};
 
 function BadgeRankingPage({ user }) { // Accept user prop
   const [showRankingExplanation, setShowRankingExplanation] = useState(false);
@@ -64,71 +31,50 @@ function BadgeRankingPage({ user }) { // Accept user prop
       setLoading(true);
       setError(null);
 
-      const { data, error: fetchError } = await supabase
-        .from('leaderboard')
-        .select(`
-          score,
-          rank,
-          badge_tier,
-          badge_division,
-          profiles (
-            full_name,
-            academic_year,
-            branch
-          )
-        `)
-        .order('rank', { ascending: true }); // Order by rank
+      // Fetch leaderboard data with dynamically calculated ranks using the RPC
+      const { data: rankedData, error: fetchError } = await supabase
+        .rpc('get_leaderboard_with_rank')
+        .order('rank', { ascending: true }); // Order by the calculated rank
 
       if (fetchError) throw fetchError;
 
-      setLeaderboardData(data);
+      // The RPC returns a flat array, so profiles data needs to be structured manually for consistency
+      const formattedRankedData = rankedData.map(entry => ({
+        ...entry,
+        profiles: {
+          full_name: entry.full_name,
+        }
+      }));
+
+      setLeaderboardData(formattedRankedData); // Set the full ranked leaderboard data
 
       // Find current user's data if logged in
-      if (user) { // Use the user prop directly
-        const userEntry = data.find(entry => entry.profiles?.full_name === user.full_name); // Assuming full_name is unique enough or use user.id
+      if (user) {
+        const userEntry = formattedRankedData.find(entry => entry.user_id === user.id);
         if (userEntry) {
           setCurrentUserData(userEntry);
         } else {
-          // If user is logged in but not in top 10, fetch their specific data
-          const { data: userData, error: userError } = await supabase
-            .from('leaderboard')
-            .select(`
-              score,
-              rank,
-              badge_tier,
-              badge_division,
-              profiles (
-                full_name,
-                academic_year,
-                branch
-              )
-            `)
-            .eq('user_id', user.id) // Use user.id from prop
-            .single();
-          if (userError && userError.code !== 'PGRST116') throw userError; // PGRST116 is 'No rows found'
-          setCurrentUserData(userData);
-
           // If user is logged in but no leaderboard entry found, create one
-          if (user && !userData) {
-            console.log("Creating new leaderboard entry for user:", user.id);
-            const { error: insertError } = await supabase
-              .from('leaderboard')
-              .insert([
-                { user_id: user.id, score: 0 } // Only insert user_id and score, rank is calculated by DB
-              ]);
+          // This part still interacts with the 'leaderboard' table directly
+          // Assuming 'leaderboard' table only contains user_id and score.
+          console.log("Creating new leaderboard entry for user:", user.id);
+          const { error: insertError } = await supabase
+            .from('leaderboard')
+            .insert([
+              { user_id: user.id, score: 0 }
+            ]);
 
-            if (insertError) {
-              throw insertError; // Throw the error so it's caught by the outer catch block
-            } else {
-              console.log('Leaderboard entry created, re-fetching data...');
-              // Re-fetch data to include the newly created entry
-              await fetchLeaderboardData(); // This will re-run the whole fetch process
-            }
+          if (insertError) {
+            throw insertError;
+          } else {
+            console.log('Leaderboard entry created, re-fetching data...');
+            // Re-fetch data to include the newly created entry
+            await fetchLeaderboardData(); // This will re-run the whole fetch process
           }
         }
       }
     } catch (err) {
-      if (err.name === 'AbortError') return; // Silently ignore AbortError
+      if (err.name === 'AbortError') return;
       console.error('Error fetching leaderboard data:', err);
       setError('Failed to load leaderboard data: ' + err.message);
     } finally {
@@ -148,25 +94,8 @@ function BadgeRankingPage({ user }) { // Accept user prop
   const currentUserDisplay = {
     name: currentUserData?.profiles?.full_name || 'You',
     rank: currentUserData?.rank,
-    badge: { 
-      name: (leagues.find(l => l.tier === currentUserData?.badge_tier)?.name ? 
-             (leagues.find(l => l.tier === currentUserData?.badge_tier).name.charAt(0).toUpperCase() + 
-              leagues.find(l => l.tier === currentUserData?.badge_tier).name.slice(1)) : 'Unranked') + 
-             ' ' + getDivisionLabel(currentUserData?.badge_division || 1),
-      tier: currentUserData?.badge_tier || 'novice', 
-      division: currentUserData?.badge_division || 1 
-    },
-    course: currentUserData?.profiles?.branch, 
-    year: currentUserData?.profiles?.academic_year,
+    league: currentUserData?.league, // Directly use the league from RPC
     points: currentUserData?.score || 0,
-    pointsToNextDivision: (() => {
-      if (!currentUserData) return null;
-      const currentLeague = leagues.find(l => l.tier === currentUserData.badge_tier);
-      if (!currentLeague) return null;
-      const scoreInLeague = currentUserData.score - (leagues.slice(0, leagues.indexOf(currentLeague)).reduce((acc, l) => acc + l.pointsPerDivision * 5, 0));
-      const pointsInDivision = scoreInLeague % currentLeague.pointsPerDivision;
-      return currentLeague.pointsPerDivision - pointsInDivision;
-    })()
   };
 
   return (
@@ -179,21 +108,7 @@ function BadgeRankingPage({ user }) { // Accept user prop
         </button>
       </div>
 
-      {showRankingExplanation && (
-        <div className="ranking-explanation leaderboard-card">
-          <h4>How Ranking Works</h4>
-          <p>Your rank is determined by your performance across various tasks and challenges. Progress through divisions by accumulating points and demonstrating mastery in your chosen path. There are 8 distinct leagues, each with 5 divisions (V to I), representing increasing levels of skill and achievement.</p>
-          <div className="league-explanation-grid">
-            {leagues.map((league) => (
-              <div key={league.tier} className="league-info-item">
-                <div className={`badge-display badge-${league.tier} badge-size-x-small`}></div> {/* Use generic div */}
-                <h5>{league.name}</h5>
-                <p>{league.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+
 
       {!showRankingExplanation && (
         <>
@@ -209,10 +124,20 @@ function BadgeRankingPage({ user }) { // Accept user prop
                     <h3 className="user-name">{currentUserDisplay.name}</h3>
                     <p className="user-rank">Your Rank: {formatRank(currentUserDisplay.rank)}</p>
                     <p className="user-points">{currentUserDisplay.points} Points</p>
-                    {currentUserDisplay.pointsToNextDivision !== null && <p className="user-points">{currentUserDisplay.pointsToNextDivision} points to next division</p>}
+                    {currentUserDisplay.league && currentUserDisplay.league !== 'Unranked' && (
+                      <p className="user-league">League: {currentUserDisplay.league}</p>
+                    )}
+                    {currentUserDisplay.league === 'Unranked' && (
+                      <p className="user-league">League: No League Yet</p>
+                    )}
                   </div>
-                  <div className="user-badge">
-                    <Badge tier={currentUserDisplay.badge.tier} division={currentUserDisplay.badge.division} size="small" /> {/* Using simplified Badge */}
+                  <div className="user-league-display">
+                    {currentUserDisplay.league && currentUserDisplay.league !== 'Unranked' && (
+                      <span className="league-badge">{currentUserDisplay.league}</span>
+                    )}
+                    {currentUserDisplay.league === 'Unranked' && (
+                      <span className="league-badge">Unranked</span>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -235,7 +160,6 @@ function BadgeRankingPage({ user }) { // Accept user prop
                     <tr>
                       <th>Rank</th>
                       <th>Name</th>
-                      <th>Details</th>
                       <th>Points</th>
                       <th>League</th>
                     </tr>
@@ -245,15 +169,15 @@ function BadgeRankingPage({ user }) { // Accept user prop
                       leaderboardData.map((student) => (
                         <tr key={student.user_id}> {/* Use user_id as key as it's unique */}
                           <td>{formatRank(student.rank)}</td>
-                          <td>{student.profiles.full_name}</td>
-                          <td>{student.profiles.branch} ({student.profiles.academic_year})</td>
+                          <td>{student.profiles.full_name || 'Unknown User'}</td>
                           <td>{student.score}</td>
-                          <td className="leaderboard-badge-cell">
-                            <Badge tier={student.badge_tier} division={student.badge_division} size="x-small" /> {/* Using simplified Badge */}
-                            {/* <div className="badge-details">
-                              <p className="badge-name-text">{leagues.find(l => l.tier === student.badge_tier)?.name || 'N/A'}</p>
-                              <DivisionIndicator division={student.badge_division || 1} totalDivisions={5} />
-                            </div> */}
+                          <td className="leaderboard-league-cell">
+                            {student.league && student.league !== 'Unranked' && (
+                              <span className="league-badge">{student.league}</span>
+                            )}
+                            {student.league === 'Unranked' && (
+                              <span className="league-badge">Unranked</span>
+                            )}
                           </td>
                         </tr>
                       ))

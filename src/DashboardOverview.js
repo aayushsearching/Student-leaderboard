@@ -17,12 +17,8 @@ function DashboardOverview({ user }) {
   const fetchTopLeaderboardStudents = useCallback(async () => {
     try {
       const { data, error } = await supabase
-        .from('leaderboard') // Assuming 'leaderboard' table exists
-        .select(`
-          score,
-          profiles (full_name)
-        `) // Join with profiles table to get full_name
-        .order('score', { ascending: false })
+        .rpc('get_leaderboard_with_rank') // Call the RPC function
+        .order('rank', { ascending: true }) // Order by the calculated rank
         .limit(3);
 
       if (error) throw error;
@@ -38,26 +34,24 @@ function DashboardOverview({ user }) {
       return;
     }
     try {
-      // Fetch all user scores from the leaderboard
-      const { data: leaderboardEntries, error: fetchError } = await supabase
-        .from('leaderboard')
-        .select('user_id, score')
-        .order('score', { ascending: false });
+      // Fetch all users with their ranks using the RPC
+      const { data: rankedLeaderboard, error: fetchError } = await supabase
+        .rpc('get_leaderboard_with_rank');
 
       if (fetchError) throw fetchError;
 
-      if (!leaderboardEntries || leaderboardEntries.length === 0) {
+      if (!rankedLeaderboard || rankedLeaderboard.length === 0) {
         setUserRankPercentage(null);
         return;
       }
 
-      const totalUsers = leaderboardEntries.length;
+      const totalUsers = rankedLeaderboard.length;
       let userRank = -1;
 
-      // Find the current user's rank
-      for (let i = 0; i < leaderboardEntries.length; i++) {
-        if (leaderboardEntries[i].user_id === user.id) {
-          userRank = i + 1; // Rank is 1-based
+      // Find the current user's rank from the RPC result
+      for (let i = 0; i < rankedLeaderboard.length; i++) {
+        if (rankedLeaderboard[i].user_id === user.id) {
+          userRank = rankedLeaderboard[i].rank; // Use the rank returned by the RPC
           break;
         }
       }
@@ -67,7 +61,7 @@ function DashboardOverview({ user }) {
         return;
       }
 
-      // Calculate percentage (lower percentage is better, so (rank / total) * 100)
+      // Calculate percentage (lower percentage is better)
       const rawPercentage = (userRank / totalUsers) * 100;
 
       // Round to nearest 10%
@@ -100,9 +94,17 @@ function DashboardOverview({ user }) {
         <ul className="student-list">
           {topLeaderboardStudents.length > 0 ? (
             topLeaderboardStudents.map((entry, index) => (
-              <li key={entry.profiles.full_name || index} className="student-item">
+              <li key={entry.full_name || index} className="student-item">
                 <span className="student-rank">{index + 1}.</span>
-                <span className="student-name">{entry.profiles.full_name || 'N/A'}</span>
+                <span className="student-name">
+                  {entry.full_name || 'Unknown User'}
+                  {entry.league && entry.league !== 'Unranked' && (
+                    <span className="student-league"> ({entry.league})</span>
+                  )}
+                  {entry.league === 'Unranked' && (
+                    <span className="student-league"> (No League Yet)</span>
+                  )}
+                </span>
                 <span className="student-points">{entry.score} points</span>
               </li>
             ))
