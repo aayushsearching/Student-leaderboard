@@ -1,6 +1,5 @@
 .dashboard-overview-container {
   padding: 0; /* DashboardPage already has padding */
-
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto auto; /* Both blocks take content-based height */
@@ -14,8 +13,6 @@
   padding: 1.5rem;
   border-radius: var(--border-radius);
   box-shadow: 5px 5px 10px rgba(163, 177, 198, 0.3), -5px -5px 10px rgba(255, 255, 255, 0.3);
-
-
   overflow-y: auto; /* Allow internal scrolling if content is large */
   display: flex; /* Ensure content stretches within */
   flex-direction: column;

@@ -3,6 +3,16 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from './supabaseClient';
 import './AdminPage.css';
 
+const DEFAULT_POINTS = 10;
+
+const buildTaskPayload = ({ title, description, points, dueDate, tasksUrl }) => ({
+  title,
+  description,
+  points,
+  due_date: dueDate,
+  tasks_url: tasksUrl
+});
+
 function AdminPage() { // Removed user prop
   // const navigate = useNavigate(); // Removed as it's not used
   const [templateTasks, setTemplateTasks] = useState([]);
@@ -11,7 +21,7 @@ function AdminPage() { // Removed user prop
   const [editingTask, setEditingTask] = useState(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [points, setPoints] = useState(10);
+  const [points, setPoints] = useState(DEFAULT_POINTS);
   const [dueDate, setDueDate] = useState('');
   const [tasksUrl, setTasksUrl] = useState('');
   
@@ -26,6 +36,11 @@ function AdminPage() { // Removed user prop
   const [sendingNotification, setSendingNotification] = useState(false);
   const [notificationError, setNotificationError] = useState('');
   const [notificationSuccess, setNotificationSuccess] = useState('');
+
+  const clearMessages = useCallback(() => {
+    setError('');
+    setSuccess('');
+  }, []);
 
   const fetchAdminData = useCallback(async () => {
     setLoading(true);
@@ -49,15 +64,16 @@ function AdminPage() { // Removed user prop
     setEditingTask(null);
     setTitle('');
     setDescription('');
-    setPoints(10);
+    setPoints(DEFAULT_POINTS);
     setDueDate('');
     setTasksUrl('');
   }, []);
 
   const handleFormSubmit = useCallback(async (e) => {
     e.preventDefault();
-    setError(''); setSuccess(''); setFormLoading(true);
-    const taskData = { title, description, points, due_date: dueDate, tasks_url: tasksUrl };
+    clearMessages();
+    setFormLoading(true);
+    const taskData = buildTaskPayload({ title, description, points, dueDate, tasksUrl });
     
     try {
       let response;
@@ -81,7 +97,7 @@ function AdminPage() { // Removed user prop
     } finally {
       setFormLoading(false);
     }
-  }, [editingTask, title, description, points, dueDate, tasksUrl, clearForm, fetchAdminData]);
+  }, [editingTask, title, description, points, dueDate, tasksUrl, clearForm, clearMessages, fetchAdminData]);
 
   const handleEditClick = useCallback((task) => {
     setEditingTask(task);

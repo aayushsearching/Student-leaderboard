@@ -8,6 +8,7 @@ function NotificationsPage({ user }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const unreadNotifications = notifications.filter((notification) => !notification.is_read);
 
   const fetchNotifications = useCallback(async () => {
     if (!user) {
@@ -39,6 +40,10 @@ function NotificationsPage({ user }) {
   useEffect(() => {
     fetchNotifications();
 
+    if (!user) {
+      return;
+    }
+
     // Realtime subscription for new notifications
     const channel = supabase
       .channel('notifications_channel')
@@ -48,7 +53,6 @@ function NotificationsPage({ user }) {
         table: 'notifications',
         filter: `user_id=eq.${user?.id}`
       }, (payload) => {
-        console.log('New notification:', payload);
         // Add new notification to the top of the list
         setNotifications((prevNotifications) => [payload.new, ...prevNotifications]);
       })
@@ -116,8 +120,8 @@ function NotificationsPage({ user }) {
     <div className="notifications-container">
       <div className="notifications-header">
         <h2>Your Notifications</h2>
-        {notifications.filter(n => !n.is_read).length > 0 && (
-          <button onClick={markAllAsRead} className="mark-all-read-button">
+        {unreadNotifications.length > 0 && (
+          <button type="button" onClick={markAllAsRead} className="mark-all-read-button">
             Mark All as Read
           </button>
         )}
@@ -144,7 +148,14 @@ function NotificationsPage({ user }) {
                 </span>
               </div>
               {!notification.is_read && (
-                <button onClick={(e) => { e.stopPropagation(); markAsRead(notification.id); }} className="mark-read-button">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    markAsRead(notification.id);
+                  }}
+                  className="mark-read-button"
+                >
                   Mark as Read
                 </button>
               )}

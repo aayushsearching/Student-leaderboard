@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { supabase } from './supabaseClient';
 import './LoginPage.css';
 
+const EMAIL_REGEX = /\S+@\S+\.\S+/;
+
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,16 +23,11 @@ function LoginPage() {
     checkSession();
   }, [navigate]);
 
-  const validateEmail = (email) => {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage('');
 
-    if (!validateEmail(email)) {
+    if (!EMAIL_REGEX.test(email)) {
       setEmailError('Please enter a valid email');
       return;
     }
@@ -46,18 +43,14 @@ function LoginPage() {
         } else {
           setErrorMessage(error.message);
         }
-        throw error; // Re-throw to be caught by the outer catch
+        return;
       }
       // Logged in successfully, redirect to dashboard
       navigate('/dashboard');
     } catch (error) {
       if (error.name === 'AbortError') return; // Silently ignore AbortError
       console.log('Supabase login error:', error); // Log the full error object for debugging
-      // Error message is already set in the if block above
-      // If it's a generic error not caught above, set it here
-      if (!errorMessage) { // Only set if not already set by specific check
-         setErrorMessage(error.message);
-      }
+      setErrorMessage(error.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -107,7 +100,7 @@ function LoginPage() {
         </form>
         <div className="login-footer">
           <a href="#forgot-password">Forgot Password?</a>
-          <span> • </span>
+          <span> | </span>
           <a href="/signup">Don't have an account? Sign Up</a>
         </div>
       </div>
@@ -116,3 +109,4 @@ function LoginPage() {
 }
 
 export default LoginPage;
+

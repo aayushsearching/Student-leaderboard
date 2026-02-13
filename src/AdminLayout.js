@@ -1,15 +1,16 @@
 import React from 'react';
-
-
 import { NavLink, Outlet } from 'react-router-dom';
-
 import './AdminLayout.css';
 import { Edit, BarChart2, User, Award } from 'react-feather';
 
+const ADMIN_NAV_ITEMS = [
+  { to: '/admin', label: 'Manage Tasks', Icon: Edit, end: true },
+  { to: '/admin/points', label: 'Point System', Icon: Award },
+  { to: '/admin/leaderboard', label: 'View Leaderboard', Icon: BarChart2 },
+  { to: '/admin/profile', label: 'My Profile', Icon: User }
+];
+
 function AdminLayout() {
-
-
-
   const getNavLinkClass = ({ isActive }) =>
     isActive ? 'active' : '';
 
@@ -21,33 +22,16 @@ function AdminLayout() {
         </div>
         <nav className="sidebar-nav">
           <ul>
-            <li>
-              <NavLink to="/admin" end className={getNavLinkClass}>
-                <Edit className="icon" />
-                <span>Manage Tasks</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/admin/points" className={getNavLinkClass}>
-                <Award className="icon" />
-                <span>Point System</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/admin/leaderboard" className={getNavLinkClass}>
-                <BarChart2 className="icon" />
-                <span>View Leaderboard</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/admin/profile" className={getNavLinkClass}>
-                <User className="icon" />
-                <span>My Profile</span>
-              </NavLink>
-            </li>
+            {ADMIN_NAV_ITEMS.map(({ to, label, Icon, end }) => (
+              <li key={to}>
+                <NavLink to={to} end={end} className={getNavLinkClass}>
+                  <Icon className="icon" />
+                  <span>{label}</span>
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </nav>
-
       </aside>
       <main className="admin-main-content">
         <Outlet />

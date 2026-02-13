@@ -19,6 +19,11 @@ import NotificationsPage from './NotificationsPage';
 import CompleteProfilePage from './CompleteProfilePage';
 import { CheckSquare, GitMerge, Send, Users, Info, HelpCircle, LogIn, UserPlus, Grid, LogOut } from 'react-feather';
 
+const PROFILE_FIELDS = 'full_name, academic_year, branch, role';
+
+const isProfileComplete = (profileData) =>
+  Boolean(profileData?.full_name && profileData?.academic_year && profileData?.branch);
+
 function HomeContent() {
   return (
     <main className="hero-section">
@@ -74,9 +79,10 @@ function HomeContent() {
 }
 
 function MainLayout({ session, onLogout }) {
-
-
   const getActiveClass = ({ isActive }) => isActive ? 'nav-item active' : 'nav-item';
+  const primaryAction = session
+    ? { to: '/dashboard', icon: <Grid /> }
+    : { to: '/login', icon: <LogIn /> };
 
   return (
     <>
@@ -90,22 +96,16 @@ function MainLayout({ session, onLogout }) {
             <span className="nav-label">How it Works</span>
           </NavLink>
           
-          {session ? (
-            <NavLink to="/dashboard" className="nav-primary-action">
-              <Grid />
-            </NavLink>
-          ) : (
-            <NavLink to="/login" className="nav-primary-action">
-              <LogIn />
-            </NavLink>
-          )}
+          <NavLink to={primaryAction.to} className="nav-primary-action">
+            {primaryAction.icon}
+          </NavLink>
 
           <NavLink to="/about" className={getActiveClass}>
             <Info className="nav-icon" />
             <span className="nav-label">About</span>
           </NavLink>
           {session ? (
-            <button onClick={onLogout} className="nav-item">
+            <button type="button" onClick={onLogout} className="nav-item">
               <LogOut className="nav-icon" />
               <span className="nav-label">Logout</span>
             </button>
@@ -124,8 +124,6 @@ function MainLayout({ session, onLogout }) {
   );
 }
 
-
-
 function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -139,34 +137,39 @@ function App() {
     }
   }, [loading, session, profileComplete, navigate]);
 
+  const syncProfileState = useCallback(async (userId, logContext) => {
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select(PROFILE_FIELDS)
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (profileError) {
+      console.error(`Error fetching profile${logContext}:`, profileError);
+      setProfile(null);
+      setProfileComplete(false);
+      return;
+    }
+
+    if (profileData) {
+      setProfile(profileData);
+      setProfileComplete(isProfileComplete(profileData));
+      return;
+    }
+
+    setProfile(null);
+    setProfileComplete(false);
+  }, []);
+
   useEffect(() => {
     const initializeAuth = async () => {
       const { data } = await supabase.auth.getSession();
       setSession(data.session);
 
       if (data.session?.user) {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('full_name, academic_year, branch, role')
-          .eq('id', data.session.user.id)
-          .maybeSingle(); // Changed to maybeSingle()
-
-        if (profileError) {
-          console.error('Error fetching profile:', profileError);
-          setProfileComplete(false); // Profile is incomplete if there's an error
-        } else if (profileData) {
-          setProfile(profileData);
-          // Check for completeness only if profileData exists
-          const isComplete = profileData.full_name && profileData.academic_year && profileData.branch;
-          setProfileComplete(!!isComplete);
-        } else {
-          // If profileData is null, profile is definitely incomplete
-          setProfileComplete(false);
-        }
+        await syncProfileState(data.session.user.id, '');
       } else {
-        // No user session, so no profile to complete.
-        // This implicitly means the onboarding loop shouldn't apply,
-        // so we can consider it "complete" for the purpose of not redirecting to onboarding.
+        setProfile(null);
         setProfileComplete(true);
       }
       setLoading(false);
@@ -178,24 +181,7 @@ function App() {
       (_event, session) => {
         setSession(session);
         if (session?.user) {
-          supabase
-            .from('profiles')
-            .select('full_name, academic_year, branch, role')
-            .eq('id', session.user.id)
-            .maybeSingle() // Changed to maybeSingle()
-            .then(({ data: profileData, error: profileError }) => {
-              if (profileError) {
-                console.error('Error fetching profile on auth state change:', profileError);
-                setProfileComplete(false); // Profile is incomplete if there's an error
-              } else if (profileData) {
-                setProfile(profileData);
-                const isComplete = profileData.full_name && profileData.academic_year && profileData.branch;
-                setProfileComplete(!!isComplete);
-              } else {
-                // If profileData is null, profile is definitely incomplete
-                setProfileComplete(false);
-              }
-            });
+          syncProfileState(session.user.id, ' on auth state change');
         } else {
           setProfileComplete(true);
           setProfile(null);
@@ -206,7 +192,7 @@ function App() {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [syncProfileState]);
 
   const handleLogout = useCallback(async () => {
     const { error } = await supabase.auth.signOut();

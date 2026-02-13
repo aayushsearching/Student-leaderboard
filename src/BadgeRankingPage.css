@@ -34,8 +34,8 @@
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
-.md\:grid-cols-3 {
-  @media (min-width: 768px) {
+@media (min-width: 768px) {
+  .md\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
@@ -50,10 +50,6 @@
 
 .bg-white {
   background-color: white;
-}
-
-.p-6 { /* Already defined above, but repeated for clarity for cards */
-  padding: 1.5rem;
 }
 
 .rounded-xl {
@@ -179,11 +175,6 @@
   height: 2rem; /* 32px */
 }
 
-/* Student Name */
-.text-gray-900 { /* Already defined */
-  color: var(--text-color);
-}
-
 /* Points */
 .text-2xl {
   font-size: 1.5rem; /* 24px */
@@ -236,10 +227,6 @@
   line-height: 1.75rem; /* 28px */
 }
 
-.mb-4 { /* Already defined */
-  margin-bottom: 1rem;
-}
-
 .overflow-x-auto {
   overflow-x: auto;
 }
@@ -256,7 +243,7 @@
 
 /* Table Header */
 .bg-gray-50 {
-  background-color: var(--bg-color-light); /* Very light gray background */
+  background-color: var(--bg-color-light, #f9fafb); /* Very light gray background */
 }
 
 .px-6 { /* Already defined */
@@ -306,7 +293,7 @@
 }
 
 .text-gray-700 {
-  color: var(--text-color-secondary); /* A bit lighter than main text */
+  color: var(--text-color-secondary, #4b5563); /* A bit lighter than main text */
 }
 
 .ml-2 {
@@ -315,10 +302,6 @@
 
 .leading-5 {
   line-height: 1.25rem; /* 20px */
-}
-
-.rounded-full { /* Already defined */
-  border-radius: 9999px;
 }
 
 /* Specific league colors (from getLeagueColor helper in JS) */
@@ -340,20 +323,3 @@
 .text-red-800 { color: #991b1b; }
 .bg-gray-100 { background-color: #f3f4f6; }
 .text-gray-700 { color: #374151; }
-
-/* Custom variables to align with DashboardPage.css where needed */
-:root {
-    --primary-color: #6A5AF9; /* Example primary color */
-    --primary-color-light: #e0e7ff; /* Lighter shade of primary */
-    --bg-color: #f7f9fc; /* White/off-white background */
-    --bg-color-alt: #ffffff; /* Slightly whiter for cards */
-    --bg-color-light: #f9fafb; /* Very light gray */
-    --border-color: #e5e7eb; /* Light gray border */
-    --text-color: #1f2937; /* Dark text */
-    --text-color-light: #6b7280; /* Muted text */
-    --text-color-secondary: #4b5563; /* Slightly lighter than main text */
-}
-
-/* Ensure global CSS variables from App.css are also considered if they exist */
-/* These hardcoded values above are placeholders; ideally, they'd use global variables */
-/* or be derived consistently. For this task, direct translation of Tailwind-like colors is used. */

@@ -3,6 +3,23 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from './supabaseClient';
 import './TasksPage.css';
 
+const STATUS_DISPLAY_MAP = {
+  not_started: 'Not Started',
+  in_progress: 'In Progress',
+  pending_review: 'Pending Approval',
+  completed: 'Completed',
+  rejected: 'Rejected',
+};
+
+const getStatusLabel = (status) => STATUS_DISPLAY_MAP[status] || 'Unknown';
+
+const getTaskCardClassName = (status) => {
+  let className = 'task-card';
+  if (status === 'completed') className += ' task-completed';
+  if (status === 'rejected') className += ' task-rejected';
+  return className;
+};
+
 function TasksPage({ user }) {
   const [userTasks, setUserTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,14 +86,6 @@ function TasksPage({ user }) {
 
   const openTaskDetailsModal = (task) => setSelectedTask(task);
   const closeTaskDetailsModal = useCallback(() => setSelectedTask(null), []);
-
-  const statusDisplayMap = {
-    not_started: 'Not Started',
-    in_progress: 'In Progress',
-    pending_review: 'Pending Approval',
-    completed: 'Completed',
-    rejected: 'Rejected',
-  };
 
   const handleStatusChange = useCallback(async () => {
     if (!selectedTask) return;
@@ -179,10 +188,10 @@ function TasksPage({ user }) {
           {!loading && !error && (
             <div className="tasks-grid">
               {userTasks.map((userTask) => (
-                <div key={userTask.id} className={`task-card ${userTask.status === 'completed' ? 'task-completed' : ''} ${userTask.status === 'rejected' ? 'task-rejected' : ''}`}>
+                <div key={userTask.id} className={getTaskCardClassName(userTask.status)}>
                   <h4>{userTask.title || 'Task details not found'}</h4>
                   <div className="task-details">
-                    <span>Status: {userTask.status === 'rejected' ? '❌ Rejected' : (statusDisplayMap[userTask.status] || 'Unknown')}</span>
+                    <span>Status: {userTask.status === 'rejected' ? '❌ Rejected' : getStatusLabel(userTask.status)}</span>
                     <span>Points: {userTask.points || 0}</span>
                   </div>
                   {userTask.rejection_message && (
@@ -190,7 +199,7 @@ function TasksPage({ user }) {
                       <strong>Admin Feedback:</strong> {userTask.rejection_message}
                     </div>
                   )}
-                  <button className="show-details-button" onClick={() => openTaskDetailsModal(userTask)}>Show Details</button>
+                  <button type="button" className="show-details-button" onClick={() => openTaskDetailsModal(userTask)}>Show Details</button>
                 </div>
               ))}
             </div>
@@ -200,7 +209,7 @@ function TasksPage({ user }) {
             <div className="modal-overlay">
               <div className="modal-content">
                 <h3>{selectedTask.title}</h3>
-                <p><strong>Status:</strong> {statusDisplayMap[selectedTask.status]}</p>
+                <p><strong>Status:</strong> {getStatusLabel(selectedTask.status)}</p>
                 {selectedTask.rejection_message && <p className="error-message"><strong>Admin Feedback:</strong> {selectedTask.rejection_message}</p>}
                 <p><strong>Description:</strong> {selectedTask.description}</p>
                 {selectedTask.tasks_url && <p><strong>URL:</strong> <a href={selectedTask.tasks_url} target="_blank" rel="noopener noreferrer">{selectedTask.tasks_url}</a></p>}
@@ -208,18 +217,18 @@ function TasksPage({ user }) {
                 {selectedTask.due_date && <p><strong>Deadline:</strong> {new Date(selectedTask.due_date).toLocaleString()}</p>}
                 
                 {(selectedTask.status === 'not_started' || selectedTask.status === 'in_progress') && (
-                  <button onClick={handleStatusChange} className="change-status-button">
+                  <button type="button" onClick={handleStatusChange} className="change-status-button">
                     Change Status to "{selectedTask.status === 'not_started' ? 'In Progress' : 'Submit for Approval'}"
                   </button>
                 )}
 
                 {selectedTask.status === 'rejected' && (
-                  <button onClick={handleRetryTask} className="change-status-button">
+                  <button type="button" onClick={handleRetryTask} className="change-status-button">
                     Retry Task
                   </button>
                 )}
 
-                <button onClick={closeTaskDetailsModal} className="modal-close-button">Close</button>
+                <button type="button" onClick={closeTaskDetailsModal} className="modal-close-button">Close</button>
               </div>
             </div>
           )}
@@ -230,7 +239,7 @@ function TasksPage({ user }) {
                 <h3>Proof of Work</h3>
                 <p>Have you sent the proof of work to the mail?</p>
                 <div className="modal-actions">
-                  <button onClick={handleSubmitForApproval} className="yes-button">Yes, I have</button>
+                  <button type="button" onClick={handleSubmitForApproval} className="yes-button">Yes, I have</button>
                   <a 
                     href={`mailto:tasksquare@duck.com?subject=Proof of Work: ${taskToComplete?.title}&body=Paste your proof of work here.`}
                     className="no-button"

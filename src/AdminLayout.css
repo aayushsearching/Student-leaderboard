@@ -73,38 +73,6 @@
   font-size: 1.2rem;
 }
 
-.sidebar-footer {
-  margin-top: auto;
-  padding: 1.5rem;
-}
-
-.logout-button {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem;
-  background: var(--bg-color);
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-color-light);
-  transition: all 0.2s ease;
-  box-shadow: 
-    5px 5px 10px rgba(163, 177, 198, 0.6),
-    -5px -5px 10px rgba(255, 255, 255, 0.5);
-  margin-top: auto;
-}
-
-.logout-button:hover {
-  color: var(--primary-color);
-  box-shadow: 
-    inset 2px 2px 5px #babecc,
-    inset -5px -5px 10px #fff;
-}
-
 .admin-main-content {
   flex: 1;
   padding: 2rem;

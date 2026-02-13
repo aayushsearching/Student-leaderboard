@@ -3,6 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient'; // Import supabase client
 import './DashboardOverview.css';
 
+const DEFAULT_RANK_PERCENTAGE = 10;
+const MAX_RANK_PERCENTAGE = 100;
+const UNRANKED_LEAGUE = 'Unranked';
+
+const toRankPercentage = (userRank, totalUsers) => {
+  const rawPercentage = (userRank / totalUsers) * 100;
+
+  if (rawPercentage <= 10) return DEFAULT_RANK_PERCENTAGE;
+  if (rawPercentage > 90) return MAX_RANK_PERCENTAGE;
+  return Math.ceil(rawPercentage / 10) * 10;
+};
 
 function DashboardOverview({ user }) {
   const navigate = useNavigate();
@@ -59,20 +70,7 @@ function DashboardOverview({ user }) {
         return;
       }
 
-      // Calculate percentage (lower percentage is better)
-      const rawPercentage = (userRank / totalUsers) * 100;
-
-      // Round to nearest 10%
-      let roundedPercentage;
-      if (rawPercentage <= 10) {
-        roundedPercentage = 10;
-      } else if (rawPercentage > 90) {
-        roundedPercentage = 100;
-      } else {
-        roundedPercentage = Math.ceil(rawPercentage / 10) * 10;
-      }
-
-      setUserRankPercentage(roundedPercentage);
+      setUserRankPercentage(toRankPercentage(userRank, totalUsers));
 
     } catch (err) {
       console.error('Error fetching user leaderboard rank:', err.message);
@@ -135,7 +133,7 @@ function DashboardOverview({ user }) {
         schema: 'public',
         table: 'user_tasks',
         filter: `user_id=eq.${user?.id}` // Filter by current user's tasks
-      }, (payload) => {
+      }, () => {
         fetchDashboardMetrics(); // Re-fetch metrics when user_tasks change
       })
       .subscribe();
@@ -176,10 +174,10 @@ function DashboardOverview({ user }) {
                 <span className="student-rank">{index + 1}.</span>
                 <span className="student-name">
                   {entry.full_name || 'Unknown User'}
-                  {entry.league && entry.league !== 'Unranked' && (
+                  {entry.league && entry.league !== UNRANKED_LEAGUE && (
                     <span className="student-league"> ({entry.league})</span>
                   )}
-                  {entry.league === 'Unranked' && (
+                  {entry.league === UNRANKED_LEAGUE && (
                     <span className="student-league"> (No League Yet)</span>
                   )}
                 </span>

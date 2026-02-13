@@ -3,7 +3,18 @@ import { supabase } from './supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import './CompleteProfilePage.css'; // Assuming a new CSS file for styling
 
-function CompleteProfilePage({ user, profile, profileComplete, onProfileUpdate }) {
+const isProfileDataComplete = (profileData) =>
+  Boolean(
+    profileData &&
+      profileData.full_name &&
+      profileData.full_name.trim() !== '' &&
+      profileData.academic_year &&
+      profileData.academic_year.trim() !== '' &&
+      profileData.branch &&
+      profileData.branch.trim() !== ''
+  );
+
+function CompleteProfilePage({ user, profile, profileComplete }) {
   const [fullName, setFullName] = useState('');
   const [academicYear, setAcademicYear] = useState('');
   const [branch, setBranch] = useState('');
@@ -29,7 +40,7 @@ function CompleteProfilePage({ user, profile, profileComplete, onProfileUpdate }
       setAcademicYear(profile.academic_year || '');
       setBranch(profile.branch || '');
     }
-  }, [user, navigate, profile, profileComplete]); // Added onProfileUpdate to dependency array
+  }, [user, navigate, profile, profileComplete]);
 
   const handleSubmit = useCallback(async (event) => {
     event.preventDefault();
@@ -48,7 +59,7 @@ function CompleteProfilePage({ user, profile, profileComplete, onProfileUpdate }
         id: user.id,
         full_name: fullName,
         academic_year: academicYear,
-        branch: branch,
+        branch,
       };
 
       const { error: updateError } = await supabase
@@ -77,10 +88,7 @@ function CompleteProfilePage({ user, profile, profileComplete, onProfileUpdate }
       }
 
       // Only redirect to dashboard if the newly fetched profile is complete (non-null and non-empty)
-      if (updatedProfile &&
-          updatedProfile.full_name && updatedProfile.full_name.trim() !== '' &&
-          updatedProfile.academic_year && updatedProfile.academic_year.trim() !== '' &&
-          updatedProfile.branch && updatedProfile.branch.trim() !== '') {
+      if (isProfileDataComplete(updatedProfile)) {
         navigate('/dashboard');
       } else {
         setError('Profile updated, but still incomplete. Please fill in all fields.');
@@ -91,7 +99,7 @@ function CompleteProfilePage({ user, profile, profileComplete, onProfileUpdate }
     } finally {
       setLoading(false);
     }
-  }, [fullName, academicYear, branch, user, navigate]); // Removed onProfileUpdate from dependency array
+  }, [fullName, academicYear, branch, user, navigate]);
 
   if (!user || profileComplete === true) {
     // Should be redirected by useEffect, but handle defensively

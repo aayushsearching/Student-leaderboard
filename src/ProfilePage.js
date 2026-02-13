@@ -12,31 +12,19 @@ function ProfilePage({ user }) { // Accept user prop
   const [success, setSuccess] = useState('');
   const navigate = useNavigate(); // Initialize useNavigate
 
-  const getProfile = useCallback(async () => {
-    try {
-      setLoading(true);
-      if (user) {
-        setFullName(user.user_metadata?.full_name || '');
-        setAcademicYear(user.user_metadata?.academic_year || '');
-        setBranch(user.user_metadata?.branch || '');
-      }
-    } catch (err) {
-      console.error('Error fetching profile:', err.message);
-      setError('Error fetching profile data.');
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
-
   useEffect(() => {
     if (!user) {
       navigate('/login'); // Redirect to login if no user
-    } else {
-      getProfile();
+      return;
     }
-  }, [user, navigate, getProfile]); // Depend on getProfile
+    setLoading(true);
+    setFullName(user.user_metadata?.full_name || '');
+    setAcademicYear(user.user_metadata?.academic_year || '');
+    setBranch(user.user_metadata?.branch || '');
+    setLoading(false);
+  }, [user, navigate]);
 
-  async function updateProfile() {
+  const updateProfile = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -66,7 +54,7 @@ function ProfilePage({ user }) { // Accept user prop
     } finally {
       setLoading(false);
     }
-  }
+  }, [user, fullName, academicYear, branch]);
 
   return (
     <div className="profile-page-container">
@@ -77,7 +65,12 @@ function ProfilePage({ user }) { // Accept user prop
         {loading ? (
           <p>Loading profile...</p>
         ) : (
-          <form onSubmit={(e) => { e.preventDefault(); updateProfile(); }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              updateProfile();
+            }}
+          >
             {error && <p className="error-message">{error}</p>}
             {success && <p className="success-message">{success}</p>}
 

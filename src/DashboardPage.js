@@ -4,8 +4,15 @@ import { supabase } from './supabaseClient';
 import './DashboardPage.css';
 import { Grid, CheckSquare, BarChart2, Bell, User } from 'react-feather';
 
-function DashboardPage({ user }) {
+const DASHBOARD_NAV_ITEMS = [
+  { to: '/dashboard', label: 'Dashboard', Icon: Grid },
+  { to: '/dashboard/tasks', label: 'Tasks', Icon: CheckSquare },
+  { to: '/dashboard/leaderboard', label: 'Leaderboard', Icon: BarChart2 },
+  { to: '/dashboard/notifications', label: 'Notifications', Icon: Bell, showBadge: true },
+  { to: '/profile', label: 'Profile', Icon: User }
+];
 
+function DashboardPage({ user }) {
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -43,7 +50,7 @@ function DashboardPage({ user }) {
         schema: 'public', 
         table: 'notifications',
         filter: `user_id=eq.${user?.id}`
-      }, (payload) => {
+      }, () => {
         fetchUnreadCount();
       })
       .subscribe();
@@ -65,37 +72,15 @@ function DashboardPage({ user }) {
         </div>
         <nav className="sidebar-nav">
           <ul>
-            <li>
-              <NavLink to="/dashboard" className={getNavLinkClass}>
-                <Grid className="icon" />
-                <span>Dashboard</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/dashboard/tasks" className={getNavLinkClass}>
-                <CheckSquare className="icon" />
-                <span>Tasks</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/dashboard/leaderboard" className={getNavLinkClass}>
-                <BarChart2 className="icon" />
-                <span>Leaderboard</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/dashboard/notifications" className={getNavLinkClass}>
-                <Bell className="icon" />
-                <span>Notifications</span>
-                {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/profile" className={getNavLinkClass}>
-                <User className="icon" />
-                <span>Profile</span>
-              </NavLink>
-            </li>
+            {DASHBOARD_NAV_ITEMS.map(({ to, label, Icon, showBadge }) => (
+              <li key={to}>
+                <NavLink to={to} className={getNavLinkClass}>
+                  <Icon className="icon" />
+                  <span>{label}</span>
+                  {showBadge && unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </nav>
 

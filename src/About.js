@@ -33,10 +33,11 @@ function About() {
       </section>
 
       {/* Stickers */}
-      <div className="sticker sticker-1">💡 Vision</div>
+      <div className="sticker sticker-1">&#x1F4A1; Vision</div>
 
     </div>
   );
 }
 
 export default About;
+

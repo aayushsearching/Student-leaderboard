@@ -3,13 +3,15 @@ import { supabase } from './supabaseClient';
 import './SignupPage.css';
 import { useNavigate } from 'react-router-dom';
 
+const EMAIL_REGEX = /\S+@\S+\.\S+/;
+
 function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // New state variable
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
@@ -24,22 +26,17 @@ function SignupPage() {
     checkSession();
   }, [navigate]);
 
-  const validateEmail = (email) => {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (isSubmitting) { // Prevent multiple submissions
+    if (isSubmitting) {
       return;
     }
 
     setErrorMessage('');
     setSuccessMessage('');
 
-    if (!validateEmail(email)) {
+    if (!EMAIL_REGEX.test(email)) {
       setEmailError('Please enter a valid email');
       return;
     }
@@ -51,15 +48,10 @@ function SignupPage() {
     }
 
     try {
-      setIsSubmitting(true); // Set submitting state to true
+      setIsSubmitting(true);
       setLoading(true);
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
-
-      if (data.user) {
-
-      }
-
       setSuccessMessage('Success! Please check your email for a confirmation link.');
     } catch (error) {
       if (error.name === 'AbortError') return; // Silently ignore AbortError
@@ -72,7 +64,7 @@ function SignupPage() {
       }
     } finally {
       setLoading(false);
-      setIsSubmitting(false); // Reset submitting state
+      setIsSubmitting(false);
     }
   };
 

@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './BadgeRankingPage.css'; // Import the new CSS
 
-
-
 const getLeagueColor = (league) => {
   switch (league) {
     case 'Novice': return 'bg-gray-200 text-gray-800';
@@ -19,6 +17,16 @@ const getLeagueColor = (league) => {
   }
 };
 
+const LEADERBOARD_TOP10_REFRESH_MS = 10000;
+
+const formatLeaderboardData = (rankedData = []) =>
+  rankedData.map((entry) => ({
+    ...entry,
+    profiles: {
+      full_name: entry.full_name,
+    }
+  }));
+
 function BadgeRankingPage({ user }) {
   const [loadingTop3, setLoadingTop3] = useState(true);
   const [errorTop3, setErrorTop3] = useState(null);
@@ -30,53 +38,49 @@ function BadgeRankingPage({ user }) {
   const [loadingTop10, setLoadingTop10] = useState(true);
   const [errorTop10, setErrorTop10] = useState(null);
 
+  const fetchRankedData = useCallback(async () => {
+    const { data: rankedData, error: fetchError } = await supabase
+      .rpc('get_leaderboard_with_rank')
+      .order('rank', { ascending: true });
+
+    if (fetchError) throw fetchError;
+    return formatLeaderboardData(rankedData);
+  }, []);
+
+  const ensureUserLeaderboardEntry = useCallback(async () => {
+    if (!user) return;
+    const { error: insertError } = await supabase
+      .from('leaderboard')
+      .insert([{ user_id: user.id, score: 0 }]);
+
+    if (insertError) {
+      console.error('Error creating new leaderboard entry:', insertError);
+    }
+  }, [user]);
+
   const fetchLeaderboardTop3Data = useCallback(async () => {
     try {
       setLoadingTop3(true);
       setErrorTop3(null);
-
-      const { data: rankedData, error: fetchError } = await supabase
-        .rpc('get_leaderboard_with_rank')
-        .order('rank', { ascending: true });
-
-      if (fetchError) throw fetchError;
-
-      const formattedRankedData = rankedData.map(entry => ({
-        ...entry,
-        profiles: {
-          full_name: entry.full_name,
-        }
-      }));
-
+      let formattedRankedData = await fetchRankedData();
       setLeaderboardTop3Data(formattedRankedData);
 
-
-      if (user) {
-        const userEntry = formattedRankedData.find(entry => entry.user_id === user.id);
-        if (userEntry) {
-          setCurrentUserData(userEntry);
-
-        } else {
-          console.log("User not found in leaderboard data. Attempting to create entry...");
-          const { error: insertError } = await supabase
-            .from('leaderboard')
-            .insert([{ user_id: user.id, score: 0 }]);
-
-          if (insertError) {
-            console.error('Error creating new leaderboard entry:', insertError);
-          } else {
-            console.log('Leaderboard entry created, re-fetching data...');
-            await fetchLeaderboardTop3Data();
-          }
-        }
+      if (user && !formattedRankedData.find((entry) => entry.user_id === user.id)) {
+        await ensureUserLeaderboardEntry();
+        formattedRankedData = await fetchRankedData();
+        setLeaderboardTop3Data(formattedRankedData);
       }
+
+      setCurrentUserData(
+        user ? formattedRankedData.find((entry) => entry.user_id === user.id) || null : null
+      );
     } catch (err) {
       console.error('Error fetching leaderboard data:', err);
       setErrorTop3('Failed to load leaderboard data: ' + err.message);
     } finally {
       setLoadingTop3(false);
     }
-  }, [user]);
+  }, [user, fetchRankedData, ensureUserLeaderboardEntry]);
 
   const fetchLeaderboardTop10 = useCallback(async () => {
     try {
@@ -101,7 +105,7 @@ function BadgeRankingPage({ user }) {
     fetchLeaderboardTop3Data();
     fetchLeaderboardTop10();
 
-    const intervalId = setInterval(fetchLeaderboardTop10, 10000);
+    const intervalId = setInterval(fetchLeaderboardTop10, LEADERBOARD_TOP10_REFRESH_MS);
 
     return () => clearInterval(intervalId);
   }, [user, navigate, fetchLeaderboardTop3Data, fetchLeaderboardTop10]);
@@ -130,14 +134,13 @@ function BadgeRankingPage({ user }) {
   return (
     <div className="p-6 max-w-5xl mx-auto">
       {/* Page Header Section */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">Leaderboard</h1>
-              <p className="text-gray-500">Top performing students</p>
-            </div>
-      
-                  
-            {loadingTop3 && <p className="text-center text-gray-600">Loading top 3 leaderboard...</p>}
-            {errorTop3 && <p className="text-center text-red-500">Error loading top 3: {errorTop3}</p>}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Leaderboard</h1>
+        <p className="text-gray-500">Top performing students</p>
+      </div>
+
+      {loadingTop3 && <p className="text-center text-gray-600">Loading top 3 leaderboard...</p>}
+      {errorTop3 && <p className="text-center text-red-500">Error loading top 3: {errorTop3}</p>}
 
       {!loadingTop3 && !errorTop3 && (
         <>
@@ -184,14 +187,15 @@ function BadgeRankingPage({ user }) {
           <h2 className="text-3xl font-semibold text-gray-900 mb-4">All Rankings</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                  <tr>
-                                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">Rank</th>
-                                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">Points</th>
-                                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">League</th>
-                                  </tr>
-                                </thead>              <tbody className="bg-white divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">Points</th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">League</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
                 {leaderboardTop10.map((student) => (
                   <tr
                     key={student.rank} // Using rank as key, assuming it's unique for top 10

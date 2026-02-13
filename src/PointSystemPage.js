@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from './supabaseClient';
 import './PointSystemPage.css';
 
-function PointSystemPage({ user }) {
+function PointSystemPage() {
   const [pendingTasks, setPendingTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -50,7 +50,7 @@ function PointSystemPage({ user }) {
     fetchPendingTasks();
   }, [fetchPendingTasks]);
 
-  const handleApprove = async (userTask) => {
+  const handleApprove = useCallback(async (userTask) => {
     setLoading(true);
     
     try {
@@ -69,9 +69,9 @@ function PointSystemPage({ user }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchPendingTasks]);
 
-  const handleReject = async (userTask) => {
+  const handleReject = useCallback(async (userTask) => {
     const reason = window.prompt('Please provide a reason for rejecting this task:');
     if (reason) {
       setLoading(true);
@@ -91,7 +91,7 @@ function PointSystemPage({ user }) {
         setLoading(false);
       }
     }
-  };
+  }, [fetchPendingTasks]);
 
   return (
     <div className="point-system-container">
@@ -127,8 +127,8 @@ function PointSystemPage({ user }) {
                 Submitted: {userTask.submitted_at ? new Date(userTask.submitted_at).toLocaleString() : 'N/A'}
               </p>
               <div className="card-actions">
-                <button onClick={() => handleApprove(userTask)} className="approve-btn" disabled={loading}>Approve</button>
-                <button onClick={() => handleReject(userTask)} className="reject-btn" disabled={loading}>Reject</button>
+                <button type="button" onClick={() => handleApprove(userTask)} className="approve-btn" disabled={loading}>Approve</button>
+                <button type="button" onClick={() => handleReject(userTask)} className="reject-btn" disabled={loading}>Reject</button>
               </div>
             </div>
           ))}

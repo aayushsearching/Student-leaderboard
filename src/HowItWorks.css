@@ -107,12 +107,13 @@
 }
 
 .step-card ul li::before {
-  content: '•'; /* Simple dot for bullet */
+  content: '\2022'; /* Simple dot for bullet */
   position: absolute;
   left: 0;
   color: #66B2FF; /* Accent color (soft blue) */
   font-size: 1.2em; /* Adjust size to fit */
   line-height: 1;
 }
+
 
 

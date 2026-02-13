@@ -3,78 +3,69 @@ import { Navigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import { useState, useEffect } from 'react';
 
+const ACCESS_VERIFY_STYLE = { textAlign: 'center', padding: '2rem' };
+
 function ProtectedRoute({ user, appLoading, profile, profileComplete, requiredRole, children }) {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    // Don't do anything until the app has finished its initial session load.
-    if (appLoading) {
-      return;
-    }
+    let isMounted = true;
 
-    // App is done loading, now we can perform our checks.
-    if (!user) {
-      // If there's no user object, authorization fails. Stop checking.
-      setIsAuthorized(false);
+    const setAuthorization = (authorized) => {
+      if (!isMounted) return;
+      setIsAuthorized(authorized);
       setIsChecking(false);
-      return;
-    }
+    };
 
-    // Check if profile is complete
-    if (profileComplete === false) {
-      setIsAuthorized(false); // Not authorized to access protected content
-      setIsChecking(false);
-      return;
-    }
-
-    // If we have a user object and profile is complete, fetch their profile to check for the required role.
-    // Optimize by using passed profile if available
-    if (profile && profile.role) {
-        if (profile.role !== requiredRole) {
-          setIsAuthorized(false);
-        } else {
-          setIsAuthorized(true);
-        }
-        setIsChecking(false);
+    const verifyAccess = async () => {
+      if (appLoading) {
         return;
-    }
+      }
 
-    supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-      .then(({ data, error }) => {
-        // Check if the fetched role matches the required role.
-        if (error || data?.role !== requiredRole) {
-          setIsAuthorized(false);
-        } else {
-          // If the role matches, authorization succeeds.
-          setIsAuthorized(true);
-        }
-        // In any case, we are done checking.
-        setIsChecking(false);
-      });
+      if (!user) {
+        setAuthorization(false);
+        return;
+      }
+
+      if (profileComplete === false) {
+        setAuthorization(false);
+        return;
+      }
+
+      if (profile?.role) {
+        setAuthorization(profile.role === requiredRole);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      setAuthorization(!error && data?.role === requiredRole);
+    };
+
+    verifyAccess();
+
+    return () => {
+      isMounted = false;
+    };
   }, [user, appLoading, profile, profileComplete, requiredRole]);
 
-  // While we are checking, show a loading message.
-  if (isChecking) {
-    return <p style={{ textAlign: 'center', padding: '2rem' }}>Verifying access...</p>;
+  if (appLoading || isChecking) {
+    return <p style={ACCESS_VERIFY_STYLE}>Verifying access...</p>;
   }
 
-  // After checking, if the user is not authorized, we redirect.
   if (!isAuthorized) {
-    // If profile is incomplete, redirect to complete-profile page
     if (user && profileComplete === false) {
-        return <Navigate to="/complete-profile" replace />;
+      return <Navigate to="/complete-profile" replace />;
     }
-    // If there was a user, but they had the wrong role, send them to the dashboard.
-    // If there was no user at all, send them to the login page.
+
     return <Navigate to={user ? "/dashboard" : "/login"} replace />;
   }
 
-  // If all checks have passed and the user is authorized, render the protected content.
   return children;
 }
 

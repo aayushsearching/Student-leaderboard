@@ -1,9 +1,5 @@
 /* PointSystemPage.css */
 
-.point-system-container {
-  /* Using styles from AdminPage.css, so this can be minimal */
-}
-
 .task-approval-list {
   display: grid;
   grid-template-columns: 1fr;
@@ -66,7 +62,8 @@
   margin-top: 1.5rem;
 }
 
-.approve-btn, .reject-btn {
+.approve-btn,
+.reject-btn {
   flex: 1;
   padding: 0.75rem;
   border-radius: 4px;
