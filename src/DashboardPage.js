@@ -2,10 +2,10 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { NavLink, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './DashboardPage.css';
-import { Grid, CheckSquare, BarChart2, Bell, User, Award, DollarSign, Clipboard } from 'react-feather';
+import { Grid, CheckSquare, BarChart2, Bell, User } from 'react-feather';
 
 function DashboardPage({ user }) {
-  const location = useLocation();
+
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
   const [totalStudents, setTotalStudents] = useState(0);
