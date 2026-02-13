@@ -35,8 +35,6 @@ function BadgeRankingPage({ user }) {
   const [errorTop3, setErrorTop3] = useState(null);
   const [leaderboardTop3Data, setLeaderboardTop3Data] = useState([]);
   const [currentUserData, setCurrentUserData] = useState(null);
-  const [totalStudents, setTotalStudents] = useState(0); // Reintroduced
-  const [userRankPercentage, setUserRankPercentage] = useState(null); // Reintroduced
   const navigate = useNavigate();
 
   const [leaderboardTop10, setLeaderboardTop10] = useState([]);
@@ -62,15 +60,13 @@ function BadgeRankingPage({ user }) {
       }));
 
       setLeaderboardTop3Data(formattedRankedData);
-      setTotalStudents(formattedRankedData.length); // Reintroduced calculation
+
 
       if (user) {
         const userEntry = formattedRankedData.find(entry => entry.user_id === user.id);
         if (userEntry) {
           setCurrentUserData(userEntry);
-          // Calculate user percentage
-          const percentage = (userEntry.rank / formattedRankedData.length) * 100;
-          setUserRankPercentage(Math.round(percentage)); // Reintroduced calculation
+
         } else {
           console.log("User not found in leaderboard data. Attempting to create entry...");
           const { error: insertError } = await supabase
@@ -91,7 +87,7 @@ function BadgeRankingPage({ user }) {
     } finally {
       setLoadingTop3(false);
     }
-  }, [user, setUserRankPercentage, setTotalStudents]); // Added back to dependencies
+  }, [user]);
 
   const fetchLeaderboardTop10 = useCallback(async () => {
     try {
