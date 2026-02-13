@@ -1,11 +1,13 @@
 import React from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { supabase } from './supabaseClient';
+
+
+import { NavLink, Outlet } from 'react-router-dom';
+
 import './AdminLayout.css';
-import { Edit, BarChart2, User, Award, DollarSign, Clipboard } from 'react-feather';
+import { Edit, BarChart2, User, Award } from 'react-feather';
 
 function AdminLayout() {
-  const navigate = useNavigate();
+
 
 
   const getNavLinkClass = ({ isActive }) =>
