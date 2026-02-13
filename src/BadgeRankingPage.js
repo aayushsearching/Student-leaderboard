@@ -3,18 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './BadgeRankingPage.css'; // Import the new CSS
 
-// Helper to format rank with suffixes
-const formatRank = (rank) => {
-  if (rank % 100 >= 11 && rank % 100 <= 13) {
-    return rank + 'th';
-  }
-  switch (rank % 10) {
-    case 1: return rank + 'st';
-    case 2: return rank + 'nd';
-    case 3: return rank + 'rd';
-    default: return rank + 'th';
-  }
-};
+
 
 const getLeagueColor = (league) => {
   switch (league) {
