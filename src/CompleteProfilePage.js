@@ -3,7 +3,7 @@ import { supabase } from './supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import './CompleteProfilePage.css'; // Assuming a new CSS file for styling
 
-function CompleteProfilePage({ user, profile, profileComplete }) {
+function CompleteProfilePage({ user, profile, profileComplete, onProfileUpdate }) {
   const [fullName, setFullName] = useState('');
   const [academicYear, setAcademicYear] = useState('');
   const [branch, setBranch] = useState('');
@@ -20,6 +20,7 @@ function CompleteProfilePage({ user, profile, profileComplete }) {
     // If profile data is already available and complete, redirect
     if (profileComplete === true) {
       navigate('/dashboard');
+      return; // Ensure to return after navigation to prevent further execution
     }
 
     // Pre-fill form if profile data exists
@@ -28,7 +29,7 @@ function CompleteProfilePage({ user, profile, profileComplete }) {
       setAcademicYear(profile.academic_year || '');
       setBranch(profile.branch || '');
     }
-  }, [user, navigate, profile, profileComplete]);
+  }, [user, navigate, profile, profileComplete]); // Added onProfileUpdate to dependency array
 
   const handleSubmit = useCallback(async (event) => {
     event.preventDefault();
@@ -52,23 +53,45 @@ function CompleteProfilePage({ user, profile, profileComplete }) {
 
       const { error: updateError } = await supabase
         .from('profiles')
-        .update(updates)
-        .eq('id', user.id);
+        .upsert(updates);
 
       if (updateError) {
+        console.error("Profile update failed:", updateError);
         throw updateError;
       }
 
       setSuccess('Profile updated successfully!');
-      // After successful update, user should be redirected to dashboard
-      navigate('/dashboard');
+
+      // Re-fetch the updated profile to ensure we have the latest state
+      const { data: updatedProfile, error: fetchError } = await supabase
+        .from('profiles')
+        .select('*') // Select all fields
+        .eq('id', user.id)
+        .single(); // Use single() here as we expect the profile to exist now
+
+      if (fetchError) {
+        console.error("Error re-fetching profile after update:", fetchError.message); // Log error.message
+        setError('Profile updated, but failed to re-verify. Please refresh.');
+        setLoading(false);
+        return;
+      }
+
+      // Only redirect to dashboard if the newly fetched profile is complete (non-null and non-empty)
+      if (updatedProfile &&
+          updatedProfile.full_name && updatedProfile.full_name.trim() !== '' &&
+          updatedProfile.academic_year && updatedProfile.academic_year.trim() !== '' &&
+          updatedProfile.branch && updatedProfile.branch.trim() !== '') {
+        navigate('/dashboard');
+      } else {
+        setError('Profile updated, but still incomplete. Please fill in all fields.');
+      }
     } catch (err) {
       console.error('Error updating profile:', err.message);
       setError('Failed to update profile: ' + err.message);
     } finally {
       setLoading(false);
     }
-  }, [fullName, academicYear, branch, user, navigate]);
+  }, [fullName, academicYear, branch, user, navigate]); // Removed onProfileUpdate from dependency array
 
   if (!user || profileComplete === true) {
     // Should be redirected by useEffect, but handle defensively

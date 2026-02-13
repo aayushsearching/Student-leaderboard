@@ -127,11 +127,11 @@ body {
 
 .hero-section {
   position: relative;
-  height: calc(100vh - 65px);
+  min-height: calc(100vh - 65px);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .hero-content {

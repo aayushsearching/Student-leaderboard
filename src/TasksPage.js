@@ -20,25 +20,37 @@ function TasksPage({ user }) {
     setSuccessMessage('');
 
     try {
-      const { data, error: fetchError } = await supabase
-        .from('user_tasks')
-        .select(`
-          id,
-          status,
-          rejection_message,
-          tasks (
-            title,
-            description,
-            points,
-            due_date,
-            tasks_url
-          )
-        `)
-        .eq('user_id', user.id)
+      // Fetch all tasks from the 'tasks' table
+      const { data: allTasks, error: tasksFetchError } = await supabase
+        .from('tasks')
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (fetchError) throw fetchError;
-      setUserTasks(data);
+      if (tasksFetchError) throw tasksFetchError;
+
+      // Fetch user-specific task progress from 'user_tasks'
+      const { data: userProgress, error: userProgressError } = await supabase
+        .from('user_tasks')
+        .select('task_id, status, rejection_message, id') // Select only relevant user_tasks fields
+        .eq('user_id', user.id);
+
+      if (userProgressError) throw userProgressError;
+
+      // Map user progress to a more accessible format
+      const userProgressMap = new Map(userProgress.map(progress => [progress.task_id, progress]));
+
+      // Combine all tasks with user-specific progress, defaulting status
+      const combinedTasks = allTasks.map(task => {
+        const progress = userProgressMap.get(task.id);
+        return {
+          ...task, // Global task details
+          user_task_id: progress?.id || null, // ID of the user_tasks entry, if it exists
+          status: progress?.status || 'not_started',
+          rejection_message: progress?.rejection_message || null,
+        };
+      });
+
+      setUserTasks(combinedTasks);
     } catch (err) {
       if (err.name === 'AbortError') return;
       setError('Failed to load your tasks: ' + err.message);
@@ -65,31 +77,44 @@ function TasksPage({ user }) {
   const handleStatusChange = useCallback(async () => {
     if (!selectedTask) return;
     const currentStatus = selectedTask.status;
-    
-    // If status is 'not_started', change to 'in_progress'
-    // If status is 'in_progress', change to 'pending_review'
-    if (currentStatus === 'not_started' || currentStatus === 'in_progress') {
-      const nextStatus = currentStatus === 'not_started' ? 'in_progress' : 'pending_review';
-      
-      if (nextStatus === 'pending_review') {
-        setTaskToComplete(selectedTask);
-        setShowProofModal(true);
-      } else { // This path is for changing from 'not_started' to 'in_progress'
-        try {
-          const { error: updateError } = await supabase
-            .from('user_tasks')
-            .update({ status: nextStatus, rejection_message: null })
-            .eq('id', selectedTask.id);
-          if (updateError) throw updateError;
-          await fetchTasks();
-          setSelectedTask(prev => ({ ...prev, status: nextStatus, rejection_message: null }));
-        } catch (err) {
-          if (err.name === 'AbortError') return;
-          setError('Failed to update task status: ' + err.message);
+
+    try {
+      if (currentStatus === 'not_started') {
+        // If status is 'not_started', create a new user_task entry
+        const { data, error: insertError } = await supabase
+          .from('user_tasks')
+          .insert({
+            user_id: user.id,
+            task_id: selectedTask.id, // This is the global task ID
+            status: 'in_progress',
+          })
+          .select('id, status, rejection_message') // Select the new user_task's properties
+          .single();
+
+        if (insertError) throw insertError;
+
+        await fetchTasks(); // Re-fetch all tasks to get the updated list
+        setSelectedTask(prev => ({
+          ...prev,
+          user_task_id: data.id, // Set the new user_task_id
+          status: data.status,
+          rejection_message: data.rejection_message,
+        }));
+      } else if (currentStatus === 'in_progress') {
+        // If status is 'in_progress', prepare for submission (show proof modal)
+        if (selectedTask.user_task_id) {
+          setTaskToComplete(selectedTask);
+          setShowProofModal(true);
+        } else {
+          // This should ideally not happen if 'in_progress' means an entry exists, but good to handle defensively
+          setError('Cannot submit task: User task entry not found for submission.');
         }
       }
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      setError('Failed to update task status: ' + err.message);
     }
-  }, [selectedTask, fetchTasks]);
+  }, [selectedTask, user.id, fetchTasks]);
 
   const handleSubmitForApproval = useCallback(async () => {
     if (!taskToComplete) return;
@@ -97,7 +122,7 @@ function TasksPage({ user }) {
       const { error: updateError } = await supabase
         .from('user_tasks')
         .update({ status: 'pending_review', submitted_at: new Date().toISOString() })
-        .eq('id', taskToComplete.id);
+        .eq('id', taskToComplete.user_task_id);
       if (updateError) throw updateError;
       
       setSuccessMessage('Task submitted for approval! Your points will be credited shortly.');
@@ -118,7 +143,7 @@ function TasksPage({ user }) {
       const { error: updateError } = await supabase
         .from('user_tasks')
         .update({ status: 'in_progress', rejection_message: null })
-        .eq('id', selectedTask.id);
+        .eq('id', selectedTask.user_task_id);
       if (updateError) throw updateError;
       await fetchTasks();
       closeTaskDetailsModal(); // Close the modal after retrying
@@ -147,10 +172,10 @@ function TasksPage({ user }) {
         <div className="tasks-grid">
           {userTasks.map((userTask) => (
             <div key={userTask.id} className={`task-card ${userTask.status === 'completed' ? 'task-completed' : ''} ${userTask.status === 'rejected' ? 'task-rejected' : ''}`}>
-              <h4>{userTask.tasks?.title || 'Task details not found'}</h4>
+              <h4>{userTask.title || 'Task details not found'}</h4>
               <div className="task-details">
                 <span>Status: {userTask.status === 'rejected' ? '❌ Rejected' : (statusDisplayMap[userTask.status] || 'Unknown')}</span>
-                <span>Points: {userTask.tasks?.points || 0}</span>
+                <span>Points: {userTask.points || 0}</span>
               </div>
               {userTask.rejection_message && (
                 <div className="rejection-box">
@@ -166,13 +191,13 @@ function TasksPage({ user }) {
       {selectedTask && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>{selectedTask.tasks?.title}</h3>
+            <h3>{selectedTask.title}</h3>
             <p><strong>Status:</strong> {statusDisplayMap[selectedTask.status]}</p>
             {selectedTask.rejection_message && <p className="error-message"><strong>Admin Feedback:</strong> {selectedTask.rejection_message}</p>}
-            <p><strong>Description:</strong> {selectedTask.tasks?.description}</p>
-            {selectedTask.tasks?.tasks_url && <p><strong>URL:</strong> <a href={selectedTask.tasks?.tasks_url} target="_blank" rel="noopener noreferrer">{selectedTask.tasks.tasks_url}</a></p>}
-            <p><strong>Points:</strong> {selectedTask.tasks?.points}</p>
-            {selectedTask.tasks?.due_date && <p><strong>Deadline:</strong> {new Date(selectedTask.tasks.due_date).toLocaleString()}</p>}
+            <p><strong>Description:</strong> {selectedTask.description}</p>
+            {selectedTask.tasks_url && <p><strong>URL:</strong> <a href={selectedTask.tasks_url} target="_blank" rel="noopener noreferrer">{selectedTask.tasks_url}</a></p>}
+            <p><strong>Points:</strong> {selectedTask.points}</p>
+            {selectedTask.due_date && <p><strong>Deadline:</strong> {new Date(selectedTask.due_date).toLocaleString()}</p>}
             
             {(selectedTask.status === 'not_started' || selectedTask.status === 'in_progress') && (
               <button onClick={handleStatusChange} className="change-status-button">
@@ -199,7 +224,7 @@ function TasksPage({ user }) {
             <div className="modal-actions">
               <button onClick={handleSubmitForApproval} className="yes-button">Yes, I have</button>
               <a 
-                href={`mailto:tasksquare@duck.com?subject=Proof of Work: ${taskToComplete?.tasks?.title}&body=Paste your proof of work here.`}
+                href={`mailto:tasksquare@duck.com?subject=Proof of Work: ${taskToComplete?.title}&body=Paste your proof of work here.`}
                 className="no-button"
                 onClick={() => setShowProofModal(false)}
               >

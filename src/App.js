@@ -150,19 +150,24 @@ function App() {
           .from('profiles')
           .select('full_name, academic_year, branch, role')
           .eq('id', data.session.user.id)
-          .single();
+          .maybeSingle(); // Changed to maybeSingle()
 
-        if (profileError && profileError.code !== 'PGRST116') {
+        if (profileError) {
           console.error('Error fetching profile:', profileError);
-          setProfileComplete(false);
+          setProfileComplete(false); // Profile is incomplete if there's an error
         } else if (profileData) {
           setProfile(profileData);
+          // Check for completeness only if profileData exists
           const isComplete = profileData.full_name && profileData.academic_year && profileData.branch;
           setProfileComplete(!!isComplete);
         } else {
+          // If profileData is null, profile is definitely incomplete
           setProfileComplete(false);
         }
       } else {
+        // No user session, so no profile to complete.
+        // This implicitly means the onboarding loop shouldn't apply,
+        // so we can consider it "complete" for the purpose of not redirecting to onboarding.
         setProfileComplete(true);
       }
       setLoading(false);
@@ -178,16 +183,17 @@ function App() {
             .from('profiles')
             .select('full_name, academic_year, branch, role')
             .eq('id', session.user.id)
-            .single()
+            .maybeSingle() // Changed to maybeSingle()
             .then(({ data: profileData, error: profileError }) => {
-              if (profileError && profileError.code !== 'PGRST116') {
+              if (profileError) {
                 console.error('Error fetching profile on auth state change:', profileError);
-                setProfileComplete(false);
+                setProfileComplete(false); // Profile is incomplete if there's an error
               } else if (profileData) {
                 setProfile(profileData);
                 const isComplete = profileData.full_name && profileData.academic_year && profileData.branch;
                 setProfileComplete(!!isComplete);
               } else {
+                // If profileData is null, profile is definitely incomplete
                 setProfileComplete(false);
               }
             });

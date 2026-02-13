@@ -1,8 +1,7 @@
 .dashboard-page-wrapper {
   display: flex;
   background-color: var(--bg-color);
-  height: 100vh; /* Ensure it takes full viewport height */
-  overflow: hidden; /* Prevent scrolling on the main page */
+  min-height: 100vh; /* Ensure it takes full viewport height */
   font-family: var(--font-family);
   color: var(--text-color);
 }
@@ -73,8 +72,8 @@
   background-color: var(--bg-color);
   padding: var(--navbar-height) 2rem 2rem 2rem;
   margin-left: 240px; /* Offset for fixed sidebar */
-  height: 100%; /* Fill available height */
-  overflow: hidden; /* Prevent scrolling here, scroll on specific grid items */
+  min-height: 100%; /* Fill available height */
+  overflow-y: auto; /* Allow vertical scrolling */
   display: grid;
   grid-template-rows: auto auto 1fr; /* Welcome banner, cards, and Outlet content */
   gap: 1rem; /* Consistent spacing between major sections */
