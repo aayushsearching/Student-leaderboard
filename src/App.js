@@ -124,19 +124,13 @@ function MainLayout({ session, onLogout }) {
   );
 }
 
-function App() {
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [profileComplete, setProfileComplete] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const navigate = useNavigate();
-  const location = useLocation();
+
 
   useEffect(() => {
-    if (!loading && session && profileComplete === false && location.pathname !== '/complete-profile') {
+    if (!loading && session && profileComplete === false) {
       navigate('/complete-profile');
     }
-  }, [loading, session, profileComplete, navigate, location.pathname]); // Removed location.pathname from dependencies
+  }, [loading, session, profileComplete, navigate]);
 
   useEffect(() => {
     const initializeAuth = async () => {
