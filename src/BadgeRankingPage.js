@@ -146,31 +146,7 @@ function BadgeRankingPage({ user }) {
               <p className="text-gray-500">Top performing students</p>
             </div>
       
-            {/* User Standing Section */}
-            {currentUserData && userRankPercentage !== null && (
-              <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-2">Your Standing</h2>
-                <div className="border-b border-gray-200 mb-4"></div> {/* Subtle divider */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                  {/* Name Card */}
-                  <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-100">
-                    <p className="text-sm text-gray-500">Name</p>
-                    <p className="text-xl font-medium text-gray-900 mt-1">{currentUserData.profiles.full_name || 'You'}</p>
-                  </div>
-                  {/* Rank Card */}
-                  <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
-                    <p className="text-sm text-blue-600">Rank</p>
-                    <p className="text-2xl font-bold text-blue-800 mt-1">{formatRank(currentUserData.rank)}</p>
-                  </div>
-                  {/* Top Percentage Card */}
-                  <div className="text-center p-4 bg-green-50 rounded-lg border border-green-100">
-                    <p className="text-sm text-green-600">Top Percentage</p>
-                    <p className="text-xl font-medium text-green-800 mt-1">Top {userRankPercentage}%</p>
-                  </div>
-                </div>
-              </div>
-            )}
-      
+                  
             {loadingTop3 && <p className="text-center text-gray-600">Loading top 3 leaderboard...</p>}
             {errorTop3 && <p className="text-center text-red-500">Error loading top 3: {errorTop3}</p>}
 
