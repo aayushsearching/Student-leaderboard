@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient'; // Import supabase client
 import './DashboardOverview.css';
-import { Award, DollarSign, Clipboard } from 'react-feather'; // Add missing icons
+
 
 function DashboardOverview({ user }) {
   const navigate = useNavigate();
