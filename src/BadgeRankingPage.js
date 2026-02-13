@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { supabase } from './supabaseClient'; // Import Supabase client
-import './BadgeRankingPage.css';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from './supabaseClient';
+import './BadgeRankingPage.css'; // Import the new CSS
 
 // Helper to format rank with suffixes
 const formatRank = (rank) => {
@@ -16,29 +16,44 @@ const formatRank = (rank) => {
   }
 };
 
+const getLeagueColor = (league) => {
+  switch (league) {
+    case 'Novice': return 'bg-gray-200 text-gray-800';
+    case 'Learner': return 'bg-yellow-100 text-yellow-800';
+    case 'Scholar': return 'bg-blue-100 text-blue-800';
+    case 'Skilled': return 'bg-green-100 text-green-800';
+    case 'Expert': return 'bg-indigo-100 text-indigo-800';
+    case 'Master': return 'bg-purple-100 text-purple-800';
+    case 'Elite': return 'bg-pink-100 text-pink-800';
+    case 'Apex': return 'bg-red-100 text-red-800';
+    default: return 'bg-gray-100 text-gray-700';
+  }
+};
 
-
-function BadgeRankingPage({ user }) { // Accept user prop
-  const [showRankingExplanation, setShowRankingExplanation] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [leaderboardData, setLeaderboardData] = useState([]);
+function BadgeRankingPage({ user }) {
+  const [loadingTop3, setLoadingTop3] = useState(true);
+  const [errorTop3, setErrorTop3] = useState(null);
+  const [leaderboardTop3Data, setLeaderboardTop3Data] = useState([]);
   const [currentUserData, setCurrentUserData] = useState(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [totalStudents, setTotalStudents] = useState(0); // Reintroduced
+  const [userRankPercentage, setUserRankPercentage] = useState(null); // Reintroduced
+  const navigate = useNavigate();
 
-  const fetchLeaderboardData = useCallback(async () => {
+  const [leaderboardTop10, setLeaderboardTop10] = useState([]);
+  const [loadingTop10, setLoadingTop10] = useState(true);
+  const [errorTop10, setErrorTop10] = useState(null);
+
+  const fetchLeaderboardTop3Data = useCallback(async () => {
     try {
-      setLoading(true);
-      setError(null);
+      setLoadingTop3(true);
+      setErrorTop3(null);
 
-      // Fetch leaderboard data with dynamically calculated ranks using the RPC
       const { data: rankedData, error: fetchError } = await supabase
         .rpc('get_leaderboard_with_rank')
-        .order('rank', { ascending: true }); // Order by the calculated rank
+        .order('rank', { ascending: true });
 
       if (fetchError) throw fetchError;
 
-      // The RPC returns a flat array, so profiles data needs to be structured manually for consistency
       const formattedRankedData = rankedData.map(entry => ({
         ...entry,
         profiles: {
@@ -46,153 +61,198 @@ function BadgeRankingPage({ user }) { // Accept user prop
         }
       }));
 
-      setLeaderboardData(formattedRankedData); // Set the full ranked leaderboard data
+      setLeaderboardTop3Data(formattedRankedData);
+      setTotalStudents(formattedRankedData.length); // Reintroduced calculation
 
-      // Find current user's data if logged in
       if (user) {
         const userEntry = formattedRankedData.find(entry => entry.user_id === user.id);
         if (userEntry) {
           setCurrentUserData(userEntry);
+          // Calculate user percentage
+          const percentage = (userEntry.rank / formattedRankedData.length) * 100;
+          setUserRankPercentage(Math.round(percentage)); // Reintroduced calculation
         } else {
-          // If user is logged in but no leaderboard entry found, create one
-          // This part still interacts with the 'leaderboard' table directly
-          // Assuming 'leaderboard' table only contains user_id and score.
-          console.log("Creating new leaderboard entry for user:", user.id);
+          console.log("User not found in leaderboard data. Attempting to create entry...");
           const { error: insertError } = await supabase
             .from('leaderboard')
-            .insert([
-              { user_id: user.id, score: 0 }
-            ]);
+            .insert([{ user_id: user.id, score: 0 }]);
 
           if (insertError) {
-            throw insertError;
+            console.error('Error creating new leaderboard entry:', insertError);
           } else {
             console.log('Leaderboard entry created, re-fetching data...');
-            // Re-fetch data to include the newly created entry
-            await fetchLeaderboardData(); // This will re-run the whole fetch process
+            await fetchLeaderboardTop3Data();
           }
         }
       }
     } catch (err) {
-      if (err.name === 'AbortError') return;
       console.error('Error fetching leaderboard data:', err);
-      setError('Failed to load leaderboard data: ' + err.message);
+      setErrorTop3('Failed to load leaderboard data: ' + err.message);
     } finally {
-      setLoading(false);
+      setLoadingTop3(false);
     }
-  }, [user]);
+  }, [user, setUserRankPercentage, setTotalStudents]); // Added back to dependencies
+
+  const fetchLeaderboardTop10 = useCallback(async () => {
+    try {
+      setLoadingTop10(true);
+      setErrorTop10(null);
+      const { data, error } = await supabase.rpc('get_leaderboard_top10');
+      if (error) throw error;
+      setLeaderboardTop10(data || []);
+    } catch (err) {
+      console.error('Error fetching top 10 leaderboard:', err);
+      setErrorTop10('Failed to load top 10 leaderboard: ' + err.message);
+    } finally {
+      setLoadingTop10(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (!user) {
-      navigate('/login'); // Redirect to login if no user
+      navigate('/login');
       return;
     }
-    fetchLeaderboardData();
-  }, [user, navigate, fetchLeaderboardData]); // Depend on user and navigate
+    fetchLeaderboardTop3Data();
+    fetchLeaderboardTop10();
 
-  // Prepare current user mock data using fetched data
-  const currentUserDisplay = {
-    name: currentUserData?.profiles?.full_name || 'You',
-    rank: currentUserData?.rank,
-    league: currentUserData?.league, // Directly use the league from RPC
-    points: currentUserData?.score || 0,
-  };
+    const intervalId = setInterval(fetchLeaderboardTop10, 10000);
+
+    return () => clearInterval(intervalId);
+  }, [user, navigate, fetchLeaderboardTop3Data, fetchLeaderboardTop10]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('leaderboard-changes')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'leaderboard' },
+        () => {
+          console.log('Leaderboard updated via real-time, re-fetching data.');
+          fetchLeaderboardTop3Data();
+          fetchLeaderboardTop10();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchLeaderboardTop3Data, fetchLeaderboardTop10]);
+
+  const top3Students = leaderboardTop3Data.slice(0, 3);
 
   return (
-    <div className="badge-ranking-page">
-      <div className="ranking-header">
-        <h1>Leaderboard</h1>
-        <p>See where you stand among your peers.</p>
-        <button className="ranking-info-button" onClick={() => setShowRankingExplanation(!showRankingExplanation)}>
-          {showRankingExplanation ? 'Hide Ranking Details' : 'See how ranking works'}
-        </button>
-      </div>
-
-
-
-      {!showRankingExplanation && (
-        <>
-          {loading && <p className="loading-message">Loading leaderboard...</p>}
-          {error && <p className="error-message">{error}</p>}
-
-          {!loading && !error && (
-            <>
-              {/* Top Section: Current User's Rank */}
-              {currentUserData ? (
-                <div className="current-user-rank-card">
-                  <div className="user-info">
-                    <h3 className="user-name">{currentUserDisplay.name}</h3>
-                    <p className="user-rank">Your Rank: {formatRank(currentUserDisplay.rank)}</p>
-                    <p className="user-points">{currentUserDisplay.points} Points</p>
-                    {currentUserDisplay.league && currentUserDisplay.league !== 'Unranked' && (
-                      <p className="user-league">League: {currentUserDisplay.league}</p>
-                    )}
-                    {currentUserDisplay.league === 'Unranked' && (
-                      <p className="user-league">League: No League Yet</p>
-                    )}
+    <div className="p-6 max-w-5xl mx-auto">
+      {/* Page Header Section */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-gray-900">Leaderboard</h1>
+              <p className="text-gray-500">Top performing students</p>
+            </div>
+      
+            {/* User Standing Section */}
+            {currentUserData && userRankPercentage !== null && (
+              <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2">Your Standing</h2>
+                <div className="border-b border-gray-200 mb-4"></div> {/* Subtle divider */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  {/* Name Card */}
+                  <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-100">
+                    <p className="text-sm text-gray-500">Name</p>
+                    <p className="text-xl font-medium text-gray-900 mt-1">{currentUserData.profiles.full_name || 'You'}</p>
                   </div>
-                  <div className="user-league-display">
-                    {currentUserDisplay.league && currentUserDisplay.league !== 'Unranked' && (
-                      <span className="league-badge">{currentUserDisplay.league}</span>
-                    )}
-                    {currentUserDisplay.league === 'Unranked' && (
-                      <span className="league-badge">Unranked</span>
-                    )}
+                  {/* Rank Card */}
+                  <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <p className="text-sm text-blue-600">Rank</p>
+                    <p className="text-2xl font-bold text-blue-800 mt-1">{formatRank(currentUserData.rank)}</p>
+                  </div>
+                  {/* Top Percentage Card */}
+                  <div className="text-center p-4 bg-green-50 rounded-lg border border-green-100">
+                    <p className="text-sm text-green-600">Top Percentage</p>
+                    <p className="text-xl font-medium text-green-800 mt-1">Top {userRankPercentage}%</p>
                   </div>
                 </div>
-              ) : (
-                <p className="muted-text" style={{textAlign: 'center', marginBottom: '2rem'}}>You are not currently ranked on the leaderboard. Complete tasks to earn points!</p>
-              )}
-
-
-              {/* Folder of Badges Section - This section will now show ALL badges defined, not just earned */}
-              {/* I'll simplify this for now based on user's previous request to only show league titles and points */}
-              {/* If you want to show earned badges, you'd need to fetch a user's specific earned badges from DB */}
-              {/* For now, removing this section as per current user's request for simpler display */}
-              {/* The league explanation grid is still available via the "How ranking works" button */}
-
-              {/* Leaderboard List: Top 10 Students */}
-              <div className="leaderboard-card">
-                <h4>Top 10 Students</h4>
-                <div className="table-responsive-wrapper"> {/* New wrapper for responsive table */}
-                  <table className="leaderboard-table">
-                  <thead>
-                    <tr>
-                      <th>Rank</th>
-                      <th>Name</th>
-                      <th>Points</th>
-                      <th>League</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {leaderboardData.length > 0 ? (
-                      leaderboardData.map((student) => (
-                        <tr key={student.user_id}> {/* Use user_id as key as it's unique */}
-                          <td>{formatRank(student.rank)}</td>
-                          <td>{student.profiles.full_name || 'Unknown User'}</td>
-                          <td>{student.score}</td>
-                          <td className="leaderboard-league-cell">
-                            {student.league && student.league !== 'Unranked' && (
-                              <span className="league-badge">{student.league}</span>
-                            )}
-                            {student.league === 'Unranked' && (
-                              <span className="league-badge">Unranked</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="5" className="muted-text" style={{textAlign: 'center', padding: '1rem'}}>No students on the leaderboard yet.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-                </div> {/* Closing tag for table-responsive-wrapper */}
               </div>
-            </>
+            )}
+      
+            {loadingTop3 && <p className="text-center text-gray-600">Loading top 3 leaderboard...</p>}
+            {errorTop3 && <p className="text-center text-red-500">Error loading top 3: {errorTop3}</p>}
+
+      {!loadingTop3 && !errorTop3 && (
+        <>
+          {/* Top 3 Highlight Section */}
+          {top3Students.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4 items-end">
+              {top3Students.map((student, index) => (
+                <div
+                  key={student.user_id}
+                  className={`bg-white p-6 rounded-xl shadow-md text-center relative transition-all duration-300
+                    ${index === 0 ? 'border-2 border-indigo-500 shadow-lg scale-105' : ''}
+                    ${index === 1 ? 'order-first' : ''}
+                    ${index === 2 ? 'order-last' : ''}
+                  `}
+                >
+                  <div className="flex justify-center mb-4">
+                    {/* Placeholder Avatar */}
+                    <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold text-lg">
+                      {student.profiles.full_name ? student.profiles.full_name[0].toUpperCase() : '?'}
+                    </div>
+                  </div>
+                  {/* Rank Badge */}
+                  <div className="absolute top-2 left-2 bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                    {student.rank}
+                  </div>
+                  <h3 className="font-bold text-lg text-gray-900">{student.profiles.full_name || 'Unknown'}</h3>
+                  <p className="text-2xl font-semibold text-gray-800">{student.score} Pts</p>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2 ${getLeagueColor(student.league)}`}>
+                    {student.league}
+                  </span>
+                </div>
+              ))}
+            </div>
           )}
         </>
+      )}
+
+      {/* New All Rankings Section (Top 10) */}
+      {loadingTop10 && <p className="text-center text-gray-600">Loading all rankings...</p>}
+      {errorTop10 && <p className="text-center text-red-500">Error loading all rankings: {errorTop10}</p>}
+
+      {!loadingTop10 && !errorTop10 && leaderboardTop10.length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm p-6 mt-6"> {/* mt-6 for spacing */}
+          <h2 className="text-3xl font-semibold text-gray-900 mb-4">All Rankings</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                  <tr>
+                                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">Points</th>
+                                    <th className="px-6 py-3 text-left text-base font-medium text-gray-500 uppercase tracking-wider">League</th>
+                                  </tr>
+                                </thead>              <tbody className="bg-white divide-y divide-gray-200">
+                {leaderboardTop10.map((student) => (
+                  <tr
+                    key={student.rank} // Using rank as key, assuming it's unique for top 10
+                    className={`${currentUserData && currentUserData.user_id === student.user_id ? 'bg-indigo-50' : 'hover:bg-gray-50'}`}
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap text-lg text-gray-900">{student.rank}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-lg font-medium text-gray-900">
+                      {student.name || 'Unknown'}
+                      {currentUserData && currentUserData.user_id === student.user_id && <span className="ml-2 px-2 inline-flex text-base leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">You</span>}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-lg text-gray-700">{student.points}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-lg text-gray-700">
+                      <span className={`px-2 inline-flex text-lg leading-5 font-semibold rounded-full ${getLeagueColor(student.league)}`}>
+                        {student.league}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
     </div>
   );

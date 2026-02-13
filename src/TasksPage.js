@@ -14,7 +14,6 @@ function TasksPage({ user }) {
   // const navigate = useNavigate(); // Removed as it's not used
 
   const fetchTasks = useCallback(async () => {
-    if (!user) return;
     setLoading(true);
     setError(null);
     setSuccessMessage('');
@@ -60,8 +59,13 @@ function TasksPage({ user }) {
   }, [user]);
 
   useEffect(() => {
+    if (!user) {
+      setUserTasks([]);
+      setLoading(false);
+      return;
+    }
     fetchTasks();
-  }, [fetchTasks]);
+  }, [fetchTasks, user]);
 
   const openTaskDetailsModal = (task) => setSelectedTask(task);
   const closeTaskDetailsModal = useCallback(() => setSelectedTask(null), []);
@@ -81,17 +85,17 @@ function TasksPage({ user }) {
     try {
       if (currentStatus === 'not_started') {
         // If status is 'not_started', create a new user_task entry
-        const { data, error: insertError } = await supabase
+        const { data, error: upsertError } = await supabase
           .from('user_tasks')
-          .insert({
+          .upsert({
             user_id: user.id,
-            task_id: selectedTask.id, // This is the global task ID
+            task_id: selectedTask.id,
             status: 'in_progress',
-          })
-          .select('id, status, rejection_message') // Select the new user_task's properties
+          }, { onConflict: 'user_id,task_id' })
+          .select('id, status, rejection_message')
           .single();
 
-        if (insertError) throw insertError;
+        if (upsertError) throw upsertError;
 
         await fetchTasks(); // Re-fetch all tasks to get the updated list
         setSelectedTask(prev => ({
@@ -114,7 +118,7 @@ function TasksPage({ user }) {
       if (err.name === 'AbortError') return;
       setError('Failed to update task status: ' + err.message);
     }
-  }, [selectedTask, user.id, fetchTasks]);
+  }, [selectedTask, user?.id, fetchTasks]);
 
   const handleSubmitForApproval = useCallback(async () => {
     if (!taskToComplete) return;
@@ -155,84 +159,90 @@ function TasksPage({ user }) {
 
   return (
     <div className="tasks-page-container">
-      {successMessage && <p className="success-message">{successMessage}</p>}
-      <div className="tasks-header">
-        <h2>My Tasks</h2>
-        <p className="muted-text">Overview of your assigned tasks</p>
-      </div>
+      {!user ? (
+        <p className="text-center text-gray-500">Please log in to view your tasks.</p>
+      ) : (
+        <>
+          {successMessage && <p className="success-message">{successMessage}</p>}
+          <div className="tasks-header">
+            <h2>My Tasks</h2>
+            <p className="muted-text">Overview of your assigned tasks</p>
+          </div>
 
-      {loading && <p className="loading-message">Loading tasks...</p>}
-      {error && <p className="error-message">{error}</p>}
+          {loading && <p className="loading-message">Loading tasks...</p>}
+          {error && <p className="error-message">{error}</p>}
 
-      {!loading && !error && userTasks.length === 0 && (
-        <p className="muted-text" style={{textAlign: 'center'}}>No tasks assigned to you yet.</p>
-      )}
+          {!loading && !error && userTasks.length === 0 && (
+            <p className="muted-text" style={{textAlign: 'center'}}>No tasks assigned to you yet.</p>
+          )}
 
-      {!loading && !error && (
-        <div className="tasks-grid">
-          {userTasks.map((userTask) => (
-            <div key={userTask.id} className={`task-card ${userTask.status === 'completed' ? 'task-completed' : ''} ${userTask.status === 'rejected' ? 'task-rejected' : ''}`}>
-              <h4>{userTask.title || 'Task details not found'}</h4>
-              <div className="task-details">
-                <span>Status: {userTask.status === 'rejected' ? '❌ Rejected' : (statusDisplayMap[userTask.status] || 'Unknown')}</span>
-                <span>Points: {userTask.points || 0}</span>
-              </div>
-              {userTask.rejection_message && (
-                <div className="rejection-box">
-                  <strong>Admin Feedback:</strong> {userTask.rejection_message}
+          {!loading && !error && (
+            <div className="tasks-grid">
+              {userTasks.map((userTask) => (
+                <div key={userTask.id} className={`task-card ${userTask.status === 'completed' ? 'task-completed' : ''} ${userTask.status === 'rejected' ? 'task-rejected' : ''}`}>
+                  <h4>{userTask.title || 'Task details not found'}</h4>
+                  <div className="task-details">
+                    <span>Status: {userTask.status === 'rejected' ? '❌ Rejected' : (statusDisplayMap[userTask.status] || 'Unknown')}</span>
+                    <span>Points: {userTask.points || 0}</span>
+                  </div>
+                  {userTask.rejection_message && (
+                    <div className="rejection-box">
+                      <strong>Admin Feedback:</strong> {userTask.rejection_message}
+                    </div>
+                  )}
+                  <button className="show-details-button" onClick={() => openTaskDetailsModal(userTask)}>Show Details</button>
                 </div>
-              )}
-              <button className="show-details-button" onClick={() => openTaskDetailsModal(userTask)}>Show Details</button>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          )}
 
-      {selectedTask && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>{selectedTask.title}</h3>
-            <p><strong>Status:</strong> {statusDisplayMap[selectedTask.status]}</p>
-            {selectedTask.rejection_message && <p className="error-message"><strong>Admin Feedback:</strong> {selectedTask.rejection_message}</p>}
-            <p><strong>Description:</strong> {selectedTask.description}</p>
-            {selectedTask.tasks_url && <p><strong>URL:</strong> <a href={selectedTask.tasks_url} target="_blank" rel="noopener noreferrer">{selectedTask.tasks_url}</a></p>}
-            <p><strong>Points:</strong> {selectedTask.points}</p>
-            {selectedTask.due_date && <p><strong>Deadline:</strong> {new Date(selectedTask.due_date).toLocaleString()}</p>}
-            
-            {(selectedTask.status === 'not_started' || selectedTask.status === 'in_progress') && (
-              <button onClick={handleStatusChange} className="change-status-button">
-                Change Status to "{selectedTask.status === 'not_started' ? 'In Progress' : 'Submit for Approval'}"
-              </button>
-            )}
+          {selectedTask && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <h3>{selectedTask.title}</h3>
+                <p><strong>Status:</strong> {statusDisplayMap[selectedTask.status]}</p>
+                {selectedTask.rejection_message && <p className="error-message"><strong>Admin Feedback:</strong> {selectedTask.rejection_message}</p>}
+                <p><strong>Description:</strong> {selectedTask.description}</p>
+                {selectedTask.tasks_url && <p><strong>URL:</strong> <a href={selectedTask.tasks_url} target="_blank" rel="noopener noreferrer">{selectedTask.tasks_url}</a></p>}
+                <p><strong>Points:</strong> {selectedTask.points}</p>
+                {selectedTask.due_date && <p><strong>Deadline:</strong> {new Date(selectedTask.due_date).toLocaleString()}</p>}
+                
+                {(selectedTask.status === 'not_started' || selectedTask.status === 'in_progress') && (
+                  <button onClick={handleStatusChange} className="change-status-button">
+                    Change Status to "{selectedTask.status === 'not_started' ? 'In Progress' : 'Submit for Approval'}"
+                  </button>
+                )}
 
-            {selectedTask.status === 'rejected' && (
-              <button onClick={handleRetryTask} className="change-status-button">
-                Retry Task
-              </button>
-            )}
+                {selectedTask.status === 'rejected' && (
+                  <button onClick={handleRetryTask} className="change-status-button">
+                    Retry Task
+                  </button>
+                )}
 
-            <button onClick={closeTaskDetailsModal} className="modal-close-button">Close</button>
-          </div>
-        </div>
-      )}
-
-      {showProofModal && (
-        <div className="modal-overlay">
-          <div className="modal-content proof-modal">
-            <h3>Proof of Work</h3>
-            <p>Have you sent the proof of work to the mail?</p>
-            <div className="modal-actions">
-              <button onClick={handleSubmitForApproval} className="yes-button">Yes, I have</button>
-              <a 
-                href={`mailto:tasksquare@duck.com?subject=Proof of Work: ${taskToComplete?.title}&body=Paste your proof of work here.`}
-                className="no-button"
-                onClick={() => setShowProofModal(false)}
-              >
-                No, take me to email
-              </a>
+                <button onClick={closeTaskDetailsModal} className="modal-close-button">Close</button>
+              </div>
             </div>
-          </div>
-        </div>
+          )}
+
+          {showProofModal && (
+            <div className="modal-overlay">
+              <div className="modal-content proof-modal">
+                <h3>Proof of Work</h3>
+                <p>Have you sent the proof of work to the mail?</p>
+                <div className="modal-actions">
+                  <button onClick={handleSubmitForApproval} className="yes-button">Yes, I have</button>
+                  <a 
+                    href={`mailto:tasksquare@duck.com?subject=Proof of Work: ${taskToComplete?.title}&body=Paste your proof of work here.`}
+                    className="no-button"
+                    onClick={() => setShowProofModal(false)}
+                  >
+                    No, take me to email
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

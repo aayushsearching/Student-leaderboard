@@ -1,488 +1,359 @@
-/* Page Layout */
-.badge-ranking-page {
-  padding: 3rem;
-  background-color: #1a1d22; /* Deep charcoal */
-  background-image: linear-gradient(to bottom, #1a1d22, #111317); /* Soft gradient */
-  color: #fff;
-  min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem; /* Spacing between sections */
+/* Base styling for the Leaderboard page */
+.p-6 {
+  padding: 1.5rem; /* Equivalent to Tailwind's p-6 */
 }
 
-.ranking-header {
-  text-align: center;
-  margin-bottom: 1rem;
+.mb-8 {
+  margin-bottom: 2rem; /* Equivalent to Tailwind's mb-8 */
 }
 
-.ranking-header h1 {
-  font-size: 2.8rem; /* Larger primary heading */
+/* Page Header Section */
+.text-3xl {
+  font-size: 1.875rem; /* 30px */
+  line-height: 2.25rem; /* 36px */
+}
+
+.font-bold {
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #fff; /* Bright primary label */
 }
 
-.ranking-header p {
-  color: #8a92a6; /* Muted secondary text */
-  font-size: 1.1rem;
+.text-gray-900 {
+  color: var(--text-color); /* Assuming --text-color is dark gray/black */
 }
 
-.ranking-info-button {
-  background-color: #3a3f45;
-  color: #fff;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  margin-top: 1rem;
+.text-gray-500 {
+  color: var(--text-color-light); /* Assuming --text-color-light is a muted gray */
 }
 
-.ranking-info-button:hover {
-  background-color: #4a4f55;
-}
-
-/* Ranking Explanation Section */
-.ranking-explanation {
-  background-color: #2a2e35;
-  border-radius: 16px;
-  padding: 2rem;
-  margin: 0 auto 3rem auto;
-  max-width: 950px;
-  width: 100%;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 10px 30px rgba(0, 0, 0, 0.4);
-  border: 1px solid #3a3f45;
-}
-
-.ranking-explanation h4 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #fff;
-  text-align: center;
-}
-
-.ranking-explanation p {
-  color: #e0e6f0;
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
-}
-
-.league-explanation-grid {
+/* Top 3 Highlight Section */
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
 }
 
-.league-info-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  background-color: #1a1d22;
-  border-radius: 10px;
-  padding: 1rem;
-  border: 1px solid #3a3f45;
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
-.league-info-item h5 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  color: #fff;
+.md\:grid-cols-3 {
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
-.league-info-item p {
-  font-size: 0.85rem;
-  color: #a0a8b9;
-  line-height: 1.4;
-  margin: 0;
+.gap-6 {
+  gap: 1.5rem; /* Equivalent to Tailwind's gap-6 */
 }
 
-/* Current User Rank Card */
-.current-user-rank-card {
-  background-color: #2a2e35;
-  border-radius: 16px;
-  padding: 2rem 3rem;
-  margin: 0 auto 3rem auto;
-  max-width: 700px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 10px 30px rgba(0, 0, 0, 0.4);
-  border: 1px solid #3a3f45;
+.items-end {
+  align-items: flex-end;
 }
 
-.current-user-rank-card .user-info {
-  text-align: left;
+.bg-white {
+  background-color: white;
 }
 
-.current-user-rank-card .user-name {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #fff;
+.p-6 { /* Already defined above, but repeated for clarity for cards */
+  padding: 1.5rem;
 }
 
-.current-user-rank-card .user-rank {
-  font-size: 1.2rem;
-  color: #a0a8b9;
+.rounded-xl {
+  border-radius: 0.75rem; /* Equivalent to Tailwind's rounded-xl */
 }
 
-.current-user-rank-card .user-badge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Tailwind shadow-md */
 }
 
-.current-user-rank-card .user-badge-name {
-  font-size: 1rem;
-  text-transform: uppercase;
-  font-weight: 600;
-  color: #a0a8b9;
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Tailwind shadow-lg */
 }
 
-/* Leaderboard & Badges Card */
-.leaderboard-card {
-  background-color: #2a2e35;
-  border-radius: 16px;
-  padding: 2rem;
-  margin: 0 auto;
-  max-width: 950px;
-  width: 100%;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 10px 30px rgba(0, 0, 0, 0.4);
-  border: 1px solid #3a3f45;
-}
-
-.leaderboard-card h4 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: #fff;
+.text-center {
   text-align: center;
 }
 
-/* Responsive table wrapper */
-.table-responsive-wrapper {
-  overflow-x: auto; /* Enable horizontal scrolling */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-  margin-bottom: 1rem; /* Add some space below the table */
-}
-
-/* Leaderboard Table */
-.leaderboard-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  min-width: 700px; /* Ensure table has a minimum width to enable scrolling */
-}
-
-.leaderboard-table th {
-  text-align: left;
-  padding: var(--spacing-sm) var(--spacing-md); /* Use spacing variables */
-  color: #8a92a6;
-  font-weight: 500;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  border-bottom: 1px solid #3a3f45;
-}
-
-.leaderboard-table td {
-  padding: var(--spacing-md) var(--spacing-md); /* Use spacing variables */
-  color: #e0e6f0;
-  font-size: 1rem;
-  font-weight: 500;
-  vertical-align: middle;
-}
-
-/* Mobile specific adjustments for Leaderboard */
-@media (max-width: 767px) {
-  .badge-ranking-page {
-    padding: var(--spacing-md); /* Reduce overall page padding on mobile */
-  }
-
-  .ranking-header h1 {
-    font-size: 2rem; /* Smaller heading on mobile */
-  }
-
-  .ranking-header p {
-    font-size: 0.9rem; /* Smaller secondary text on mobile */
-  }
-
-  .current-user-rank-card {
-    padding: var(--spacing-md); /* Smaller padding for user rank card */
-    flex-direction: column; /* Stack info and badge vertically */
-    gap: var(--spacing-md);
-  }
-
-  .current-user-rank-card .user-name {
-    font-size: 1.5rem;
-  }
-
-  .current-user-rank-card .user-rank,
-  .current-user-rank-card .user-points {
-    font-size: 1rem;
-  }
-
-  .leaderboard-card {
-    padding: var(--spacing-md); /* Smaller padding for leaderboard card */
-  }
-
-  .leaderboard-card h4 {
-    font-size: 1.2rem; /* Smaller "Top 10 Students" heading */
-    margin-bottom: var(--spacing-md);
-  }
-
-  .leaderboard-table th,
-  .leaderboard-table td {
-    padding: var(--spacing-sm); /* Smaller padding for table cells */
-    font-size: 0.85rem; /* Smaller font size for table text */
-  }
-
-  .leaderboard-table .leaderboard-badge-cell {
-    gap: var(--spacing-xs); /* Smaller gap for badge cell */
-  }
-
-  .badge-size-x-small {
-    width: 40px; /* Even smaller badges on mobile */
-    height: 46px;
-  }
-}
-
-.leaderboard-table tbody tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.leaderboard-table tbody tr:hover {
-  background-color: #3a3f45;
-}
-
-.leaderboard-table .progress-bar-container {
-  width: 100px;
-  height: 8px;
-  background-color: #1a1d22;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.leaderboard-table .progress-bar {
-  height: 100%;
-  background-color: #4caf50;
-  border-radius: 4px;
-}
-
-.leaderboard-badge-cell {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.leaderboard-badge-cell .badge-details {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.leaderboard-badge-cell .badge-name-text {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #fff;
-}
-
-/* Folder of Badges Section */
-.earned-badges-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 2rem;
-  justify-items: center;
-}
-
-/* Badge Display Styling (CSS-based shapes) */
-.badge-display {
-  width: 50px; /* Default size for general display */
-  height: 57px;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); /* Shield shape */
+.relative {
   position: relative;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 8px; /* Rounded edges for the base shape */
-  display: grid;
-  place-items: center;
-  overflow: hidden;
 }
 
-.badge-display .league-title {
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: bold;
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.duration-300 {
+  transition-duration: 300ms;
+}
+
+/* First place card specific styles */
+.border-2 {
+  border-width: 2px;
+}
+
+.border-indigo-500 {
+  border-color: var(--primary-color); /* Assuming --primary-color is indigo-500 like */
+}
+
+.scale-105 {
+  transform: scale(1.05);
+}
+
+/* Order for responsive grid */
+.order-first {
+  order: -9999;
+}
+
+.order-last {
+  order: 9999;
+}
+
+/* Avatar Placeholder */
+.w-16 {
+  width: 4rem; /* 64px */
+}
+
+.h-16 {
+  height: 4rem; /* 64px */
+}
+
+.bg-gray-300 {
+  background-color: var(--bg-color-alt); /* Light gray background */
+}
+
+.rounded-full {
+  border-radius: 9999px; /* Equivalent to Tailwind's rounded-full */
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.text-gray-600 {
+  color: var(--text-color-light);
+}
+
+.text-lg {
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.75rem; /* 28px */
+}
+
+.mb-4 {
+  margin-bottom: 1rem; /* Equivalent to Tailwind's mb-4 */
+}
+
+/* Rank Badge */
+.absolute {
+  position: absolute;
+}
+
+.top-2 {
+  top: 0.5rem; /* 8px */
+}
+
+.left-2 {
+  left: 0.5rem; /* 8px */
+}
+
+.bg-indigo-500 {
+  background-color: var(--primary-color);
+}
+
+.text-white {
+  color: white;
+}
+
+.w-8 {
+  width: 2rem; /* 32px */
+}
+
+.h-8 {
+  height: 2rem; /* 32px */
+}
+
+/* Student Name */
+.text-gray-900 { /* Already defined */
+  color: var(--text-color);
+}
+
+/* Points */
+.text-2xl {
+  font-size: 1.5rem; /* 24px */
+  line-height: 2rem; /* 32px */
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.text-gray-800 {
+  color: var(--text-color); /* Slightly darker than text-color-light */
+}
+
+/* League Badge */
+.inline-flex {
+  display: inline-flex;
+}
+
+.px-2\.5 {
+  padding-left: 0.625rem; /* 10px */
+  padding-right: 0.625rem; /* 10px */
+}
+
+.py-0\.5 {
+  padding-top: 0.125rem; /* 2px */
+  padding-bottom: 0.125rem; /* 2px */
+}
+
+.text-xs {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1rem; /* 16px */
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.mt-2 {
+  margin-top: 0.5rem; /* 8px */
+}
+
+/* Full Leaderboard Table Section */
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Tailwind shadow-sm */
+}
+
+.text-xl {
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.75rem; /* 28px */
+}
+
+.mb-4 { /* Already defined */
+  margin-bottom: 1rem;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+.min-w-full {
+  min-width: 100%;
+}
+
+.divide-y > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-y-reverse: 0;
+  border-top-width: 1px;
+  border-color: var(--border-color); /* Subtle border color */
+}
+
+/* Table Header */
+.bg-gray-50 {
+  background-color: var(--bg-color-light); /* Very light gray background */
+}
+
+.px-6 { /* Already defined */
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.py-3 {
+  padding-top: 0.75rem; /* 12px */
+  padding-bottom: 0.75rem; /* 12px */
+}
+
+.text-left {
+  text-align: left;
+}
+
+.uppercase {
   text-transform: uppercase;
 }
 
-/* Tier-specific styling for the badge-display */
-/* 1. Novice */
-.badge-novice {
-  background-color: #8c5b3c;
-  background-image: linear-gradient(145deg, #a67b5b, #70472d);
+.tracking-wider {
+  letter-spacing: 0.05em; /* 0.05em */
 }
 
-/* 2. Learner */
-.badge-learner {
-  background-color: #c0c0c0;
-  background-image: linear-gradient(145deg, #e0e0e0, #a0a0a0);
-}
-.badge-learner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  clip-path: inherit;
-  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.4), inset 0 -2px 2px rgba(0, 0, 0, 0.1);
+/* Table Body */
+.divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-y-reverse: 0;
+  border-color: var(--border-color);
 }
 
-/* 3. Scholar */
-.badge-scholar {
-  background-color: #ffd700;
-  background-image: linear-gradient(145deg, #ffec80, #d4af37);
-}
-.badge-scholar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  clip-path: inherit;
-  box-shadow: inset 0 3px 4px rgba(255, 255, 255, 0.5), inset 0 -3px 4px rgba(0, 0, 0, 0.2);
+/* Current User Row Highlight */
+.bg-indigo-50 {
+  background-color: var(--primary-color-light); /* Light primary color background */
 }
 
-/* 4. Skilled */
-.badge-skilled {
-  background-color: #e5e4e2;
-  background-image: linear-gradient(145deg, #f0f8ff, #b0c4de);
-}
-.badge-skilled::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  clip-path: inherit;
-  box-shadow: inset 0 3px 3px rgba(255, 255, 255, 0.7), inset 0 -3px 3px rgba(0, 0, 0, 0.15);
-  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+.hover\:bg-gray-50:hover {
+  background-color: var(--bg-color-light); /* Light gray on hover */
 }
 
-/* 5. Expert */
-.badge-expert {
-  background-color: #b9f2ff;
-  background-image: linear-gradient(145deg, #a1c4fd, #c2e9fb);
-  box-shadow: 0 0 15px rgba(161, 196, 253, 0.3); /* Soft outer glow */
-}
-.badge-expert::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  clip-path: inherit;
-  background-image: 
-    radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.4), transparent),
-    radial-gradient(ellipse at 50% 70%, rgba(200,220,255,0.3), transparent);
-  clip-path: polygon(50% 0, 100% 25%, 50% 50%, 0 25%); /* Top facet */
-}
-.badge-expert::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  clip-path: inherit;
-  background-image: 
-    radial-gradient(ellipse at 50% 70%, rgba(255,255,255,0.2), transparent),
-    radial-gradient(ellipse at 50% 30%, rgba(200,220,255,0.1), transparent);
-  clip-path: polygon(100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%, 50% 50%); /* Bottom facets */
+.whitespace-nowrap {
+  white-space: nowrap;
 }
 
-/* 6. Master */
-.badge-master {
-  background-color: #a52a2a;
-  background-image: linear-gradient(145deg, #dc143c, #8b0000);
-}
-.badge-master::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  clip-path: inherit;
-  box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.4); /* Subtle inner glow */
-  background: radial-gradient(circle, rgba(255,100,100,0.2) 0%, rgba(255,0,0,0) 60%);
+.text-sm {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
 }
 
-/* 7. Elite */
-.badge-elite {
-  background-color: #4b0082;
-  background-image: linear-gradient(145deg, #8a2be2, #483d8b);
-  box-shadow: 0 0 25px rgba(138, 43, 226, 0.4); /* Controlled ambient glow */
-}
-.badge-elite::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  clip-path: inherit;
-  border: 3px solid rgba(220, 220, 255, 0.3);
-  box-shadow: inset 0 0 20px rgba(190, 150, 255, 0.3);
+.text-gray-700 {
+  color: var(--text-color-secondary); /* A bit lighter than main text */
 }
 
-/* 8. Apex */
-.badge-apex {
-  background-color: #1a1d22;
-  background-image: linear-gradient(145deg, #333, #000);
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.4); /* Elegant gold glow */
-}
-.badge-apex::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  clip-path: inherit;
-  border: 4px solid #ffd700;
-  box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.5);
-  background: 
-    linear-gradient(to top, rgba(255,215,0,0) 50%, rgba(255,215,0,0.1) 100%),
-    linear-gradient(to bottom, rgba(255,215,0,0) 50%, rgba(255,215,0,0.1) 100%);
+.ml-2 {
+  margin-left: 0.5rem; /* 8px */
 }
 
-/* Updated Badge Size Adjustments */
-.badge-size-small {
-  width: 90px;
-  height: 102px;
+.leading-5 {
+  line-height: 1.25rem; /* 20px */
 }
 
-.badge-size-x-small {
-  width: 50px;
-  height: 57px;
+.rounded-full { /* Already defined */
+  border-radius: 9999px;
 }
+
+/* Specific league colors (from getLeagueColor helper in JS) */
+.bg-gray-200 { background-color: #e5e7eb; }
+.text-gray-800 { color: #1f2937; }
+.bg-yellow-100 { background-color: #fef3c7; }
+.text-yellow-800 { color: #92400e; }
+.bg-blue-100 { background-color: #dbeafe; }
+.text-blue-800 { color: #1e40af; }
+.bg-green-100 { background-color: #d1fae5; }
+.text-green-800 { color: #065f46; }
+.bg-indigo-100 { background-color: #e0e7ff; }
+.text-indigo-800 { color: #3730a3; }
+.bg-purple-100 { background-color: #ede9fe; }
+.text-purple-800 { color: #5b21b6; }
+.bg-pink-100 { background-color: #fce7f3; }
+.text-pink-800 { color: #9d174d; }
+.bg-red-100 { background-color: #fee2e2; }
+.text-red-800 { color: #991b1b; }
+.bg-gray-100 { background-color: #f3f4f6; }
+.text-gray-700 { color: #374151; }
+
+/* Custom variables to align with DashboardPage.css where needed */
+:root {
+    --primary-color: #6A5AF9; /* Example primary color */
+    --primary-color-light: #e0e7ff; /* Lighter shade of primary */
+    --bg-color: #f7f9fc; /* White/off-white background */
+    --bg-color-alt: #ffffff; /* Slightly whiter for cards */
+    --bg-color-light: #f9fafb; /* Very light gray */
+    --border-color: #e5e7eb; /* Light gray border */
+    --text-color: #1f2937; /* Dark text */
+    --text-color-light: #6b7280; /* Muted text */
+    --text-color-secondary: #4b5563; /* Slightly lighter than main text */
+}
+
+/* Ensure global CSS variables from App.css are also considered if they exist */
+/* These hardcoded values above are placeholders; ideally, they'd use global variables */
+/* or be derived consistently. For this task, direct translation of Tailwind-like colors is used. */
