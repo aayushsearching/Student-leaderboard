@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route, Link, useNavigate, Outlet, useLocation, NavLink } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate, Outlet, NavLink } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from './supabaseClient';
 import HowItWorks from './HowItWorks';
@@ -74,7 +74,7 @@ function HomeContent() {
 }
 
 function MainLayout({ session, onLogout }) {
-  const location = useLocation();
+
 
   const getActiveClass = ({ isActive }) => isActive ? 'nav-item active' : 'nav-item';
 
