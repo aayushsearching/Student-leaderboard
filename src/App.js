@@ -130,14 +130,13 @@ function App() {
   const [profileComplete, setProfileComplete] = useState(null);
   const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (!loading && session && profileComplete === false) { // Removed location.pathname condition
+    if (!loading && session && profileComplete === false && location.pathname !== '/complete-profile') {
       navigate('/complete-profile');
-    } else if (!loading && session && profileComplete === true) { // Removed location.pathname === '/complete-profile'
-      navigate('/dashboard');
     }
-  }, [loading, session, profileComplete, navigate]); // Removed location.pathname from dependencies
+  }, [loading, session, profileComplete, navigate, location.pathname]); // Removed location.pathname from dependencies
 
   useEffect(() => {
     const initializeAuth = async () => {
