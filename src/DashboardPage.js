@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { NavLink, useLocation, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import './DashboardPage.css';
 import { Grid, CheckSquare, BarChart2, Bell, User } from 'react-feather';
