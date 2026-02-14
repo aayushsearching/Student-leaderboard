@@ -1,128 +1,26 @@
 import './App.css';
-import { Routes, Route, Link, useNavigate, Outlet, NavLink } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
-import { supabase } from './supabaseClient';
-import HowItWorks from './HowItWorks';
-import About from './About';
-import LoginPage from './LoginPage';
-import SignupPage from './SignupPage';
-import DashboardPage from './DashboardPage';
-import TasksPage from './TasksPage';
-import DashboardOverview from './DashboardOverview';
-import BadgeRankingPage from './BadgeRankingPage';
-import ProfilePage from './ProfilePage';
-import AdminPage from './AdminPage';
-import AdminLayout from './AdminLayout';
-import PointSystemPage from './PointSystemPage';
+import HowItWorks from './pages/HowItWorksPage';
+import About from './pages/AboutPage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import DashboardPage from './pages/DashboardPage';
+import TasksPage from './pages/TaskPage';
+import DashboardOverview from './pages/DashboardOverviewPage';
+import BadgeRankingPage from './pages/LeaderboardPage';
+import ProfilePage from './pages/ProfilePage';
+import AdminPage from './pages/AdminPage';
+import AdminLayout from './pages/AdminLayoutPage';
+import PointSystemPage from './pages/PointSystemPage';
 import ProtectedRoute from './ProtectedRoute';
-import NotificationsPage from './NotificationsPage';
-import CompleteProfilePage from './CompleteProfilePage';
-import { CheckSquare, GitMerge, Send, Users, Info, HelpCircle, LogIn, UserPlus, Grid, LogOut } from 'react-feather';
-
-const PROFILE_FIELDS = 'full_name, academic_year, branch, role';
-
-const isProfileComplete = (profileData) =>
-  Boolean(profileData?.full_name && profileData?.academic_year && profileData?.branch);
-
-function HomeContent() {
-  return (
-    <main className="hero-section">
-      <div className="hero-content">
-        <h1>Level Up Your Skills, Boost Your Rank!</h1>
-        <p className="secondary-text">Task-based mentorship for college students to learn, earn points, and climb the leaderboard.</p>
-        <Link to="/login" className="cta-button">Join the Challenge</Link>
-      </div>
-
-      {/* Floating UI Cards */}
-      <div className="ui-card card-task">
-        <div className="card-header">
-          <span className="card-title">Submit Task</span>
-          <CheckSquare className="card-icon" size={20} />
-        </div>
-        <div className="card-body">
-          <p>Complete the assigned task and submit for peer review.</p>
-        </div>
-        <div className="card-footer">
-          <div className="avatar-group">
-            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Avatar" className="avatar" />
-            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Avatar" className="avatar" />
-          </div>
-        </div>
-      </div>
-
-      <div className="ui-card card-sticky-note">
-        <p className="sticky-note-text">"The only way to do great work is to love what you do."</p>
-      </div>
-
-      <div className="ui-card card-reminder">
-        <div className="card-header">
-          <span className="card-title">Weekly Sync</span>
-          <Send className="card-icon" size={20} />
-        </div>
-        <div className="reminder-item">
-          <div className="reminder-checkbox"></div>
-          <span className="reminder-text">Sync up with the team on project progress.</span>
-        </div>
-      </div>
-
-      <div className="ui-card card-integration">
-        <div className="card-header">
-          <span className="card-title">Connect</span>
-        </div>
-        <div className="integration-icons">
-          <GitMerge className="card-icon" size={24} />
-          <Users className="card-icon" size={24} />
-        </div>
-      </div>
-    </main>
-  );
-}
-
-function MainLayout({ session, onLogout }) {
-  const getActiveClass = ({ isActive }) => isActive ? 'nav-item active' : 'nav-item';
-  const primaryAction = session
-    ? { to: '/dashboard', icon: <Grid /> }
-    : { to: '/login', icon: <LogIn /> };
-
-  return (
-    <>
-      <div className="main-nav-container">
-        <nav className="main-nav">
-          <NavLink to="/" className="logo-link nav-item">
-            <div className="logo">MentorFlow</div>
-          </NavLink>
-          <NavLink to="/how-it-works" className={getActiveClass}>
-            <HelpCircle className="nav-icon" />
-            <span className="nav-label">How it Works</span>
-          </NavLink>
-          
-          <NavLink to={primaryAction.to} className="nav-primary-action">
-            {primaryAction.icon}
-          </NavLink>
-
-          <NavLink to="/about" className={getActiveClass}>
-            <Info className="nav-icon" />
-            <span className="nav-label">About</span>
-          </NavLink>
-          {session ? (
-            <button type="button" onClick={onLogout} className="nav-item">
-              <LogOut className="nav-icon" />
-              <span className="nav-label">Logout</span>
-            </button>
-          ) : (
-            <NavLink to="/signup" className={getActiveClass}>
-              <UserPlus className="nav-icon" />
-              <span className="nav-label">Sign Up</span>
-            </NavLink>
-          )}
-        </nav>
-      </div>
-      <div className="container-1200">
-        <Outlet />
-      </div>
-    </>
-  );
-}
+import NotificationsPage from './pages/NotificationsPage';
+import CompleteProfilePage from './pages/CompleteProfilePage';
+import HomeContent from './components/Home/HomeContent';
+import MainLayout from './components/Layout/MainLayout';
+import { getCurrentSession, signOut, subscribeToAuthStateChanges } from './services/authService';
+import { fetchProfileById } from './services/profileService';
+import { isProfileComplete } from './utils/helpers';
 
 function App() {
   const [session, setSession] = useState(null);
@@ -138,11 +36,7 @@ function App() {
   }, [loading, session, profileComplete, navigate]);
 
   const syncProfileState = useCallback(async (userId, logContext) => {
-    const { data: profileData, error: profileError } = await supabase
-      .from('profiles')
-      .select(PROFILE_FIELDS)
-      .eq('id', userId)
-      .maybeSingle();
+    const { data: profileData, error: profileError } = await fetchProfileById(userId);
 
     if (profileError) {
       console.error(`Error fetching profile${logContext}:`, profileError);
@@ -163,11 +57,11 @@ function App() {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
+      const fetchedSession = await getCurrentSession();
+      setSession(fetchedSession);
 
-      if (data.session?.user) {
-        await syncProfileState(data.session.user.id, '');
+      if (fetchedSession?.user) {
+        await syncProfileState(fetchedSession.user.id, '');
       } else {
         setProfile(null);
         setProfileComplete(true);
@@ -177,11 +71,11 @@ function App() {
 
     initializeAuth();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        if (session?.user) {
-          syncProfileState(session.user.id, ' on auth state change');
+    const authSubscription = subscribeToAuthStateChanges(
+      (_event, nextSession) => {
+        setSession(nextSession);
+        if (nextSession?.user) {
+          syncProfileState(nextSession.user.id, ' on auth state change');
         } else {
           setProfileComplete(true);
           setProfile(null);
@@ -190,12 +84,12 @@ function App() {
     );
 
     return () => {
-      authListener.subscription.unsubscribe();
+      authSubscription.unsubscribe();
     };
   }, [syncProfileState]);
 
   const handleLogout = useCallback(async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await signOut();
     if (error) console.error('Error signing out:', error.message);
     else navigate('/');
   }, [navigate]);

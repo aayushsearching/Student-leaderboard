@@ -1,11 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { supabase } from './supabaseClient';
 import './DashboardPage.css';
 import { Grid, CheckSquare, BarChart2, Bell, User } from 'react-feather';
+import {
+  fetchUnreadNotificationsCount,
+  removeRealtimeChannel,
+  subscribeToNotificationChanges,
+} from '../services/notificationService';
 
 const DASHBOARD_NAV_ITEMS = [
-  { to: '/dashboard', label: 'Dashboard', Icon: Grid },
+  { to: '/dashboard', label: 'Dashboard', Icon: Grid, end: true },
   { to: '/dashboard/tasks', label: 'Tasks', Icon: CheckSquare },
   { to: '/dashboard/leaderboard', label: 'Leaderboard', Icon: BarChart2 },
   { to: '/dashboard/notifications', label: 'Notifications', Icon: Bell, showBadge: true },
@@ -22,11 +26,7 @@ function DashboardPage({ user }) {
       return;
     }
     try {
-      const { count, error } = await supabase
-        .from('notifications')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('is_read', false);
+      const { count, error } = await fetchUnreadNotificationsCount(user.id);
 
       if (error) throw error;
       setUnreadCount(count);
@@ -43,20 +43,12 @@ function DashboardPage({ user }) {
     }
     fetchUnreadCount();
 
-    const notificationsChannel = supabase
-      .channel('unread_dashboard_notifications_channel')
-      .on('postgres_changes', { 
-        event: '*', 
-        schema: 'public', 
-        table: 'notifications',
-        filter: `user_id=eq.${user?.id}`
-      }, () => {
-        fetchUnreadCount();
-      })
-      .subscribe();
+    const notificationsChannel = subscribeToNotificationChanges(user.id, () => {
+      fetchUnreadCount();
+    });
 
     return () => {
-      supabase.removeChannel(notificationsChannel);
+      removeRealtimeChannel(notificationsChannel);
     };
   }, [user, navigate, fetchUnreadCount]);
 
@@ -72,9 +64,9 @@ function DashboardPage({ user }) {
         </div>
         <nav className="sidebar-nav">
           <ul>
-            {DASHBOARD_NAV_ITEMS.map(({ to, label, Icon, showBadge }) => (
+            {DASHBOARD_NAV_ITEMS.map(({ to, label, Icon, showBadge, end }) => (
               <li key={to}>
-                <NavLink to={to} className={getNavLinkClass}>
+                <NavLink to={to} end={end} className={getNavLinkClass}>
                   <Icon className="icon" />
                   <span>{label}</span>
                   {showBadge && unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
@@ -94,3 +86,4 @@ function DashboardPage({ user }) {
 }
 
 export default DashboardPage;
+

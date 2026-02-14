@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { supabase } from './supabaseClient';
 import './PointSystemPage.css';
+import {
+  approveTaskAndUpdateScore,
+  fetchPendingReviewTasks,
+  rejectTaskWithFeedback,
+} from '../services/taskService';
 
 function PointSystemPage() {
   const [pendingTasks, setPendingTasks] = useState([]);
@@ -11,29 +15,10 @@ function PointSystemPage() {
   const fetchPendingTasks = useCallback(async () => {
     setLoading(true);
     setError('');
-    setSuccess('');
     
     try {
       // Using the exact query structure as requested
-      const { data, error: fetchError } = await supabase
-        .from('user_tasks')
-        .select(`
-          id,
-          user_id,
-          status,
-          submission_url,
-          submitted_at,
-          tasks (
-            title,
-            points
-          ),
-          profiles (
-            full_name,
-            email
-          )
-        `)
-        .eq('status', 'pending_review')
-        .order('submitted_at', { ascending: true });
+      const { data, error: fetchError } = await fetchPendingReviewTasks();
 
       if (fetchError) throw fetchError;
       setPendingTasks(data);
@@ -54,10 +39,10 @@ function PointSystemPage() {
     setLoading(true);
     
     try {
-      const { error: rpcError } = await supabase.rpc('approve_task_and_update_score', {
-        p_user_task_id: userTask.id, // This is the ID of the row in user_tasks
-        p_user_id: userTask.user_id, // The ID of the user who submitted it
-        p_points_to_add: userTask.tasks.points // The points from the joined tasks table
+      const { error: rpcError } = await approveTaskAndUpdateScore({
+        userTaskId: userTask.id, // This is the ID of the row in user_tasks
+        userId: userTask.user_id, // The ID of the user who submitted it
+        points: userTask.tasks.points, // The points from the joined tasks table
       });
 
       if (rpcError) throw rpcError;
@@ -76,9 +61,9 @@ function PointSystemPage() {
     if (reason) {
       setLoading(true);
       try {
-        const { error: rpcError } = await supabase.rpc('reject_task_with_feedback', {
-          p_user_task_id: userTask.id,
-          p_feedback: reason
+        const { error: rpcError } = await rejectTaskWithFeedback({
+          userTaskId: userTask.id,
+          feedback: reason,
         });
 
         if (rpcError) throw rpcError;
@@ -139,3 +124,4 @@ function PointSystemPage() {
 }
 
 export default PointSystemPage;
+

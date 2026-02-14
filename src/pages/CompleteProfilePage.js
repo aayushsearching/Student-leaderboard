@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { supabase } from './supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import './CompleteProfilePage.css'; // Assuming a new CSS file for styling
+import { fetchFullProfileById, upsertProfile } from '../services/profileService';
 
 const isProfileDataComplete = (profileData) =>
   Boolean(
@@ -62,9 +62,7 @@ function CompleteProfilePage({ user, profile, profileComplete }) {
         branch,
       };
 
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .upsert(updates);
+      const { error: updateError } = await upsertProfile(updates);
 
       if (updateError) {
         console.error("Profile update failed:", updateError);
@@ -74,11 +72,7 @@ function CompleteProfilePage({ user, profile, profileComplete }) {
       setSuccess('Profile updated successfully!');
 
       // Re-fetch the updated profile to ensure we have the latest state
-      const { data: updatedProfile, error: fetchError } = await supabase
-        .from('profiles')
-        .select('*') // Select all fields
-        .eq('id', user.id)
-        .single(); // Use single() here as we expect the profile to exist now
+      const { data: updatedProfile, error: fetchError } = await fetchFullProfileById(user.id);
 
       if (fetchError) {
         console.error("Error re-fetching profile after update:", fetchError.message); // Log error.message
@@ -167,3 +161,4 @@ function CompleteProfilePage({ user, profile, profileComplete }) {
 }
 
 export default CompleteProfilePage;
+

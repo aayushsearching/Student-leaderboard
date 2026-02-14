@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { supabase } from './supabaseClient';
 import { useState, useEffect } from 'react';
+import { fetchProfileRoleByUserId } from './services/profileService';
 
 const ACCESS_VERIFY_STYLE = { textAlign: 'center', padding: '2rem' };
 
@@ -38,11 +38,7 @@ function ProtectedRoute({ user, appLoading, profile, profileComplete, requiredRo
         return;
       }
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
+      const { data, error } = await fetchProfileRoleByUserId(user.id);
 
       setAuthorization(!error && data?.role === requiredRole);
     };

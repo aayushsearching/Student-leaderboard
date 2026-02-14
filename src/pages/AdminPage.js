@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 // import { useNavigate } from 'react-router-dom'; // Removed as it's not used
-import { supabase } from './supabaseClient';
 import './AdminPage.css';
+import {
+  createTaskTemplate,
+  deleteTaskTemplate,
+  fetchTaskTemplates,
+  updateTaskTemplate,
+} from '../services/taskService';
+import { sendAdminAnnouncement } from '../services/notificationService';
 
 const DEFAULT_POINTS = 10;
 
@@ -45,7 +51,7 @@ function AdminPage() { // Removed user prop
   const fetchAdminData = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error: fetchError } = await supabase.from('tasks').select('*').order('created_at', { ascending: false });
+      const { data, error: fetchError } = await fetchTaskTemplates();
       if (fetchError) throw fetchError;
       setTemplateTasks(data);
     } catch (err) {
@@ -78,14 +84,14 @@ function AdminPage() { // Removed user prop
     try {
       let response;
       if (editingTask) {
-        response = await supabase.from('tasks').update(taskData).eq('id', editingTask.id);
+        response = await updateTaskTemplate(editingTask.id, taskData);
       } else {
         if (!title || !description || !points) {
           setError('Please fill out all required fields.');
           setFormLoading(false);
           return;
         }
-        response = await supabase.from('tasks').insert([taskData]);
+        response = await createTaskTemplate(taskData);
       }
       if (response.error) throw response.error;
       setSuccess(`Task template ${editingTask ? 'updated' : 'created'} successfully!`);
@@ -114,7 +120,7 @@ function AdminPage() { // Removed user prop
     if (window.confirm('Are you sure you want to delete this task template?')) {
       setLoading(true);
       try {
-        const { error: deleteError } = await supabase.from('tasks').delete().eq('id', taskId);
+        const { error: deleteError } = await deleteTaskTemplate(taskId);
         if (deleteError) throw deleteError;
         setSuccess('Task template deleted successfully!');
         await fetchAdminData();
@@ -141,9 +147,9 @@ function AdminPage() { // Removed user prop
     }
 
     try {
-      const { error: rpcError } = await supabase.rpc('send_admin_notification', {
-        p_title: notificationTitle,
-        p_message: notificationMessage
+      const { error: rpcError } = await sendAdminAnnouncement({
+        title: notificationTitle,
+        message: notificationMessage,
       });
 
       if (rpcError) {
@@ -179,8 +185,8 @@ function AdminPage() { // Removed user prop
                   <td>{task.title}</td>
                   <td>{task.points}</td>
                   <td className="task-actions">
-                    <button className="edit-btn" onClick={() => handleEditClick(task)} disabled={formLoading}>Edit</button>
-                    <button className="delete-btn" onClick={() => handleDeleteClick(task.id)} disabled={formLoading}>Delete</button>
+                    <button type="button" className="edit-btn" onClick={() => handleEditClick(task)} disabled={formLoading}>Edit</button>
+                    <button type="button" className="delete-btn" onClick={() => handleDeleteClick(task.id)} disabled={formLoading}>Delete</button>
                   </td>
                 </tr>
               )) : (
@@ -231,3 +237,4 @@ function AdminPage() { // Removed user prop
 }
 
 export default AdminPage;
+

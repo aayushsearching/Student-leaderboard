@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { supabase } from './supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import './NotificationsPage.css';
+import {
+  fetchNotificationsByUserId,
+  markAllNotificationsRead,
+  markNotificationRead,
+  removeRealtimeChannel,
+  subscribeToNotifications,
+} from '../services/notificationService';
 
 function NotificationsPage({ user }) {
   const [notifications, setNotifications] = useState([]);
@@ -20,11 +26,7 @@ function NotificationsPage({ user }) {
     setError(null);
 
     try {
-      const { data, error: fetchError } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+      const { data, error: fetchError } = await fetchNotificationsByUserId(user.id);
 
       if (fetchError) throw fetchError;
       setNotifications(data);
@@ -45,30 +47,19 @@ function NotificationsPage({ user }) {
     }
 
     // Realtime subscription for new notifications
-    const channel = supabase
-      .channel('notifications_channel')
-      .on('postgres_changes', { 
-        event: 'INSERT', 
-        schema: 'public', 
-        table: 'notifications',
-        filter: `user_id=eq.${user?.id}`
-      }, (payload) => {
+    const channel = subscribeToNotifications(user.id, (payload) => {
         // Add new notification to the top of the list
         setNotifications((prevNotifications) => [payload.new, ...prevNotifications]);
-      })
-      .subscribe();
+      });
 
     return () => {
-      supabase.removeChannel(channel);
+      removeRealtimeChannel(channel);
     };
   }, [fetchNotifications, user]);
 
   const markAsRead = useCallback(async (notificationId) => {
     try {
-      const { error: updateError } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('id', notificationId);
+      const { error: updateError } = await markNotificationRead(notificationId);
 
       if (updateError) throw updateError;
       setNotifications((prevNotifications) =>
@@ -86,11 +77,7 @@ function NotificationsPage({ user }) {
   const markAllAsRead = useCallback(async () => {
     if (!user) return;
     try {
-      const { error: updateError } = await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('user_id', user.id)
-        .eq('is_read', false);
+      const { error: updateError } = await markAllNotificationsRead(user.id);
 
       if (updateError) throw updateError;
       setNotifications((prevNotifications) =>
@@ -109,7 +96,7 @@ function NotificationsPage({ user }) {
     }
     // Navigate to the task if task_id is present
     if (notification.task_id) {
-      navigate(`/dashboard/tasks/${notification.task_id}`); // Assuming a route like /dashboard/tasks/:taskId
+      navigate('/dashboard/tasks');
     }
   }, [navigate, markAsRead]);
 
@@ -168,3 +155,4 @@ function NotificationsPage({ user }) {
 }
 
 export default NotificationsPage;
+

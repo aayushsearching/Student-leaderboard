@@ -1,7 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from './supabaseClient'; // Import supabase client
 import './DashboardOverview.css';
+import {
+  fetchCompletedTasksCount,
+  fetchPendingReviewsCount,
+  fetchRankedLeaderboard,
+  fetchTopLeaderboardStudents as fetchTopLeaderboardStudentsService,
+  fetchTotalStudentsCount,
+  removeRealtimeChannel,
+  subscribeToUserTaskChanges,
+} from '../services/dashboardService';
 
 const DEFAULT_RANK_PERCENTAGE = 10;
 const MAX_RANK_PERCENTAGE = 100;
@@ -25,10 +33,7 @@ function DashboardOverview({ user }) {
 
   const fetchTopLeaderboardStudents = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .rpc('get_leaderboard_with_rank') // Call the RPC function
-        .order('rank', { ascending: true }) // Order by the calculated rank
-        .limit(3);
+      const { data, error } = await fetchTopLeaderboardStudentsService(3);
 
       if (error) throw error;
       setTopLeaderboardStudents(data);
@@ -44,8 +49,7 @@ function DashboardOverview({ user }) {
     }
     try {
       // Fetch all users with their ranks using the RPC
-      const { data: rankedLeaderboard, error: fetchError } = await supabase
-        .rpc('get_leaderboard_with_rank');
+      const { data: rankedLeaderboard, error: fetchError } = await fetchRankedLeaderboard();
 
       if (fetchError) throw fetchError;
 
@@ -88,27 +92,21 @@ function DashboardOverview({ user }) {
 
     try {
       // Fetch Total Students (assuming a 'profiles' table for all users)
-      const { count: studentsCount, error: studentsError } = await supabase
-        .from('profiles')
-        .select('id', { count: 'exact', head: true });
+      const { count: studentsCount, error: studentsError } = await fetchTotalStudentsCount();
       if (studentsError) throw studentsError;
       setTotalStudents(studentsCount);
 
       // Fetch Tasks Completed by the current user from 'user_tasks' table
-      const { count: completedTasksCount, error: completedTasksError } = await supabase
-        .from('user_tasks') // Changed to 'user_tasks'
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('status', 'completed');
+      const { count: completedTasksCount, error: completedTasksError } = await fetchCompletedTasksCount(
+        user.id
+      );
       if (completedTasksError) throw completedTasksError;
       setTasksCompleted(completedTasksCount);
 
       // Fetch Pending Reviews for the current user from 'user_tasks' table
-      const { count: pendingReviewsCount, error: pendingReviewsError } = await supabase
-        .from('user_tasks') // Changed to 'user_tasks'
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('status', 'pending_review'); // Changed to 'pending_review'
+      const { count: pendingReviewsCount, error: pendingReviewsError } = await fetchPendingReviewsCount(
+        user.id
+      );
       if (pendingReviewsError) throw pendingReviewsError;
       setPendingReviews(pendingReviewsCount);
 
@@ -126,20 +124,12 @@ function DashboardOverview({ user }) {
     fetchUserLeaderboardRank();
     fetchDashboardMetrics(); // Call new fetch function
 
-    const userTasksChannel = supabase
-      .channel('dashboard_user_tasks_channel')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'user_tasks',
-        filter: `user_id=eq.${user?.id}` // Filter by current user's tasks
-      }, () => {
-        fetchDashboardMetrics(); // Re-fetch metrics when user_tasks change
-      })
-      .subscribe();
+    const userTasksChannel = subscribeToUserTaskChanges(user.id, () => {
+      fetchDashboardMetrics();
+    });
 
     return () => {
-      supabase.removeChannel(userTasksChannel); // Unsubscribe from user_tasks channel
+      removeRealtimeChannel(userTasksChannel);
     };
   }, [user, navigate, fetchTopLeaderboardStudents, fetchUserLeaderboardRank, fetchDashboardMetrics]);
 
@@ -170,7 +160,7 @@ function DashboardOverview({ user }) {
         <ul className="student-list">
           {topLeaderboardStudents.length > 0 ? (
             topLeaderboardStudents.map((entry, index) => (
-              <li key={entry.full_name || index} className="student-item">
+              <li key={entry.user_id || `${entry.full_name || 'student'}-${index}`} className="student-item">
                 <span className="student-rank">{index + 1}.</span>
                 <span className="student-name">
                   {entry.full_name || 'Unknown User'}
@@ -210,3 +200,4 @@ function DashboardOverview({ user }) {
 }
 
 export default DashboardOverview;
+

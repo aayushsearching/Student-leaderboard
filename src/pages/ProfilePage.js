@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { supabase } from './supabaseClient'; // Import Supabase client
 import './ProfilePage.css';
+import { updateAuthUser } from '../services/authService';
 
 function ProfilePage({ user }) { // Accept user prop
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,7 @@ function ProfilePage({ user }) { // Accept user prop
           },
         };
 
-        const { error: updateUserError } = await supabase.auth.updateUser(updates);
+        const { error: updateUserError } = await updateAuthUser(updates);
 
         if (updateUserError) throw updateUserError;
 
@@ -121,3 +121,4 @@ function ProfilePage({ user }) { // Accept user prop
 }
 
 export default ProfilePage;
+
