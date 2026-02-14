@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  createLeaderboardEntryIfMissing,
   fetchRankedLeaderboard,
   fetchTop10Leaderboard,
   removeRealtimeChannel,
@@ -43,16 +42,6 @@ export function useLeaderboard(user) {
 
       let formattedRankedData = await fetchFormattedRankedData();
       setLeaderboardTop3Data(formattedRankedData);
-
-      if (user && !formattedRankedData.find((entry) => entry.user_id === user.id)) {
-        const { error: insertError } = await createLeaderboardEntryIfMissing(user.id);
-        if (insertError) {
-          console.error('Error creating new leaderboard entry:', insertError);
-        } else {
-          formattedRankedData = await fetchFormattedRankedData();
-          setLeaderboardTop3Data(formattedRankedData);
-        }
-      }
 
       setCurrentUserData(
         user ? formattedRankedData.find((entry) => entry.user_id === user.id) || null : null

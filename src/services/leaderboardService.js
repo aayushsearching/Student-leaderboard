@@ -16,8 +16,7 @@ export const fetchTop10Leaderboard = () =>
  * Ensure leaderboard row exists for a user.
  * @param {string} userId
  */
-export const createLeaderboardEntryIfMissing = (userId) =>
-  supabase.from('leaderboard').insert([{ user_id: userId, score: 0 }]);
+
 
 /**
  * Subscribe to leaderboard updates.

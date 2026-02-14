@@ -16,6 +16,17 @@ function SignupPage() {
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
+  // ✅ Strong password validator
+  const validatePassword = (password) => {
+    const minLength = password.length >= 10;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return minLength && hasUpper && hasLower && hasNumber && hasSpecial;
+  };
+
   useEffect(() => {
     const checkSession = async () => {
       const session = await getCurrentSession();
@@ -29,9 +40,7 @@ function SignupPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (isSubmitting) {
-      return;
-    }
+    if (isSubmitting) return;
 
     setErrorMessage('');
     setSuccessMessage('');
@@ -47,17 +56,31 @@ function SignupPage() {
       return;
     }
 
+    // ✅ Enforce strong password
+    if (!validatePassword(password)) {
+      setErrorMessage(
+        "Password must be at least 10 characters and include uppercase, lowercase, number and special character."
+      );
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       setLoading(true);
+
       const { error } = await signUpWithPassword({ email, password });
       if (error) throw error;
+
       setSuccessMessage('Success! Please check your email for a confirmation link.');
     } catch (error) {
-      if (error.name === 'AbortError') return; // Silently ignore AbortError
-      console.log('Supabase signup error:', error); // Log the full error object for debugging
-      // Check for specific error message indicating user already exists
-      if (error.message.includes('User already registered') || error.message.includes('duplicate key value violates unique constraint')) {
+      if (error.name === 'AbortError') return;
+
+      console.log('Supabase signup error:', error);
+
+      if (
+        error.message.includes('User already registered') ||
+        error.message.includes('duplicate key value violates unique constraint')
+      ) {
         setErrorMessage('User already existed, please log in');
       } else {
         setErrorMessage(error.message);
@@ -70,9 +93,7 @@ function SignupPage() {
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
-    if (emailError) {
-      setEmailError('');
-    }
+    if (emailError) setEmailError('');
   };
 
   return (
@@ -83,6 +104,7 @@ function SignupPage() {
         <form onSubmit={handleSubmit}>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           {successMessage && <p className="success-message">{successMessage}</p>}
+
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -96,6 +118,7 @@ function SignupPage() {
             />
             {emailError && <p className="error-message">{emailError}</p>}
           </div>
+
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -107,6 +130,7 @@ function SignupPage() {
               disabled={loading}
             />
           </div>
+
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
             <input
@@ -118,10 +142,12 @@ function SignupPage() {
               disabled={loading}
             />
           </div>
+
           <button type="submit" className="login-button" disabled={loading || isSubmitting}>
             {loading ? 'Signing up...' : 'Sign Up'}
           </button>
         </form>
+
         <div className="login-footer">
           <Link to="/login">Already have an account? Log In</Link>
         </div>
@@ -131,4 +157,3 @@ function SignupPage() {
 }
 
 export default SignupPage;
-
