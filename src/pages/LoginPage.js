@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 import { getCurrentSession, signInWithPassword } from '../services/authService';
 
 const EMAIL_REGEX = /\S+@\S+\.\S+/;
+
+const MAX_ATTEMPTS = 5;
+const LOCK_TIME_MS = 5 * 60 * 1000; // 5 minutes
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,7 +14,8 @@ function LoginPage() {
   const [emailError, setEmailError] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [lockoutMessage, setLockoutMessage] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -26,6 +30,17 @@ function LoginPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage('');
+    setLockoutMessage('');
+
+    const now = Date.now();
+    const lockData = JSON.parse(localStorage.getItem('login_lock') || '{}');
+
+    // Check if locked
+    if (lockData.lockUntil && now < lockData.lockUntil) {
+      const remaining = Math.ceil((lockData.lockUntil - now) / 1000);
+      setLockoutMessage(`Too many failed attempts. Try again in ${remaining} seconds.`);
+      return;
+    }
 
     if (!EMAIL_REGEX.test(email)) {
       setEmailError('Please enter a valid email');
@@ -35,22 +50,38 @@ function LoginPage() {
 
     try {
       setLoading(true);
+
       const { error } = await signInWithPassword({ email, password });
+
       if (error) {
-        // Supabase often returns a specific message for invalid credentials
-        if (error.message.includes('Invalid login credentials') || error.message.includes('Invalid email or password')) {
-          setErrorMessage('ID or password is incorrect');
+        let attempts = lockData.attempts || 0;
+        attempts++;
+
+        if (attempts >= MAX_ATTEMPTS) {
+          const lockUntil = now + LOCK_TIME_MS;
+          localStorage.setItem(
+            'login_lock',
+            JSON.stringify({ attempts: 0, lockUntil })
+          );
+          setLockoutMessage('Too many failed attempts. Account temporarily locked.');
         } else {
-          setErrorMessage(error.message);
+          localStorage.setItem(
+            'login_lock',
+            JSON.stringify({ attempts, lockUntil: null })
+          );
+          setErrorMessage('ID or password is incorrect');
         }
+
         return;
       }
-      // Logged in successfully, redirect to dashboard
+
+      // Success → reset lock
+      localStorage.removeItem('login_lock');
       navigate('/dashboard');
+
     } catch (error) {
-      if (error.name === 'AbortError') return; // Silently ignore AbortError
-      console.log('Supabase login error:', error); // Log the full error object for debugging
-      setErrorMessage(error.message || 'Login failed. Please try again.');
+      if (error.name === 'AbortError') return;
+      setErrorMessage('Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -69,6 +100,7 @@ function LoginPage() {
         <h2>Welcome Back!</h2>
         <p className="login-subtitle">Sign in to your MentorFlow account</p>
         <form onSubmit={handleSubmit}>
+          {lockoutMessage && <p className="error-message">{lockoutMessage}</p>}
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -109,5 +141,3 @@ function LoginPage() {
 }
 
 export default LoginPage;
-
-
