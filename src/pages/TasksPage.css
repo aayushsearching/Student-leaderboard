@@ -1,6 +1,5 @@
 .tasks-page-container {
-  padding: 2rem;
-  /* Align with dashboard-main-content styling */
+  padding: 0;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -10,100 +9,135 @@
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: #333;
+  color: var(--text-color);
+  letter-spacing: -0.02em;
 }
 
 .tasks-header .muted-text {
-  color: #8a92a6;
+  color: var(--text-color-light);
   margin-bottom: 2rem;
 }
 
 .tasks-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
 }
 
 .task-card {
-  background-color: #fff;
-  padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
-  border: 1px solid #eef0f6;
+  background-color: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 1.75rem;
+  border-radius: 20px;
+  box-shadow: var(--shadow-elevation-low);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   display: flex;
   flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.task-card:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: var(--shadow-elevation-medium);
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .task-card h4 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #333;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-color);
 }
 
 .task-card .muted-text {
-  color: #8a92a6;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
+  color: var(--text-color-light);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
 }
 
 .task-card .task-details {
   display: flex;
   justify-content: space-between;
-  margin-top: auto; /* Push details to the bottom */
-  padding-top: 1rem;
-  border-top: 1px solid #eef0f6;
-  font-size: 0.85rem;
-  color: #555;
-  flex-wrap: wrap; /* Allow details to wrap on smaller screens */
-  gap: 0.5rem; /* Space between detail items */
+  margin-top: auto;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 0.9rem;
+  color: var(--text-color-light);
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .task-card .task-details span {
-  flex-basis: 48%; /* Roughly half width for two columns */
+  flex-basis: 48%;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .show-details-button {
-  background-color: #000000; /* Black background */
+  background: var(--text-color);
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
   cursor: pointer;
-  margin-top: 1rem;
-  transition: background-color 0.2s ease;
-  align-self: flex-end; /* Align to the right within the flex column */
+  margin-top: 1.25rem;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+  font-weight: 600;
+  font-size: 0.9rem;
+  width: 100%;
 }
 
 .show-details-button:hover {
-  background-color: #333333; /* Darker black on hover */
+  background: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .expanded-details {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eef0f6;
-  font-size: 0.9rem;
-  color: #333;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 0.95rem;
+  color: var(--text-color);
   text-align: left;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .expanded-details p {
-  margin-bottom: 0.5rem;
-  line-height: 1.4;
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
 }
 
 .expanded-details strong {
-  color: #000;
+  color: var(--text-color);
+  font-weight: 600;
 }
 
 .expanded-details a {
-  color: #007bff;
+  color: var(--primary-color);
   text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px dashed var(--primary-color);
 }
 
 .expanded-details a:hover {
-  text-decoration: underline;
+  text-decoration: none;
+  border-bottom: 1px solid var(--primary-color);
 }
 
 /* Modal Overlay */
@@ -113,176 +147,208 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure it's on top of other content */
+  z-index: 2000;
+  padding: 1rem;
 }
 
 /* Modal Content */
 .modal-content {
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.95);
   padding: 2.5rem;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 500px; /* Max width for readability */
+  border-radius: 24px;
+  box-shadow: var(--shadow-elevation-high);
+  width: 100%;
+  max-width: 500px;
   position: relative;
   text-align: left;
-  animation: fadeInScale 0.3s ease-out;
+  animation: fadeInScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid white;
 }
 
 @keyframes fadeInScale {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.9) translateY(20px);
   }
+
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateY(0);
   }
 }
 
 .modal-content h3 {
   font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #333;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  letter-spacing: -0.03em;
 }
 
 .modal-content p {
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 0.8rem;
-  color: #555;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  color: var(--text-color-light);
 }
 
-.modal-content strong {
-  color: #333;
-}
-
-.modal-content a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.modal-content a:hover {
-  text-decoration: underline;
-}
-
-/* Close button for modal */
 .modal-close-button {
-  background-color: #dc3545; /* Red for close/danger */
+  background-color: #ef4444;
+  /* Red-500 */
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.85rem 1.5rem;
+  border-radius: 12px;
   cursor: pointer;
   margin-top: 1.5rem;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   font-size: 1rem;
+  font-weight: 600;
+  width: 100%;
 }
 
 .modal-close-button:hover {
-  background-color: #c82333;
+  background-color: #dc2626;
+  /* Red-600 */
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
 }
 
-/* Change Status Button */
 .change-status-button {
-  background-color: #000000; /* Black for primary action */
+  background-color: var(--text-color);
+  /* Dark based on theme */
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.85rem 1.5rem;
+  border-radius: 12px;
   cursor: pointer;
   margin-top: 1.5rem;
-  margin-right: 1rem; /* Space between change status and close button */
-  transition: background-color 0.2s ease;
+  /* margin-right: 1rem;  Stacked on mobile usually better, but let's see responsive */
+  transition: all 0.2s ease;
   font-size: 1rem;
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: 0.75rem;
+  /* Space if stacked */
 }
 
 .change-status-button:hover {
-  background-color: #333333; /* Darker black on hover */
+  background-color: black;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Completed Task Status */
 .task-status-completed {
-  color: green;
-  font-weight: bold;
-  /* You can add more styling here, e.g., text-decoration: line-through; */
+  color: #10b981;
+  /* Emerald-500 */
+  font-weight: 700;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 100px;
+  display: inline-block;
 }
 
 /* NEW STYLES */
 .success-message {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: #d1fae5;
+  color: #065f46;
   padding: 1rem;
-  border-radius: 4px;
+  border-radius: 12px;
   margin-bottom: 1.5rem;
   text-align: center;
-  border: 1px solid #c3e6cb;
+  border: 1px solid #a7f3d0;
+  font-weight: 500;
 }
 
 .task-completed {
-  background-color: #f8f9fa;
-  border-left: 4px solid #28a745;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-left: 5px solid #10b981;
 }
 
 .task-rejected {
-  background-color: #fff3f3;
-  border-left: 4px solid #dc3545;
+  background-color: #fff1f2;
+  border-left: 5px solid #f43f5e;
 }
 
 .rejection-box {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 0.75rem;
-  border-radius: 4px;
+  background-color: #fee2e2;
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: 12px;
   margin-top: 1rem;
-  font-size: 0.9rem;
-  border: 1px solid #f5c6cb;
-}
-
-.proof-modal p {
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
+  font-size: 0.95rem;
+  border: 1px solid #fecaca;
 }
 
 .modal-actions {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2rem;
 }
 
-.yes-button, .no-button {
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+.yes-button,
+.no-button {
+  padding: 1rem;
+  border-radius: 14px;
   font-weight: 600;
   cursor: pointer;
-  text-decoration: none;
   text-align: center;
-  border: 1px solid transparent;
   transition: all 0.2s;
-  flex: 1;
+  width: 100%;
 }
 
 .yes-button {
-  background-color: #28a745;
-  color: #fff;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
 }
 
 .yes-button:hover {
-  background-color: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
 }
 
 .no-button {
-  background-color: #f1f3f5;
-  color: #495057;
-  border-color: #dee2e6;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
 }
 
 .no-button:hover {
-  background-color: #e9ecef;
+  background-color: #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  .tasks-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .task-card {
+    padding: 1.5rem;
+  }
+
+  .task-card h4 {
+    font-size: 1.15rem;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+    max-width: 100%;
+    border-radius: 20px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .change-status-button {
+    margin-right: 0;
+  }
 }

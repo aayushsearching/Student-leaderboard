@@ -1,187 +1,392 @@
-/* Mobile First Styles */
+/* Modern Mobile Authentication Screen - Jobsly Style */
 .login-page-container {
+  /* Full-screen gradient background - Purple theme */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 50;
+
+  /* Beautiful purple gradient */
+  background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  background-attachment: fixed;
+
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-  background:
-    linear-gradient(135deg, rgba(255,255,255,0.05) 25%, transparent 25%) -50px 0,
-    linear-gradient(225deg, rgba(255,255,255,0.05) 25%, transparent 25%) -50px 0,
-    linear-gradient(315deg, rgba(255,255,255,0.05) 25%, transparent 25%),
-    linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%),
-    linear-gradient(to bottom, #e0f2f7, #ffffff);
-  background-size: 100px 100px, 100px 100px, 100px 100px, 100px 100px, cover;
-  background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
-  padding: 1rem; /* Smaller padding for mobile */
-  overflow: hidden;
+  padding: 0 0 100px 0;
+  /* Bottom padding for nav bar */
+  overflow-y: auto;
+  font-family: var(--font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
 }
 
-.login-form-card {
-  background: rgba(255, 255, 255, 0.9); /* Slightly more opaque for mobile readability */
-  backdrop-filter: blur(10px); /* Slightly less blur for performance */
-  border-radius: 15px; /* Slightly less rounded */
-  padding: 2rem; /* Reduced padding for mobile */
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  max-width: 90%; /* Max width for mobile */
+/* Top Section with Logo */
+.login-header {
   width: 100%;
+  padding: 60px 24px 40px;
   text-align: center;
+  color: white;
+}
+
+.login-logo {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.login-tagline {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+/* Top Right Action Button */
+.top-action-button {
+  position: absolute;
+  top: 50px;
+  right: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.top-action-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Main Form Card - Slides up from bottom */
+.login-form-card {
+  background: #ffffff;
+  border-radius: 32px 32px 0 0;
+  padding: 40px 24px 48px;
+  width: 100%;
+  max-width: 480px;
+  min-height: auto;
+  /* Remove fixed height */
+  max-height: calc(100vh - 180px);
+  /* Account for header space */
+  overflow-y: auto;
+  /* Enable scrolling if content is tall */
+  box-shadow:
+    0 -10px 40px rgba(0, 0, 0, 0.15),
+    0 -2px 8px rgba(0, 0, 0, 0.08);
   z-index: 10;
   position: relative;
+  margin-top: auto;
+
+  /* Smooth slide-up animation */
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Header Area Inside Card */
 .login-form-card h2 {
-  font-size: 1.8rem; /* Smaller for mobile */
-  margin-bottom: 0.5rem;
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1f2937;
+  text-align: center;
+  letter-spacing: -0.02em;
 }
 
 .login-subtitle {
-  font-size: 0.9rem; /* Smaller for mobile */
-  margin-bottom: 1.5rem; /* Reduced margin */
+  font-size: 0.9375rem;
+  color: #6b7280;
+  margin-bottom: 32px;
+  text-align: center;
+  line-height: 1.5;
+  font-weight: 400;
 }
 
+/* Form Groups */
 .form-group {
-  margin-bottom: 1rem; /* Reduced margin */
+  margin-bottom: 20px;
   text-align: left;
+  position: relative;
 }
 
 .form-group label {
-  font-size: 0.85rem; /* Smaller for mobile */
-  margin-bottom: 0.4rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 8px;
+  display: block;
 }
 
+/* Input Fields - Clean minimal style */
 .form-group input {
-  width: 100%; /* Full width for mobile */
-  box-sizing: border-box; /* Include padding in width */
-  padding: 10px 12px; /* Adjusted padding */
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px; /* Less rounded for a cleaner look */
-  font-size: 0.9rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  background-color: rgba(255, 255, 255, 0.9);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 12px 12px;
+  background-color: #fafafa;
+  /* Subtle background */
+  border: none;
+  border-bottom: 2px solid #e5e7eb;
+  /* Thicker border */
+  font-size: 1rem;
+  color: #1f2937;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  border-radius: 0;
+}
+
+.form-group input::placeholder {
+  color: #9ca3af;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1); /* Softer focus shadow */
+  border-bottom-color: #6366f1;
+  background-color: #ffffff;
+  transform: translateY(-1px);
+  /* Subtle lift */
 }
 
+/* Primary Button - Gradient style matching image */
 .login-button {
-  background-color: #333;
+  background: linear-gradient(90deg, #6366f1 0%, #a855f7 100%);
   color: white;
   border: none;
-  padding: 0.8rem 1.5rem; /* Reduced padding for mobile */
+  padding: 18px;
   font-size: 1rem;
   font-weight: 600;
-  border-radius: 10px; /* Less rounded */
+  border-radius: 16px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  width: 100%; /* Full width for mobile */
-  margin-top: 1rem; /* Reduced margin */
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+  width: 100%;
+  margin-top: 32px;
+  letter-spacing: 0.01em;
 }
 
 .login-button:hover {
-  transform: translateY(-1px); /* Less aggressive hover effect */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(99, 102, 241, 0.45);
 }
 
+.login-button:active {
+  transform: translateY(0);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Forgot Password Link */
+.forgot-password {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 0.875rem;
+}
+
+.forgot-password a {
+  color: #6b7280;
+  text-decoration: none;
+  font-weight: 400;
+  transition: color 0.2s;
+}
+
+.forgot-password a:hover {
+  color: #6366f1;
+}
+
+/* Secondary Link */
 .login-footer {
-  margin-top: 1.5rem; /* Reduced margin */
-  font-size: 0.85rem; /* Smaller for mobile */
+  margin-top: 24px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 400;
 }
 
 .login-footer a {
-  color: #888;
+  color: #6366f1;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.2s ease;
+  transition: color 0.2s;
 }
 
 .login-footer a:hover {
-  color: #333;
-  text-decoration: underline;
+  color: #4f46e5;
 }
 
+/* Divider Section */
+.divider-section {
+  display: flex;
+  align-items: center;
+  margin: 32px 0 24px;
+  gap: 16px;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: #e5e7eb;
+}
+
+.divider-text {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* Social Login Buttons - Matching the image style */
+.social-login-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.social-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.social-button:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.social-button svg,
+.social-button img {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Error & Success Messages */
 .error-message {
-  padding: 0.6rem 0.8rem; /* Adjusted padding */
-  font-size: 0.9rem;
-  margin-bottom: 1rem; /* Adjusted margin */
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+  text-align: center;
+  line-height: 1.4;
 }
 
 .success-message {
-  padding: 0.8rem;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+  background: #f0fdf4;
+  color: #16a34a;
+  border-radius: 12px;
+  border: 1px solid #bbf7d0;
+  text-align: center;
 }
 
 /* Tablet Layout */
 @media (min-width: 768px) {
-  .login-page-container {
-    padding: 2rem;
-  }
-
   .login-form-card {
-    padding: 3rem; /* More padding for tablet */
-    max-width: 400px; /* Increased max-width */
-    border-radius: 20px;
-    backdrop-filter: blur(15px);
+    max-width: 440px;
+    border-radius: 32px;
+    min-height: auto;
+    margin: auto;
+    padding: 48px 40px;
   }
 
-  .login-form-card h2 {
-    font-size: 2rem;
+  .login-page-container {
+    justify-content: center;
+    padding: 24px;
   }
 
-  .login-subtitle {
-    font-size: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-
-  .form-group label {
-    font-size: 0.9rem;
-  }
-
-  .form-group input {
-    padding: 12px 15px;
-    font-size: 1rem;
-  }
-
-  .login-button {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    margin-top: 1.5rem;
-    border-radius: 12px;
-  }
-
-  .login-footer {
-    margin-top: 2rem;
-    font-size: 0.95rem;
-  }
-  .error-message {
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  .success-message {
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    font-size: 0.95rem;
+  .login-header {
+    position: absolute;
+    top: 0;
   }
 }
 
-/* Laptop/Desktop Layout */
+/* Desktop Layout */
 @media (min-width: 1024px) {
   .login-form-card {
-    padding: 3.5rem; /* Original padding */
-    max-width: 450px; /* Original max-width */
+    padding: 56px 48px;
   }
 
-  .login-form-card h2 {
-    font-size: 2.2rem; /* Original font size */
+  /* Hide MentorFlow logo on laptop/desktop */
+  .login-header {
+    display: none;
+  }
+
+  /* Hide top action button on laptop/desktop */
+  .top-action-button {
+    display: none;
+  }
+}
+
+/* Very Small Mobile Screens */
+@media (max-width: 375px) {
+  .login-form-card {
+    padding: 32px 20px 40px;
+    border-radius: 28px 28px 0 0;
+  }
+
+  .social-login-container {
+    grid-template-columns: 1fr;
+    /* Stack vertically */
+    gap: 10px;
+  }
+
+  .login-header {
+    padding: 50px 20px 30px;
+  }
+
+  .login-logo {
+    font-size: 2rem;
+  }
+
+  .top-action-button {
+    top: 40px;
+    right: 20px;
+    padding: 6px 12px;
+    font-size: 0.8125rem;
+  }
+
+  .form-group input {
+    padding: 14px 10px 10px;
+    font-size: 0.9375rem;
+  }
+
+  .login-button {
+    padding: 16px;
+    font-size: 0.9375rem;
   }
 }

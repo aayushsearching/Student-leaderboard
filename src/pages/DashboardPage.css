@@ -1,172 +1,324 @@
 .dashboard-page-wrapper {
   display: flex;
   background-color: var(--bg-color);
-  min-height: 100vh; /* Ensure it takes full viewport height */
+  min-height: 100vh;
   font-family: var(--font-family);
   color: var(--text-color);
 }
 
 .dashboard-sidebar {
-  width: 240px;
-  background-color: var(--bg-color);
+  width: 260px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
   padding: 2rem;
-  border-right: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
   display: flex;
   flex-direction: column;
-  box-shadow: 
-    5px 5px 10px rgba(163, 177, 198, 0.3),
-    -5px -5px 10px rgba(255, 255, 255, 0.3);
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.02);
   position: fixed;
   left: 0;
-  top: 0; 
+  top: 0;
   height: 100vh;
   flex-shrink: 0;
-  border-radius: 0 15px 15px 0; /* Rounded right edge */
-  z-index: 100; /* Ensure it's above main content but below top nav */
+  z-index: 100;
+  transition: all 0.3s ease;
 }
 
 .sidebar-header h2 {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--primary-color);
   text-align: center;
   margin-bottom: 3rem;
+  letter-spacing: -0.02em;
 }
 
 .sidebar-nav ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .sidebar-nav li a {
   display: flex;
   align-items: center;
-  padding: 1rem;
-  border-radius: var(--border-radius);
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
   text-decoration: none;
   color: var(--text-color-light);
-  font-weight: 600;
-  margin-bottom: 0.8rem; /* Slightly reduced margin */
-  transition: all 0.2s ease;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.sidebar-nav li a.active { /* Use a.active for NavLink */
-  color: var(--bg-color-alt); /* White text on active pill */
-  background-color: var(--primary-color); /* Dark active pill */
-  box-shadow: 0 4px 10px rgba(106, 90, 249, 0.3); /* Stronger shadow for active */
-}
-
-.sidebar-nav li a:not(.active):hover { /* Hover for non-active items */
+.sidebar-nav li a.active {
   color: var(--primary-color);
-  background-color: rgba(106, 90, 249, 0.05); /* Soft hover background */
+  background-color: rgba(99, 102, 241, 0.08);
+  font-weight: 600;
+}
+
+.sidebar-nav li a:not(.active):hover {
+  color: var(--primary-color);
+  background-color: rgba(99, 102, 241, 0.04);
+  transform: translateX(4px);
 }
 
 .sidebar-nav .icon {
-  margin-right: 1rem;
-  font-size: 1.2rem;
+  margin-right: 0.85rem;
+  font-size: 1.25rem;
+  width: 20px;
+  height: 20px;
 }
 
 .dashboard-main-content {
   flex-grow: 1;
   background-color: var(--bg-color);
-  padding: var(--navbar-height) 2rem 2rem 2rem;
-  margin-left: 240px; /* Offset for fixed sidebar */
-  min-height: 100%; /* Fill available height */
-  overflow-y: auto; /* Allow vertical scrolling */
-  display: grid;
-  grid-template-rows: auto auto 1fr; /* Welcome banner, cards, and Outlet content */
-  gap: 1rem; /* Consistent spacing between major sections */
+  padding: calc(var(--navbar-height) + 1rem) 2rem 2rem 2rem;
+  margin-left: 260px;
+  min-height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .welcome-banner {
-  background-color: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
   color: white;
-  padding: 1rem 2rem; /* Make more compact */
-  border-radius: var(--border-radius);
-  /* margin-bottom: 2rem; Removed as gap in grid handles spacing */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1));
+  transform: skewX(-20deg) translateX(50%);
 }
 
 .welcome-banner h1 {
-  font-size: 1.8rem; /* Slightly smaller for compactness */
+  font-size: 2rem;
   margin: 0;
   font-weight: 700;
+  position: relative;
+  z-index: 1;
 }
 
 .welcome-banner p {
-  margin-top: 0.25rem; /* More compact */
-  font-size: 1rem; /* Slightly smaller */
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
   font-weight: 400;
-  opacity: 0.9;
+  opacity: 0.95;
+  position: relative;
+  z-index: 1;
 }
 
 .dashboard-cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted minmax for more compactness */
-  gap: 1rem; /* Consistent spacing */
-  /* margin-bottom: 2rem; Removed as gap in grid handles spacing */
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
 }
 
 .dashboard-card {
-  background-color: var(--bg-color);
-  padding: 2rem;
-  min-height: 120px; /* Ensure a minimum height for the card */
-  border-radius: var(--border-radius);
-  box-shadow: 5px 5px 10px rgba(163, 177, 198, 0.3), -5px -5px 10px rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  padding: 1.75rem;
+  min-height: 140px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-elevation-low);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   text-align: center;
-  transition: transform 0.2s ease-in-out;
-  display: flex; /* Use flex to align content vertically */
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
   flex-direction: column;
   justify-content: center;
+  cursor: default;
 }
 
 .dashboard-card:hover {
   transform: translateY(-5px);
+  box-shadow: var(--shadow-elevation-medium);
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .dashboard-card h3 {
-  color: var(--primary-color);
-  font-size: 1.1rem; /* Slightly smaller */
+  color: var(--text-color-light);
+  font-size: 0.95rem;
   margin-bottom: 0.5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .dashboard-card .card-value {
-  font-size: 2.2rem; /* Slightly smaller */
+  font-size: 2.5rem;
   font-weight: 700;
   color: var(--text-color);
+  /* Gradient text for values */
+  background: linear-gradient(135deg, var(--text-color) 0%, var(--primary-color) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .notification-badge {
   background-color: var(--secondary-color);
   color: white;
   font-size: 0.7rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 10px;
-  margin-left: auto; /* Push to right */
+  padding: 0.15rem 0.6rem;
+  border-radius: 20px;
+  margin-left: auto;
+  font-weight: 700;
+  box-shadow: 0 2px 5px rgba(236, 72, 153, 0.4);
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .dashboard-sidebar {
-    width: 180px; /* Smaller fixed sidebar on smaller screens */
+    width: 80px;
+    padding: 2rem 1rem;
+    align-items: center;
+  }
+
+  .sidebar-header h2 {
+    display: none;
+    /* Hide logo text on tablet */
+  }
+
+  .sidebar-nav li a span {
+    display: none;
+    /* Hide labels */
+  }
+
+  .sidebar-nav .icon {
+    margin-right: 0;
+    font-size: 1.5rem;
+    width: 24px;
+    height: 24px;
+  }
+
+  .notification-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 2px 5px;
+    font-size: 0.6rem;
   }
 
   .dashboard-main-content {
-    margin-left: 180px; /* Adjust offset for smaller sidebar */
+    margin-left: 80px;
   }
 }
 
-@media (max-width: 576px) {
-  .dashboard-sidebar {
-    width: 100%; /* Full width sidebar on very small screens */
-    height: auto;
-    position: relative; /* Not fixed on very small screens */
-    box-shadow: none;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
+@media (max-width: 768px) {
+  .dashboard-page-wrapper {
+    flex-direction: column;
+    padding-bottom: 80px;
+    /* Space for bottom nav */
   }
+
+  .dashboard-sidebar {
+    width: 100%;
+    height: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    top: auto;
+    flex-direction: row;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-right: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
+    justify-content: space-around;
+    z-index: 1000;
+  }
+
+  .sidebar-header {
+    display: none;
+  }
+
+  .sidebar-nav {
+    width: 100%;
+  }
+
+  .sidebar-nav ul {
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    gap: 0;
+  }
+
+  .sidebar-nav li {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  .sidebar-nav li a {
+    flex-direction: column;
+    padding: 0.5rem;
+    font-size: 0.7rem;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    gap: 0.2rem;
+  }
+
+  .sidebar-nav li a:hover {
+    transform: none;
+  }
+
+  .sidebar-nav li a.active {
+    color: var(--primary-color);
+  }
+
+  .sidebar-nav li a span {
+    display: block;
+    /* Show labels on mobile bottom nav */
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+
+  .sidebar-nav .icon {
+    margin-right: 0;
+    margin-bottom: 2px;
+  }
+
   .dashboard-main-content {
     margin-left: 0;
+    padding: 2rem 1.5rem;
+    display: block;
+    /* Reset flex */
+  }
+
+  .welcome-banner {
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .welcome-banner h1 {
+    font-size: 1.6rem;
+  }
+
+  .dashboard-cards-container {
+    grid-template-columns: 1fr;
+    /* Single column on mobile */
+  }
+
+  .dashboard-card {
+    min-height: 120px;
+    padding: 1.5rem;
   }
 }

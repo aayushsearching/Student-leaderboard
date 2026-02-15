@@ -1,28 +1,29 @@
 /* Base styling for the Leaderboard page */
 .p-6 {
-  padding: 1.5rem; /* Equivalent to Tailwind's p-6 */
+  padding: 1.5rem;
 }
 
 .mb-8 {
-  margin-bottom: 2rem; /* Equivalent to Tailwind's mb-8 */
+  margin-bottom: 2rem;
 }
 
 /* Page Header Section */
 .text-3xl {
-  font-size: 1.875rem; /* 30px */
-  line-height: 2.25rem; /* 36px */
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1.2;
 }
 
 .font-bold {
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .text-gray-900 {
-  color: var(--text-color); /* Assuming --text-color is dark gray/black */
+  color: var(--text-color);
 }
 
 .text-gray-500 {
-  color: var(--text-color-light); /* Assuming --text-color-light is a muted gray */
+  color: var(--text-color-light);
 }
 
 /* Top 3 Highlight Section */
@@ -41,7 +42,7 @@
 }
 
 .gap-6 {
-  gap: 1.5rem; /* Equivalent to Tailwind's gap-6 */
+  gap: 1.5rem;
 }
 
 .items-end {
@@ -49,19 +50,21 @@
 }
 
 .bg-white {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .rounded-xl {
-  border-radius: 0.75rem; /* Equivalent to Tailwind's rounded-xl */
+  border-radius: 1rem;
 }
 
 .shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Tailwind shadow-md */
+  box-shadow: var(--shadow-elevation-medium);
 }
 
 .shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Tailwind shadow-lg */
+  box-shadow: var(--shadow-elevation-high);
 }
 
 .text-center {
@@ -75,7 +78,7 @@
 .transition-all {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  transition-duration: 300ms;
 }
 
 .duration-300 {
@@ -88,11 +91,22 @@
 }
 
 .border-indigo-500 {
-  border-color: var(--primary-color); /* Assuming --primary-color is indigo-500 like */
+  border-color: var(--primary-color);
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .scale-105 {
   transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .scale-105 {
+    transform: scale(1);
+    /* Disable scale on mobile */
+    order: -1;
+    /* Ensure first place is first on mobile */
+    margin-bottom: 1rem;
+  }
 }
 
 /* Order for responsive grid */
@@ -106,19 +120,20 @@
 
 /* Avatar Placeholder */
 .w-16 {
-  width: 4rem; /* 64px */
+  width: 4rem;
 }
 
 .h-16 {
-  height: 4rem; /* 64px */
+  height: 4rem;
 }
 
 .bg-gray-300 {
-  background-color: var(--bg-color-alt); /* Light gray background */
+  background-color: var(--primary-color-light);
+  color: var(--primary-color-dark);
 }
 
 .rounded-full {
-  border-radius: 9999px; /* Equivalent to Tailwind's rounded-full */
+  border-radius: 9999px;
 }
 
 .flex {
@@ -138,12 +153,12 @@
 }
 
 .text-lg {
-  font-size: 1.125rem; /* 18px */
-  line-height: 1.75rem; /* 28px */
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 .mb-4 {
-  margin-bottom: 1rem; /* Equivalent to Tailwind's mb-4 */
+  margin-bottom: 1rem;
 }
 
 /* Rank Badge */
@@ -152,15 +167,18 @@
 }
 
 .top-2 {
-  top: 0.5rem; /* 8px */
+  top: 1rem;
+  /* Adjusted styling */
 }
 
 .left-2 {
-  left: 0.5rem; /* 8px */
+  left: 1rem;
+  /* Adjusted styling */
 }
 
 .bg-indigo-500 {
-  background-color: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
 }
 
 .text-white {
@@ -168,17 +186,21 @@
 }
 
 .w-8 {
-  width: 2rem; /* 32px */
+  width: 2.5rem;
 }
 
 .h-8 {
-  height: 2rem; /* 32px */
+  height: 2.5rem;
 }
 
 /* Points */
 .text-2xl {
-  font-size: 1.5rem; /* 24px */
-  line-height: 2rem; /* 32px */
+  font-size: 1.5rem;
+  line-height: 2rem;
+  background: linear-gradient(135deg, var(--text-color) 0%, var(--primary-color) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .font-semibold {
@@ -186,7 +208,7 @@
 }
 
 .text-gray-800 {
-  color: var(--text-color); /* Slightly darker than text-color-light */
+  color: var(--text-color);
 }
 
 /* League Badge */
@@ -195,18 +217,20 @@
 }
 
 .px-2\.5 {
-  padding-left: 0.625rem; /* 10px */
-  padding-right: 0.625rem; /* 10px */
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
 .py-0\.5 {
-  padding-top: 0.125rem; /* 2px */
-  padding-bottom: 0.125rem; /* 2px */
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 
 .text-xs {
-  font-size: 0.75rem; /* 12px */
-  line-height: 1rem; /* 16px */
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
 }
 
 .font-medium {
@@ -214,46 +238,42 @@
 }
 
 .mt-2 {
-  margin-top: 0.5rem; /* 8px */
+  margin-top: 0.75rem;
 }
 
 /* Full Leaderboard Table Section */
 .shadow-sm {
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Tailwind shadow-sm */
+  box-shadow: var(--shadow-elevation-low);
 }
 
 .text-xl {
-  font-size: 1.25rem; /* 20px */
-  line-height: 1.75rem; /* 28px */
+  font-size: 1.25rem;
+  line-height: 1.75rem;
 }
 
 .overflow-x-auto {
   overflow-x: auto;
+  border-radius: 1rem;
 }
 
 .min-w-full {
   min-width: 100%;
 }
 
-.divide-y > :not([hidden]) ~ :not([hidden]) {
-  --tw-divide-y-reverse: 0;
-  border-top-width: 1px;
-  border-color: var(--border-color); /* Subtle border color */
-}
-
 /* Table Header */
 .bg-gray-50 {
-  background-color: var(--bg-color-light, #f9fafb); /* Very light gray background */
+  background-color: rgba(248, 250, 252, 0.5);
+  backdrop-filter: blur(5px);
 }
 
-.px-6 { /* Already defined */
+.px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
 
 .py-3 {
-  padding-top: 0.75rem; /* 12px */
-  padding-bottom: 0.75rem; /* 12px */
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .text-left {
@@ -265,22 +285,30 @@
 }
 
 .tracking-wider {
-  letter-spacing: 0.05em; /* 0.05em */
+  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-color-light);
 }
 
 /* Table Body */
-.divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
-  --tw-divide-y-reverse: 0;
-  border-color: var(--border-color);
+.divide-y> :not([hidden])~ :not([hidden]) {
+  border-top-width: 1px;
+  border-color: rgba(226, 232, 240, 0.6);
+}
+
+.bg-white.divide-y {
+  background-color: transparent;
+  /* transparent to let card bg show */
 }
 
 /* Current User Row Highlight */
 .bg-indigo-50 {
-  background-color: var(--primary-color-light); /* Light primary color background */
+  background-color: rgba(99, 102, 241, 0.1) !important;
 }
 
 .hover\:bg-gray-50:hover {
-  background-color: var(--bg-color-light); /* Light gray on hover */
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .whitespace-nowrap {
@@ -288,38 +316,70 @@
 }
 
 .text-sm {
-  font-size: 0.875rem; /* 14px */
-  line-height: 1.25rem; /* 20px */
+  font-size: 0.875rem;
 }
 
 .text-gray-700 {
-  color: var(--text-color-secondary, #4b5563); /* A bit lighter than main text */
+  color: var(--text-color);
 }
 
 .ml-2 {
-  margin-left: 0.5rem; /* 8px */
+  margin-left: 0.5rem;
 }
 
 .leading-5 {
-  line-height: 1.25rem; /* 20px */
+  line-height: 1.25rem;
 }
 
-/* Specific league colors (from getLeagueColor helper in JS) */
-.bg-gray-200 { background-color: #e5e7eb; }
-.text-gray-800 { color: #1f2937; }
-.bg-yellow-100 { background-color: #fef3c7; }
-.text-yellow-800 { color: #92400e; }
-.bg-blue-100 { background-color: #dbeafe; }
-.text-blue-800 { color: #1e40af; }
-.bg-green-100 { background-color: #d1fae5; }
-.text-green-800 { color: #065f46; }
-.bg-indigo-100 { background-color: #e0e7ff; }
-.text-indigo-800 { color: #3730a3; }
-.bg-purple-100 { background-color: #ede9fe; }
-.text-purple-800 { color: #5b21b6; }
-.bg-pink-100 { background-color: #fce7f3; }
-.text-pink-800 { color: #9d174d; }
-.bg-red-100 { background-color: #fee2e2; }
-.text-red-800 { color: #991b1b; }
-.bg-gray-100 { background-color: #f3f4f6; }
-.text-gray-700 { color: #374151; }
+/* Specific league colors */
+.bg-gray-200 {
+  background-color: #e2e8f0;
+  color: #475569;
+}
+
+.bg-yellow-100 {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.bg-blue-100 {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.bg-green-100 {
+  background-color: #d1fae5;
+  color: #059669;
+}
+
+.bg-indigo-100 {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+}
+
+.bg-purple-100 {
+  background-color: #ede9fe;
+  color: #7c3aed;
+}
+
+.bg-pink-100 {
+  background-color: #fce7f3;
+  color: #db2777;
+}
+
+.bg-red-100 {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.bg-gray-100 {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+@media (max-width: 640px) {
+  .px-6 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

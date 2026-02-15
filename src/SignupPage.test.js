@@ -43,8 +43,8 @@ describe('SignupPage', () => {
     render(<SignupPage />);
 
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'user@example.com' } });
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText('Confirm Password'), { target: { value: 'password123' } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'Password123!' } });
+    fireEvent.change(screen.getByLabelText('Confirm Password'), { target: { value: 'Password123!' } });
     fireEvent.click(screen.getByRole('button', { name: 'Sign Up' }));
 
     expect(await screen.findByText('Success! Please check your email for a confirmation link.')).toBeInTheDocument();

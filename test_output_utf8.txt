@@ -1,0 +1,181 @@
+﻿
+> student-leaderboard@0.1.0 test
+> react-scripts test src/SignupPage.test.js --watchAll=false
+
+node.exe : FAIL src/SignupPage.test.js
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAI 
+   L src/SignupPage.test.js:String) [], RemoteE  
+  xception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  SignupPage
+    ÔêÜ stops submit when passwords do not match 
+(187 ms)
+    ├ù shows success message when signup 
+succeeds (1060 ms)
+
+  ÔùÅ SignupPage ÔÇ║ shows success message when 
+signup succeeds
+
+    Unable to find an element with the text: 
+Success! Please check your email for a 
+confirmation link.. This could be because the 
+text is broken up by multiple elements. In this 
+case, you can provide a function for your text 
+matcher to make your matcher more flexible.
+
+    Ignored nodes: comments, script, style
+    [36m<body>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          
+[33mclass[39m=[32m"login-page-container"[39m
+        [36m>[39m
+          [36m<div[39m
+            
+[33mclass[39m=[32m"login-form-card"[39m
+          [36m>[39m
+            [36m<h2>[39m
+              [0mJoin MentorFlow![0m
+            [36m</h2>[39m
+            [36m<p[39m
+              
+[33mclass[39m=[32m"login-subtitle"[39m
+            [36m>[39m
+              [0mCreate your account to get 
+started[0m
+            [36m</p>[39m
+            [36m<form>[39m
+              [36m<p[39m
+                
+[33mclass[39m=[32m"error-message"[39m
+              [36m>[39m
+                [0mPassword must be at least 10 
+characters and include uppercase, lowercase, 
+number and special character.[0m
+              [36m</p>[39m
+              [36m<div[39m
+                
+[33mclass[39m=[32m"form-group"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mfor[39m=[32m"email"[39m
+                [36m>[39m
+                  [0mEmail[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m""[39m
+                  [33mid[39m=[32m"email"[39m
+                  [33mrequired[39m=[32m""[39m
+                  
+[33mtype[39m=[32m"email"[39m
+                  
+[33mvalue[39m=[32m"user@example.com"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                
+[33mclass[39m=[32m"form-group"[39m
+              [36m>[39m
+                [36m<label[39m
+                  
+[33mfor[39m=[32m"password"[39m
+                [36m>[39m
+                  [0mPassword[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  
+[33mid[39m=[32m"password"[39m
+                  [33mrequired[39m=[32m""[39m
+                  
+[33mtype[39m=[32m"password"[39m
+                  
+[33mvalue[39m=[32m"password123"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                
+[33mclass[39m=[32m"form-group"[39m
+              [36m>[39m
+                [36m<label[39m
+                  
+[33mfor[39m=[32m"confirmPassword"[39m
+                [36m>[39m
+                  [0mConfirm Password[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  
+[33mid[39m=[32m"confirmPassword"[39m
+                  [33mrequired[39m=[32m""[39m
+                  
+[33mtype[39m=[32m"password"[39m
+                  
+[33mvalue[39m=[32m"password123"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                
+[33mclass[39m=[32m"login-button"[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [0mSign Up[0m
+              [36m</button>[39m
+            [36m</form>[39m
+            [36m<div[39m
+              
+[33mclass[39m=[32m"login-footer"[39m
+            [36m>[39m
+              [36m<a[39m
+                [33mhref[39m=[32m"/login"[39m
+              [36m>[39m
+                [0mAlready have an account? Log 
+In[0m
+              [36m</a>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</body>[39m
+
+    [0m [90m 48 |[39m     fireEvent[33m.[39m
+click(screen[33m.[39mgetByRole([32m'button'[3
+9m[33m,[39m { name[33m:[39m [32m'Sign 
+Up'[39m }))[33m;[39m
+     [90m 49 |[39m
+    [31m[1m>[22m[39m[90m 50 |[39m     
+expect([36mawait[39m 
+screen[33m.[39mfindByText([32m'Success! 
+Please check your email for a confirmation link.'
+[39m))[33m.[39mtoBeInTheDocument()[33m;[39m
+     [90m    |[39m                         
+[31m[1m^[22m[39m
+     [90m 51 |[39m   })[33m;[39m
+     [90m 52 |[39m })[33m;[39m
+     [90m 53 |[39m[0m
+
+      at waitForWrapper (node_modules/@testing-li
+brary/dom/dist/wait-for.js:163:27)
+      at findByText (node_modules/@testing-librar
+y/dom/dist/query-helpers.js:86:33)
+      at Object.<anonymous> 
+(src/SignupPage.test.js:50:25)
+      at TestScheduler.scheduleTests (node_module
+s/@jest/core/build/TestScheduler.js:333:13)
+      at runJest 
+(node_modules/@jest/core/build/runJest.js:404:19)
+      at _run10000 (node_modules/@jest/core/build
+/cli/index.js:320:7)
+      at runCLI (node_modules/@jest/core/build/cl
+i/index.js:173:3)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 1 passed, 2 total
+Snapshots:   0 total
+Time:        4.037 s
+Ran all test suites matching 
+/src\\SignupPage.test.js/i.
